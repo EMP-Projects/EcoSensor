@@ -7,3 +7,5 @@ osm-data/
 ecosensor-data/
 openmeteo-data/
 .idea/
+./backend/bin/
+./backend/obj/
