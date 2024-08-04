@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <LangVersion>default</LangVersion>
+        <TargetFramework>net8.0</TargetFramework>
+        <UserSecretsId>ce75eb87-aa0a-4be3-85ff-902a124f58de</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="NetTopologySuite" Version="2.5.0" />
+        <PackageReference Include="NetTopologySuite.Features" Version="2.1.0" />
+        <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
+        <PackageReference Include="NetTopologySuite.IO.PostGis" Version="2.1.0" />
+        <PackageReference Include="Npgsql" Version="8.0.3" />
+        <PackageReference Include="Npgsql.DependencyInjection" Version="8.0.3" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="8.0.4" />
+        <PackageReference Include="Npgsql.Json.NET" Version="8.0.3" />
+        <PackageReference Include="Npgsql.NetTopologySuite" Version="8.0.3" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+        <PackageReference Include="TeamSviluppo.NetCoreFw" Version="8.5.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Controllers\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\TeamSviluppo.Gis\TeamSviluppo.Gis.NetCoreFw\TeamSviluppo.Gis.NetCoreFw.csproj" />
+      <ProjectReference Include="..\..\TeamSviluppo.Gis\TeamSviluppo.Gis\TeamSviluppo.Gis.csproj" />
+      <ProjectReference Include="..\..\TeamSviluppo.OpenMeteo\TeamSviluppo.OpenMeteo\TeamSviluppo.OpenMeteo.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="GeoJson\limits_IT_regions.geojson">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="GeoJson\limits_R_2_municipalities.geojson">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="GeoJson\limits_P_72_municipalities.geojson">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
