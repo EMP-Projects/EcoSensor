@@ -19,7 +19,7 @@ namespace EcoSensorApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
@@ -982,6 +982,68 @@ namespace EcoSensorApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("air_quality");
+                });
+
+            modelBuilder.Entity("EcoSensorApi.Config.ConfigModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int?>("CityCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("city_code");
+
+                    b.Property<string>("CityField")
+                        .HasColumnType("text")
+                        .HasColumnName("city_field");
+
+                    b.Property<int>("Distance")
+                        .HasColumnType("integer")
+                        .HasColumnName("distance_mt");
+
+                    b.Property<int>("MatrixDistancePoints")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_distance_points_mt");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<int>("RegionCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("region_code");
+
+                    b.Property<string>("RegionField")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("region_field");
+
+                    b.Property<int>("TypeSource")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("layers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CityCode = 72021,
+                            CityField = "com_istat_code_num",
+                            Distance = 100,
+                            MatrixDistancePoints = 2500,
+                            Name = "limits_P_72_municipalities.geojson",
+                            RegionCode = 16,
+                            RegionField = "reg_istat_code_num",
+                            TypeSource = 0
+                        });
                 });
 
             modelBuilder.Entity("TeamSviluppo.Gis.NetCoreFw.OsmPg.Properties.OsmPropertiesModel", b =>

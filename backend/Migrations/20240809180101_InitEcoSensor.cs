@@ -58,6 +58,26 @@ namespace EcoSensorApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "layers",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    type = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    region_field = table.Column<string>(type: "text", nullable: false),
+                    region_code = table.Column<int>(type: "integer", nullable: false),
+                    city_field = table.Column<string>(type: "text", nullable: true),
+                    city_code = table.Column<int>(type: "integer", nullable: true),
+                    distance_mt = table.Column<int>(type: "integer", nullable: false),
+                    max_distance_points_mt = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_layers", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "osm_properties",
                 columns: table => new
                 {
@@ -182,6 +202,11 @@ namespace EcoSensorApi.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "layers",
+                columns: new[] { "id", "city_code", "city_field", "distance_mt", "max_distance_points_mt", "name", "region_code", "region_field", "type" },
+                values: new object[] { 1L, 72021, "com_istat_code_num", 100, 2500, "limits_P_72_municipalities.geojson", 16, "reg_istat_code_num", 0 });
+
+            migrationBuilder.InsertData(
                 table: "us_air_quality_index",
                 columns: new[] { "id", "color", "level", "max", "min", "period", "pollution", "unit" },
                 values: new object[,]
@@ -246,6 +271,9 @@ namespace EcoSensorApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "eu_air_quality_index");
+
+            migrationBuilder.DropTable(
+                name: "layers");
 
             migrationBuilder.DropTable(
                 name: "osm_vector");

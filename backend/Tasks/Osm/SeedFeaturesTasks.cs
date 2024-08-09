@@ -12,10 +12,11 @@ public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
     public override async Task HandleNotificationsAsync()
     {
         var result = await Service().SeedFeatures();
-        Logger.LogInformation($"Sono stati trovati {result} nuove features geografiche");
+        var msg = $"Sono stati trovati {result} nuove features geografiche";
+        Logger.LogInformation(msg);
     }
 
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(5);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(5);
 
     public override string Name => $"{nameof(SeedFeaturesTasks)} Task";
 }

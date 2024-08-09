@@ -12,7 +12,7 @@
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
         <PackageReference Include="AutoMapper" Version="13.0.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -26,8 +26,8 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="8.0.4" />
         <PackageReference Include="Npgsql.Json.NET" Version="8.0.3" />
         <PackageReference Include="Npgsql.NetTopologySuite" Version="8.0.3" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-        <PackageReference Include="TeamSviluppo.NetCoreFw" Version="8.5.4" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
+        <PackageReference Include="TeamSviluppo.NetCoreFw" Version="8.6.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -47,13 +47,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="GeoJson\limits_IT_regions.geojson">
+      <None Update="GeoJson\data\limits_IT_regions.geojson">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="GeoJson\limits_R_2_municipalities.geojson">
+      <None Update="GeoJson\data\limits_P_72_municipalities.geojson">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="GeoJson\limits_P_72_municipalities.geojson">
+      <None Update="GeoJson\data\limits_R_2_municipalities.geojson">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

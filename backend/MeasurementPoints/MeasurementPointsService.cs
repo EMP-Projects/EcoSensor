@@ -1,8 +1,7 @@
-using System.Globalization;
 using EcoSensorApi.AirQuality;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
-using Microsoft.AspNetCore.Http.Features;
+using EcoSensorApi.Config;
 using NetTopologySuite.Geometries;
 using TeamSviluppo.Gis;
 using TeamSviluppo.Gis.NetCoreFw.OsmPg.Vector;
@@ -20,6 +19,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly IConfiguration _configuration;
     private readonly ILogger<MeasurementPointsService> _logger;
     private readonly IAirQualityService _airQualityService;
+    private readonly ConfigService _configService;
 
     public MeasurementPointsService(
         OsmVectorService osmVectorService, 
@@ -27,7 +27,8 @@ public class MeasurementPointsService : IMeasurementPointsService
         IConfiguration configuration, 
         ILogger<MeasurementPointsService> logger, 
         IAirQualityService airQualityService, 
-        AirQualityPropertiesService airQualityPropertiesService)
+        AirQualityPropertiesService airQualityPropertiesService, 
+        ConfigService configService)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
@@ -35,49 +36,8 @@ public class MeasurementPointsService : IMeasurementPointsService
         _logger = logger;
         _airQualityService = airQualityService;
         _airQualityPropertiesService = airQualityPropertiesService;
+        _configService = configService;
     }
-
-    /// <summary>
-    /// Legge la geometria per applicare filtro sulle sorgenti di features di dati
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    private Task<Geometry> ReadGeomQuery()
-    {
-        if (_configuration["Gis:SrCode"] is null)
-        {
-            const string msg = "Non riesco a leggere il sistema di riferimento delle coordinate dalle configurazioni Gis:SrCode";
-            _logger.LogError(msg);
-            throw new Exception(msg);
-        }
-        
-        // leggo il file GeoJson delle regioni italiane, oppure de singolo comune
-        // https://github.com/openpolis/geojson-italy/blob/master/geojson/limits_R_2_municipalities.geojson
-        // TODO: Ideale sarebbe leggere il geojson direttamente da un GeoServer
-        var featuresCollection = GisUtility.GetFeatureCollectionByGeoJson(_configuration["Gis:Istat:Layer"]!);
-
-        // filtro il GeoJson per il comune e regione
-        var fColl = featuresCollection.FirstOrDefault(x => (long)x.Attributes.GetOptionalValue(_configuration["Gis:Istat:RegioneCampo"]!) == int.Parse(_configuration["Gis:Istat:RegioneNumero"]!) 
-            && (long)x.Attributes.GetOptionalValue(_configuration["Gis:Istat:ComuneCampo"]!) == int.Parse(_configuration["Gis:Istat:ComuneNumero"]!));
-        
-        if (fColl is null)
-        {
-            const string msg = "Non riesco a leggere il GeoJson delle geometrie";
-            _logger.LogError(msg);
-            throw new Exception(msg);
-        }
-
-        // creo la geometria per eseguire il filtro sulle feature di OSM
-        var geom = GisUtility.CreateGeometryFactory(int.Parse(_configuration["Gis:SrCode"]!)).CreateGeometry(fColl.Geometry);
-        
-        // con geoserver si possono leggere direttamente i dati geojson con lo stesso sistema di riferimento di Osm EPSG:3857
-        // creo un bbox dalla geometria nelle coordinate EPSG:3857
-        var bbox = geom.Envelope;
-        var pointMinToWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(bbox.EnvelopeInternal.MinX, bbox.EnvelopeInternal.MinY);
-        var pointMaxToWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(bbox.EnvelopeInternal.MaxX, bbox.EnvelopeInternal.MaxY);
-        var bboxConverted = GisUtility.CreateEnvelopeFromBBox(pointMinToWebMercator.Y, pointMinToWebMercator.X, pointMaxToWebMercator.Y, pointMaxToWebMercator.X);
-        return Task.FromResult(GisUtility.CreateGeometryFromBBox(int.Parse(_configuration["Gis:SrCode"]!), bboxConverted));
-    } 
 
     /// <summary>
     /// Crea le geometrie dei punti di misurazione 
@@ -86,68 +46,74 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <exception cref="Exception"></exception>
     public async Task<int> MeasurementPoints()
     {
-        // leggo le nuove features
-        var featuresOsm = await _osmVectorService.FeatureCollection();
+        // leggo i records di vettori
+        var listOsm = await _osmVectorService.List(new OsmVectorQuery
+        {
+            SrCode = 3857
+        });
         
-        if (featuresOsm is null || featuresOsm.Count == 0)
+        if (listOsm.Count == 0)
         {
             const string msg = "Non riesco a leggere le geometrie da OpenStreet Map";
             _logger.LogError(msg);
             return 0;
         }
-        
-        var matrixDistancePoints = _configuration["Gis:MatrixDistancePoints"] is not null 
-            ? double.Parse(_configuration["Gis:MatrixDistancePoints"]!) 
-            : 2500;
 
         // leggo la collection di features di tutti i punti di misurazione per controllare eventuali duplicati
-        var listMeasurementPoints = await _airQualityVectorService.FeatureCollection();
+        var listMeasurementPoints = await _airQualityVectorService.List(new AirQualityVectorQuery
+        {
+            SrCode = 3857
+        });
+        
         var measurementPoints = new List<Point>();
-        var measurementPointsMatrix = new List<Point>();
-        var measurementPointsToInsert = new List<Point>();
-        var index = listMeasurementPoints?.Count + 1 ;
         
         // leggo tutti i punti creati dalle coordinate delle geometrie
-        foreach (var featureOsm in featuresOsm)
+        foreach (var osm in listOsm)
         {
             // leggo tutte le coordinate
-            var coordinates = featureOsm.Geometry.Coordinates;
+            var coordinates = osm.Geom?.Coordinates;
             // creo una collection di punti geografici dalle coordinate
-            measurementPoints.AddRange(coordinates.Select(coordinate => GisUtility.CreatePoint(int.Parse(_configuration["Gis:SrCode"]!), coordinate)).ToList());
-        }
-        
-        // selezionare solo i punti distanti matrixDistancePoints
-        foreach (var point in from point in measurementPoints let isExistPointWithinDistance = measurementPointsMatrix?.Any(x => x.Distance(point) <= matrixDistancePoints) where isExistPointWithinDistance is null or false select point)
-            measurementPointsMatrix?.Add(point);
-        
-        if (measurementPointsMatrix is not null) 
-            if (listMeasurementPoints is null || listMeasurementPoints.Count == 0)
-                measurementPointsToInsert = measurementPointsMatrix;
-            else
+            var coordinatesGeom = coordinates?.Select(coordinate => GisUtility.CreatePoint(3857, coordinate)).ToList();
+            
+            if (coordinatesGeom is null)
+                continue;
+            
+            // leggo le configurazioni del layer
+            var configDistance = (await _configService.List(new ConfigQuery
             {
-                // controllo se esiste un nuovo punto con una distanza
-                // maggiore o uguale a matrixDistancePoints
-                foreach (var point in measurementPointsMatrix)
+                Name = osm.Key
+            })).FirstOrDefault();
+
+            if (configDistance is null)
+                throw new Exception("Non riesco a leggere le configurazioni");
+
+            // per ogni coordinate seleziono solo quelle ad una certa distanza configurata
+            foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= configDistance.MatrixDistancePoints) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
+            {
+                measurementPoints.Add(c);
+                
+                var aqPoint = new AirQualityVectorDto
                 {
-                    var nearestPoint = listMeasurementPoints.MinBy(p => p.Geometry.Distance(point));
-                    if (nearestPoint?.Geometry.Distance(point) >= matrixDistancePoints)
-                        measurementPointsToInsert.Add(point);
+                    SourceData = ESourceData.Osm,
+                    Geom = c,
+                    TimeStamp = DateTime.UtcNow,
+                    Guid = Guid.NewGuid(),
+                    Key = osm.Key,
+                    Lat = c.Y,
+                    Lng = c.X
+                };
+
+                if (listMeasurementPoints?.Count == 0)
+                    // se non esistono altri punti nel database
+                    await _airQualityVectorService.Insert(aqPoint);
+                else
+                {
+                    // altrimenti solo se maggiore o uguale alla distanza configurata per il layer
+                    var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
+                    if (nearestPoint?.Geom?.Distance(c) >= configDistance.MatrixDistancePoints)
+                        await _airQualityVectorService.Insert(aqPoint);
                 }
             }
-        
-        // per ogni coordinate creo un punto geometrico 
-        foreach (var newMeasurementPoint in measurementPointsToInsert.Select(point => new AirQualityVectorDto
-                 {
-                     SourceData = ESourceData.Osm,
-                     Geom = point,
-                     TimeStamp = DateTime.UtcNow,
-                     Guid = Guid.NewGuid(),
-                     Key = $"OSM:{index++}",
-                     Lat = point.Y,
-                     Lng = point.X
-                 }))
-        {
-            await _airQualityVectorService.Insert(newMeasurementPoint);
         }
 
         return await _airQualityVectorService.SaveContext();
@@ -160,12 +126,15 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns></returns>
     public async Task<int> SeedFeatures()
     {
-        var geomFilter = await ReadGeomQuery();
+        var listGeomFilters = await _configService.BBoxGeometries();
         // salvare le nuove features di OpenStreetMap
-        return await _osmVectorService.SeedGeometries(geomFilter, int.Parse(_configuration["Gis:SrCode"]!));
+        var resultSeed = 0;
+        foreach (var geomFilter in listGeomFilters)
+            resultSeed += await _osmVectorService.SeedGeometries(geomFilter.BBox, geomFilter.Config.Name);
+        return resultSeed;
     }
 
-    private async Task<List<AirQualityPropertiesDto>> CreateListAQValues(
+    private async Task<List<AirQualityPropertiesDto>> CreateListAqValues(
         EPollution pollution,
         double lat,
         double lng,
@@ -233,7 +202,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             .Where(x => x is not null)
             .ToArray();
 
-        if (coordinates is null || coordinates.Length == 0)
+        if (coordinates.Length == 0)
         {
             const string msg = "Non sono riuscito a leggere le coordinate dei punti di misura";
             _logger.LogError(msg);
@@ -263,7 +232,6 @@ public class MeasurementPointsService : IMeasurementPointsService
 
             foreach (var r in resultAq)
             {
-
                 if (r.Longitude is null && r.Latitude is null) continue;
                 var pointWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(r.Longitude!.Value, r.Latitude!.Value);
                 
@@ -279,7 +247,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     return 0;
                 }
                 
-                listAllNewAirQualityDto.AddRange(await CreateListAQValues(
+                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                         EPollution.Pm10,
                         pointWebMercator.Y,
                         pointWebMercator.X,
@@ -291,7 +259,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                         r.Hourly?.EuropeanAqiPm10
                     ));
                 
-                listAllNewAirQualityDto.AddRange(await CreateListAQValues(
+                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.Pm25,
                     pointWebMercator.Y,
                     pointWebMercator.X,
@@ -303,7 +271,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     r.Hourly?.EuropeanAqiPm25
                 ));
                 
-                listAllNewAirQualityDto.AddRange(await CreateListAQValues(
+                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.CarbonMonoxide,
                     pointWebMercator.Y,
                     pointWebMercator.X,
@@ -315,7 +283,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     r.Hourly?.EuropeanAqi
                 ));
                 
-                listAllNewAirQualityDto.AddRange(await CreateListAQValues(
+                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.Ozone,
                     pointWebMercator.Y,
                     pointWebMercator.X,
@@ -327,7 +295,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     r.Hourly?.EuropeanAqiOzone
                 ));
                 
-                listAllNewAirQualityDto.AddRange(await CreateListAQValues(
+                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.SulphurDioxide,
                     pointWebMercator.Y,
                     pointWebMercator.X,
@@ -339,7 +307,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     r.Hourly?.EuropeanAqiSulphurDioxide
                 ));
                 
-                listAllNewAirQualityDto.AddRange(await CreateListAQValues(
+                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.NitrogenDioxide,
                     pointWebMercator.Y,
                     pointWebMercator.X,

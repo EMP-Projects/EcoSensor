@@ -1,7 +1,9 @@
+using System.Reflection;
 using EcoSensorApi.AirQuality.Indexes.Eu;
 using EcoSensorApi.AirQuality.Indexes.Us;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
+using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
 using EcoSensorApi.Tasks.Osm;
 using TeamSviluppo.Gis;
@@ -45,13 +47,12 @@ public static class EcoSensorManager
         builder.Services.AddScoped<AirQualityVectorService>();
         builder.Services.AddScoped<UsAirQualityService>();
         builder.Services.AddScoped<EuAirQualityService>();
+
+        builder.Services.AddScoped<ConfigRepository>();
+        builder.Services.AddScoped<ConfigService>();
         
         // mappers 
-        builder.Services.AddAutoMapper(
-            typeof(AirQualityPropertiesMapper),
-            typeof(AirQualityVectorMapper),
-            typeof(EuAirQualityLevelMapper),
-            typeof(UsAirQualityLevelMapper));
+        builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         // servizio per creare la griglia dei punti di misurazione
         builder.Services.AddScoped<MeasurementPointsService>();
