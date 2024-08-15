@@ -27,7 +27,6 @@
         <PackageReference Include="Npgsql.Json.NET" Version="8.0.3" />
         <PackageReference Include="Npgsql.NetTopologySuite" Version="8.0.3" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
-        <PackageReference Include="TeamSviluppo.NetCoreFw" Version="8.6.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -41,21 +40,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\TeamSviluppo.Gis\TeamSviluppo.Gis.NetCoreFw\TeamSviluppo.Gis.NetCoreFw.csproj" />
-      <ProjectReference Include="..\..\TeamSviluppo.Gis\TeamSviluppo.Gis\TeamSviluppo.Gis.csproj" />
-      <ProjectReference Include="..\..\TeamSviluppo.OpenMeteo\TeamSviluppo.OpenMeteo\TeamSviluppo.OpenMeteo.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="GeoJson\data\limits_IT_regions.geojson">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="GeoJson\data\limits_P_72_municipalities.geojson">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="GeoJson\data\limits_R_2_municipalities.geojson">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+      <ProjectReference Include="..\..\Gis.Net\Gis.Net\Gis.Net.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,14 +1,12 @@
 using Asp.Versioning;
 using EcoSensorApi;
 using EcoSensorApi.Auth;
+using Gis.Net.Core.Tasks;
+using Gis.Net.OpenMeteo;
 using Microsoft.AspNetCore.HttpLogging;
-using TeamSviluppo;
-using TeamSviluppo.OpenMeteo;
-using TeamSviluppo.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCoreServices().WithDbMigrations();
 builder.Services.AddNotificationService();
 builder.AddAuthentication();
 
