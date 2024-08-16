@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build ./backend --file Dockerfile --build-arg NUGET_USERNAME=${{secrets.NUGET_USERNAME}} --build-arg NUGET_PWD=${{secrets.NUGET_PWD}} --tag emp/ecosensor:$(date +%s)
+      run: docker build --file Dockerfile --build-arg NUGET_USERNAME=${{secrets.NUGET_USERNAME}} --build-arg NUGET_PWD=${{secrets.NUGET_PWD}} --tag emp/ecosensor:$(date +%s) ./backend 
