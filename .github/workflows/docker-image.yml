@@ -14,7 +14,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set env files
-      run: echo "${{secrets.GITHUB_TOKEN}}" > .env
     - name: Build the Docker image
-      run: docker build . --file backend/Dockerfile --build-arg NUGET_USERNAME=gzileni --build-arg NUGET_PWD=${{env.GITHUB_TOKEN}} --tag emp/ecosensor:$(date +%s)
+      run: docker build . --file backend/Dockerfile --build-arg NUGET_USERNAME=gzileni --build-arg NUGET_PWD=${{secrets.GITHUB_TOKEN}} --tag emp/ecosensor:$(date +%s)
