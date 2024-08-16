@@ -6,9 +6,12 @@ EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG NUGET_USERNAME=${NUGET_USERNAME}
+ARG NUGET_PWD=${NUGET_PWD}
+
 WORKDIR /src
 COPY ["backend/EcoSensorApi.csproj", "EcoSensorApi/"]
-RUN dotnet nuget add source --username gzileni --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/EMP-Projects/index.json"
+COPY ["backend/nuget.config", "EcoSensorApi/"]
 
 RUN dotnet restore "EcoSensorApi/EcoSensorApi.csproj"
 COPY . .
