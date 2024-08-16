@@ -6,8 +6,12 @@ EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG NUGET_USERNAME=${NUGET_USERNAME}
+ARG NUGET_PWD=${NUGET_PWD}
+
 WORKDIR /src
 COPY ["backend/EcoSensorApi.csproj", "EcoSensorApi/"]
+COPY ["backend/nuget.config", "EcoSensorApi/Nuget.Config"]
 
 RUN dotnet restore "EcoSensorApi/EcoSensorApi.csproj"
 COPY . .
