@@ -15,7 +15,6 @@ ENV NUGET_PWD=${NUGET_PWD}
 WORKDIR /src
 COPY ["backend/EcoSensorApi.csproj", "EcoSensorApi/"]
 COPY ["backend/nuget.config", "EcoSensorApi/"]
-
 RUN dotnet restore "EcoSensorApi/EcoSensorApi.csproj"
 COPY . .
 WORKDIR "/src/EcoSensorApi"

@@ -7,6 +7,7 @@
         <LangVersion>default</LangVersion>
         <TargetFramework>net8.0</TargetFramework>
         <UserSecretsId>ce75eb87-aa0a-4be3-85ff-902a124f58de</UserSecretsId>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
