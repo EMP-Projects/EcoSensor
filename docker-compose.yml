@@ -1,7 +1,7 @@
 ﻿services:
   ecosensor-db:
     container_name: ecosensor-db
-    image: ecosensor/postgis
+    image: ghcr.io/emp-projects/docker-postgis:main
     profiles: ["all", "db", "be", "stack"]
     env_file:
       - .env.database
@@ -56,7 +56,7 @@
   
   ecosensor-osm2pgsql:
     container_name: ecosensor-osm2pgsql
-    image: teamsviluppo/ecosensor-osm2pgsql:latest
+    image: ghcr.io/emp-projects/docker-osm2pgsql:main
     profiles: ["all", "db", "be", "osm", "stack"]
     env_file:
       - .env.osm2pgsql
