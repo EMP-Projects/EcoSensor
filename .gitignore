@@ -4,7 +4,9 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 osm-data/
+osm-data-dev/
 ecosensor-data/
+ecosensor-data-dev/
 openmeteo-data/
 .idea/
 ./backend/bin/

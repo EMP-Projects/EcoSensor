@@ -1,27 +1,15 @@
-build-osm:
-	@echo Building and tagging OSM2PGSQL 
-	docker build -t teamsviluppo/ecosensor-osm2pgsql:latest -f osm2pgsql/Dockerfile ./osm2pgsql
+stack-dev-db:
+	docker compose --env-file .env.stack -f docker-compose.yml -f docker-compose.dev.yml -p ecosensor --profile db down
+	docker compose --env-file .env.stack -f docker-compose.yml -f docker-compose.dev.yml -p ecosensor --profile db up -d
 
-build-backend: build-osm
-	@echo Building and tagging BACKEND 
-	docker build -t teamsviluppo/ecosensor-backend:latest -f backend/EcoSensorApi/Dockerfile ./backend/EcoSensorApi
+stack-git-db:
+	docker compose --env-file .env.stack -f docker-compose.yml -f docker-compose.git.yml -p ecosensor --profile db down
+	docker compose --env-file .env.stack -f docker-compose.yml -f docker-compose.git.yml -p ecosensor --profile db up -d
 
-stack-osm:
-	docker-compose -f ./docker-compose.yml --profile osm down
-	docker-compose -f ./docker-compose.yml --profile osm rm
-
-stack-db: stack-osm
-	docker-compose -f ./docker-compose.yml --profile db down
-	docker-compose -f ./docker-compose.yml --profile db rm
-
-stack-openmeteo: stack-db
-	docker-compose -f ./docker-compose.yml --profile osm down
-	docker-compose -f ./docker-compose.yml --profile osm rm
-
-stack-backend: stack-openmeteo
-	docker-compose -f ./docker-compose.yml --profile backend down
-	docker-compose -f ./docker-compose.yml --profile backend rm
+stack-dev:
+	docker compose --env-file .env.stack -f docker-compose.yml -f docker-compose.dev.yml -p ecosensor --profile all down
+	docker compose --env-file .env.stack -f docker-compose.yml -f docker-compose.dev.yml -p ecosensor --profile all up -d
 
 stack-all:
-	docker-compose -f ./docker-compose.yml --profile all down
-	docker-compose -f ./docker-compose.yml --profile all rm
+	docker compose --env-file .env.stack -f docker-compose.yml -f docker-compose.git.yml -p ecosensor --profile all down
+	docker compose --env-file .env.stack -f docker-compose.yml -f docker-compose.git.yml -p ecosensor --profile all up -d

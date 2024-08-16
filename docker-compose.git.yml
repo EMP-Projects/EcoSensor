@@ -1,0 +1,48 @@
+services:
+  ecosensor-db:
+    container_name: ecosensor-db
+    image: ghcr.io/emp-projects/docker-postgis:main
+    profiles: ["all", "db", "be", "stack"]
+    env_file:
+      - .env.database
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: md5
+      PGPORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS}
+      POSTGRES_INITDB_ARGS: "-c shared_buffers=1GB -c work_mem=50MB -c maintenance_work_mem=10GB -c autovacuum_work_mem=2GB -c wal_level=minimal -c checkpoint_completion_target=0.9 -c max_wal_senders=0 -c random_page_cost=1.0"
+    ports:
+      - ${POSTGRES_PORT}:5432
+    healthcheck:
+      test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB} -p 5432"
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 1m
+    restart: on-failure
+    networks:
+      - ecosensor-network
+    volumes:
+      - ./ecosensor-data/db:/var/lib/postgresql
+  
+  ecosensor-osm2pgsql:
+    container_name: ecosensor-osm2pgsql
+    image: ghcr.io/emp-projects/docker-osm2pgsql:main
+    profiles: ["all", "db", "be", "osm", "stack"]
+    env_file:
+      - .env.osm2pgsql
+    depends_on:
+      ecosensor-osm2pg-db:
+        condition: service_healthy
+    restart: always
+    environment:
+      PGHOST: ecosensor-osm2pg-db
+      PGDATABASE: ${POSTGRES_OSM_DB}
+      PGUSER: ${POSTGRES_OSM_USER}
+      PGPASSWORD: ${POSTGRES_OSM_PASS}
+      PGPORT: ${POSTGRES_OSM_PORT}
+    volumes:
+      - ./osm-data/osm:/osm
+    networks:
+      - ecosensor-network
