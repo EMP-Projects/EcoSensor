@@ -1,19 +1,24 @@
 using EcoSensorApi.AirQuality.Properties;
+using Gis.Net.OpenMeteo.AirQuality;
+using Gis.Net.Vector.Services;
 using NetTopologySuite.Features;
-using TeamSviluppo.Auth;
-using TeamSviluppo.Gis.NetCoreFw.Services;
-using TeamSviluppo.OpenMeteo.AirQuality;
+
 namespace EcoSensorApi.AirQuality.Vector;
 
 public class AirQualityVectorService : 
-    GisVectorCoreManyService<AirQualityVectorDto, AirQualityVectorModel, AirQualityVectorQuery, AirQualityPropertiesModel, AirQualityPropertiesDto>
+    GisVectorCoreManyService<AirQualityVectorModel, 
+        AirQualityVectorDto, 
+        AirQualityVectorQuery, 
+        AirQualityVectorRequest, 
+        EcoSensorDbContext, 
+        AirQualityPropertiesModel, 
+        AirQualityPropertiesDto>
 {
     /// <inheritdoc />
     public AirQualityVectorService(
         ILogger<AirQualityVectorService> logger, 
-        AirQualityVectorRepository netCoreRepository, 
-        IAuthService authService) : 
-        base(logger, netCoreRepository, authService)
+        AirQualityVectorRepository netCoreRepository) : 
+        base(logger, netCoreRepository)
     {
         
     }

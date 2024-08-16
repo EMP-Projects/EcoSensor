@@ -1,7 +1,8 @@
-using TeamSviluppo.Mapper;
+using Gis.Net.Core.Mapper;
+
 namespace EcoSensorApi.AirQuality.Indexes.Us;
 
-public class UsAirQualityLevelMapper : AbstractMapperProfile<UsAirQualityLevelDto, UsAirQualityLevel>
+public class UsAirQualityLevelMapper : AbstractMapperProfile<UsAirQualityLevel, UsAirQualityLevelDto, UsAirQualityLevelRequest>
 {
     public UsAirQualityLevelMapper()
     {

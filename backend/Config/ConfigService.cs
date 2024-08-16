@@ -1,16 +1,13 @@
-using NetTopologySuite.Geometries;
-using TeamSviluppo.Auth;
-using TeamSviluppo.Exceptions;
-using TeamSviluppo.Gis;
-using TeamSviluppo.Services;
+using Gis.Net.Core.Services;
+using Gis.Net.Vector;
 
 namespace EcoSensorApi.Config;
 
-public class ConfigService : Service<ConfigDto, ConfigModel, ConfigQuery>
+public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, ConfigRequest, EcoSensorDbContext>
 {
     /// <inheritdoc />
-    public ConfigService(ILogger<ConfigService> logger, ConfigRepository repository, IAuthService authService) : 
-        base(logger, repository, authService) { }
+    public ConfigService(ILogger<ConfigService> logger, ConfigRepository repository) : 
+        base(logger, repository) { }
 
     /// <summary>
     /// Lettura del file GeoJson dei limiti delle regioni e comuni italiani
@@ -39,7 +36,7 @@ public class ConfigService : Service<ConfigDto, ConfigModel, ConfigQuery>
         {
             var featuresCollection = GisUtility.GetFeatureCollectionByGeoJson(layer.Name);
             // filtro il GeoJson per il comune e regione
-            var fFiltered = featuresCollection.Where(x => (long)x.Attributes.GetOptionalValue(layer.RegionField) == layer.RegionCode).ToList();
+            var fFiltered = featuresCollection?.Where(x => (long)x.Attributes.GetOptionalValue(layer.RegionField) == layer.RegionCode).ToList();
                                                                      
             if (fFiltered is null)
             {
@@ -76,7 +73,4 @@ public class ConfigService : Service<ConfigDto, ConfigModel, ConfigQuery>
 
         return resultBBox;
     }
-
-    protected override Task ClearExternalRepositoriesCache() => Task.CompletedTask;
-    public override Task Validate(ConfigDto dto, CrudEnum crudEnum) => Task.CompletedTask;
 }

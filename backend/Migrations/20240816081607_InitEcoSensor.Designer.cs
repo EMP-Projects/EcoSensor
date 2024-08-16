@@ -14,7 +14,7 @@ using NpgsqlTypes;
 namespace EcoSensorApi.Migrations
 {
     [DbContext(typeof(EcoSensorDbContext))]
-    [Migration("20240809180101_InitEcoSensor")]
+    [Migration("20240816081607_InitEcoSensor")]
     partial class InitEcoSensor
     {
         /// <inheritdoc />
@@ -22,10 +22,15 @@ namespace EcoSensorApi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "hstore");
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_catalog", "pg_cron");
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pgrouting");
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis_raster");
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "topology", "postgis_topology");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("EcoSensorApi.AirQuality.Indexes.Eu.EuAirQualityLevel", b =>
@@ -42,6 +47,11 @@ namespace EcoSensorApi.Migrations
                         .HasColumnType("text")
                         .HasColumnName("color");
 
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("key");
+
                     b.Property<int>("Level")
                         .HasColumnType("integer")
                         .HasColumnName("level");
@@ -62,12 +72,24 @@ namespace EcoSensorApi.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("pollution");
 
+                    b.Property<NpgsqlTsVector>("SearchText")
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_text");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("now()");
+
                     b.Property<string>("Unit")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("unit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Key");
 
                     b.ToTable("eu_air_quality_index");
 
@@ -76,330 +98,390 @@ namespace EcoSensorApi.Migrations
                         {
                             Id = 1L,
                             Color = "#47EEE0",
+                            Key = "Eu AirQuality Level",
                             Level = 0,
                             Max = 10.0,
                             Min = 0.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 726, DateTimeKind.Utc).AddTicks(7000),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 2L,
                             Color = "#44C39A",
+                            Key = "Eu AirQuality Level",
                             Level = 1,
                             Max = 20.0,
                             Min = 10.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(520),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 3L,
                             Color = "#ECE433",
+                            Key = "Eu AirQuality Level",
                             Level = 2,
                             Max = 25.0,
                             Min = 20.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(520),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 4L,
                             Color = "#E8333C",
+                            Key = "Eu AirQuality Level",
                             Level = 3,
                             Max = 50.0,
                             Min = 25.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(520),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 5L,
                             Color = "#820026",
+                            Key = "Eu AirQuality Level",
                             Level = 4,
                             Max = 75.0,
                             Min = 50.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(520),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 6L,
                             Color = "#680D6D",
+                            Key = "Eu AirQuality Level",
                             Level = 5,
                             Max = 800.0,
                             Min = 75.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(530),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 7L,
                             Color = "#47EEE0",
+                            Key = "Eu AirQuality Level",
                             Level = 0,
                             Max = 20.0,
                             Min = 0.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(530),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 8L,
                             Color = "#44C39A",
+                            Key = "Eu AirQuality Level",
                             Level = 1,
                             Max = 40.0,
                             Min = 20.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(530),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 9L,
                             Color = "#ECE433",
+                            Key = "Eu AirQuality Level",
                             Level = 2,
                             Max = 50.0,
                             Min = 40.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(530),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 10L,
                             Color = "#E8333C",
+                            Key = "Eu AirQuality Level",
                             Level = 3,
                             Max = 100.0,
                             Min = 50.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(540),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 11L,
                             Color = "#820026",
+                            Key = "Eu AirQuality Level",
                             Level = 4,
                             Max = 150.0,
                             Min = 100.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(540),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 12L,
                             Color = "#680D6D",
+                            Key = "Eu AirQuality Level",
                             Level = 5,
                             Max = 1200.0,
                             Min = 150.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(570),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 13L,
                             Color = "#47EEE0",
+                            Key = "Eu AirQuality Level",
                             Level = 0,
                             Max = 40.0,
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(570),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 14L,
                             Color = "#44C39A",
+                            Key = "Eu AirQuality Level",
                             Level = 1,
                             Max = 90.0,
                             Min = 40.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(590),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 15L,
                             Color = "#ECE433",
+                            Key = "Eu AirQuality Level",
                             Level = 2,
                             Max = 120.0,
                             Min = 90.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(590),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 16L,
                             Color = "#E8333C",
+                            Key = "Eu AirQuality Level",
                             Level = 3,
                             Max = 230.0,
                             Min = 120.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(590),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 17L,
                             Color = "#820026",
+                            Key = "Eu AirQuality Level",
                             Level = 4,
                             Max = 340.0,
                             Min = 230.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(590),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 18L,
                             Color = "#680D6D",
+                            Key = "Eu AirQuality Level",
                             Level = 5,
                             Max = 1000.0,
                             Min = 340.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(600),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 19L,
                             Color = "#47EEE0",
+                            Key = "Eu AirQuality Level",
                             Level = 0,
                             Max = 50.0,
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(600),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 20L,
                             Color = "#44C39A",
+                            Key = "Eu AirQuality Level",
                             Level = 1,
                             Max = 100.0,
                             Min = 50.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(600),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 21L,
                             Color = "#ECE433",
+                            Key = "Eu AirQuality Level",
                             Level = 2,
                             Max = 130.0,
                             Min = 100.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(600),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 22L,
                             Color = "#E8333C",
+                            Key = "Eu AirQuality Level",
                             Level = 3,
                             Max = 240.0,
                             Min = 130.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(600),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 23L,
                             Color = "#820026",
+                            Key = "Eu AirQuality Level",
                             Level = 4,
                             Max = 380.0,
                             Min = 240.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(610),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 24L,
                             Color = "#680D6D",
+                            Key = "Eu AirQuality Level",
                             Level = 5,
                             Max = 800.0,
                             Min = 380.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(620),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 25L,
                             Color = "#47EEE0",
+                            Key = "Eu AirQuality Level",
                             Level = 0,
                             Max = 100.0,
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(620),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 26L,
                             Color = "#44C39A",
+                            Key = "Eu AirQuality Level",
                             Level = 1,
                             Max = 200.0,
                             Min = 100.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(630),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 27L,
                             Color = "#ECE433",
+                            Key = "Eu AirQuality Level",
                             Level = 2,
                             Max = 350.0,
                             Min = 200.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(630),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 28L,
                             Color = "#E8333C",
+                            Key = "Eu AirQuality Level",
                             Level = 3,
                             Max = 500.0,
                             Min = 350.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(630),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 29L,
                             Color = "#820026",
+                            Key = "Eu AirQuality Level",
                             Level = 4,
                             Max = 750.0,
                             Min = 500.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(630),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 30L,
                             Color = "#680D6D",
+                            Key = "Eu AirQuality Level",
                             Level = 5,
                             Max = 1250.0,
                             Min = 750.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(630),
                             Unit = "μg/m3"
                         });
                 });
@@ -415,8 +497,14 @@ namespace EcoSensorApi.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("color");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("key");
 
                     b.Property<int>("Level")
                         .HasColumnType("integer")
@@ -438,12 +526,25 @@ namespace EcoSensorApi.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("pollution");
 
+                    b.Property<NpgsqlTsVector>("SearchText")
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_text");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("now()");
+
                     b.Property<string>("Unit")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("unit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Key");
 
                     b.ToTable("us_air_quality_index");
 
@@ -452,429 +553,507 @@ namespace EcoSensorApi.Migrations
                         {
                             Id = 1L,
                             Color = "#47EEE0",
+                            Key = "Us AirQuality Level",
                             Level = 0,
                             Max = 55.0,
                             Min = 0.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(1020),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 2L,
                             Color = "#44C39A",
+                            Key = "Us AirQuality Level",
                             Level = 1,
                             Max = 70.0,
                             Min = 55.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4100),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 3L,
                             Color = "#ECE433",
+                            Key = "Us AirQuality Level",
                             Level = 2,
                             Max = 85.0,
                             Min = 70.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4100),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 4L,
                             Color = "#E8333C",
+                            Key = "Us AirQuality Level",
                             Level = 3,
                             Max = 105.0,
                             Min = 85.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4110),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 5L,
                             Color = "#820026",
+                            Key = "Us AirQuality Level",
                             Level = 4,
                             Max = 200.0,
                             Min = 105.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4140),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 6L,
                             Color = "#ECE433",
+                            Key = "Us AirQuality Level",
                             Level = 2,
                             Max = 165.0,
                             Min = 125.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4140),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 7L,
                             Color = "#E8333C",
+                            Key = "Us AirQuality Level",
                             Level = 3,
                             Max = 205.0,
                             Min = 165.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4140),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 8L,
                             Color = "#820026",
+                            Key = "Us AirQuality Level",
                             Level = 4,
                             Max = 405.0,
                             Min = 205.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4140),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 9L,
                             Color = "#680D6D",
+                            Key = "Us AirQuality Level",
                             Level = 5,
                             Max = 605.0,
                             Min = 405.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4150),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 10L,
                             Color = "#47EEE0",
+                            Key = "Us AirQuality Level",
                             Level = 0,
                             Max = 12.0,
                             Min = 0.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4150),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 11L,
                             Color = "#44C39A",
+                            Key = "Us AirQuality Level",
                             Level = 1,
                             Max = 35.5,
                             Min = 12.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4350),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 12L,
                             Color = "#ECE433",
+                            Key = "Us AirQuality Level",
                             Level = 2,
                             Max = 55.5,
                             Min = 35.5,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4350),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 13L,
                             Color = "#E8333C",
+                            Key = "Us AirQuality Level",
                             Level = 3,
                             Max = 105.5,
                             Min = 55.5,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4350),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 14L,
                             Color = "#820026",
+                            Key = "Us AirQuality Level",
                             Level = 4,
                             Max = 250.5,
                             Min = 150.5,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4350),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 15L,
                             Color = "#680D6D",
+                            Key = "Us AirQuality Level",
                             Level = 5,
                             Max = 500.5,
                             Min = 250.5,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 7,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4360),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 16L,
                             Color = "#47EEE0",
+                            Key = "Us AirQuality Level",
                             Level = 0,
                             Max = 55.0,
                             Min = 0.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4360),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 17L,
                             Color = "#44C39A",
+                            Key = "Us AirQuality Level",
                             Level = 1,
                             Max = 155.0,
                             Min = 55.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4370),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 18L,
                             Color = "#ECE433",
+                            Key = "Us AirQuality Level",
                             Level = 2,
                             Max = 255.0,
                             Min = 155.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4380),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 19L,
                             Color = "#E8333C",
+                            Key = "Us AirQuality Level",
                             Level = 3,
                             Max = 355.0,
                             Min = 255.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4380),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 20L,
                             Color = "#820026",
+                            Key = "Us AirQuality Level",
                             Level = 4,
                             Max = 425.0,
                             Min = 355.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4380),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 21L,
                             Color = "#680D6D",
+                            Key = "Us AirQuality Level",
                             Level = 5,
                             Max = 605.0,
                             Min = 425.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 6,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4380),
                             Unit = "μg/m3"
                         },
                         new
                         {
                             Id = 22L,
                             Color = "#47EEE0",
+                            Key = "Us AirQuality Level",
                             Level = 0,
                             Max = 4.5,
                             Min = 0.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4390),
                             Unit = "ppm"
                         },
                         new
                         {
                             Id = 23L,
                             Color = "#44C39A",
+                            Key = "Us AirQuality Level",
                             Level = 1,
                             Max = 9.5,
                             Min = 4.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4390),
                             Unit = "ppm"
                         },
                         new
                         {
                             Id = 24L,
                             Color = "#ECE433",
+                            Key = "Us AirQuality Level",
                             Level = 2,
                             Max = 12.5,
                             Min = 9.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4390),
                             Unit = "ppm"
                         },
                         new
                         {
                             Id = 25L,
                             Color = "#E8333C",
+                            Key = "Us AirQuality Level",
                             Level = 3,
                             Max = 15.5,
                             Min = 12.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4390),
                             Unit = "ppm"
                         },
                         new
                         {
                             Id = 26L,
                             Color = "#820026",
+                            Key = "Us AirQuality Level",
                             Level = 4,
                             Max = 30.5,
                             Min = 15.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4390),
                             Unit = "ppm"
                         },
                         new
                         {
                             Id = 27L,
                             Color = "#680D6D",
+                            Key = "Us AirQuality Level",
                             Level = 5,
                             Max = 50.5,
                             Min = 30.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4400),
                             Unit = "ppm"
                         },
                         new
                         {
                             Id = 28L,
                             Color = "#47EEE0",
+                            Key = "Us AirQuality Level",
                             Level = 0,
                             Max = 35.0,
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4410),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 29L,
                             Color = "#44C39A",
+                            Key = "Us AirQuality Level",
                             Level = 1,
                             Max = 75.0,
                             Min = 35.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4410),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 30L,
                             Color = "#ECE433",
+                            Key = "Us AirQuality Level",
                             Level = 2,
                             Max = 185.0,
                             Min = 75.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4420),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 31L,
                             Color = "#E8333C",
+                            Key = "Us AirQuality Level",
                             Level = 3,
                             Max = 305.0,
                             Min = 185.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4420),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 32L,
                             Color = "#820026",
+                            Key = "Us AirQuality Level",
                             Level = 4,
                             Max = 605.0,
                             Min = 305.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4420),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 33L,
                             Color = "#680D6D",
+                            Key = "Us AirQuality Level",
                             Level = 5,
                             Max = 1005.0,
                             Min = 605.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 2,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4420),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 34L,
                             Color = "#47EEE0",
+                            Key = "Us AirQuality Level",
                             Level = 0,
                             Max = 54.0,
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4420),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 35L,
                             Color = "#44C39A",
+                            Key = "Us AirQuality Level",
                             Level = 1,
                             Max = 100.0,
                             Min = 54.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4430),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 36L,
                             Color = "#ECE433",
+                            Key = "Us AirQuality Level",
                             Level = 2,
                             Max = 360.0,
                             Min = 100.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4430),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 37L,
                             Color = "#E8333C",
+                            Key = "Us AirQuality Level",
                             Level = 3,
                             Max = 650.0,
                             Min = 360.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4430),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 38L,
                             Color = "#820026",
+                            Key = "Us AirQuality Level",
                             Level = 4,
                             Max = 1250.0,
                             Min = 650.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4430),
                             Unit = "ppb"
                         },
                         new
                         {
                             Id = 39L,
                             Color = "#680D6D",
+                            Key = "Us AirQuality Level",
                             Level = 5,
                             Max = 2050.0,
                             Min = 1250.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 5, 727, DateTimeKind.Utc).AddTicks(4430),
                             Unit = "ppb"
                         });
                 });
@@ -904,6 +1083,11 @@ namespace EcoSensorApi.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("gis_id");
 
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("key");
+
                     b.Property<double>("Lat")
                         .HasColumnType("double precision")
                         .HasColumnName("lat");
@@ -916,9 +1100,19 @@ namespace EcoSensorApi.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("pollution");
 
+                    b.Property<NpgsqlTsVector>("SearchText")
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_text");
+
                     b.Property<int>("Source")
                         .HasColumnType("integer")
                         .HasColumnName("source");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<string>("Unit")
                         .IsRequired()
@@ -938,6 +1132,8 @@ namespace EcoSensorApi.Migrations
 
                     b.HasIndex("GisId");
 
+                    b.HasIndex("Key");
+
                     b.ToTable("air_quality_measures");
                 });
 
@@ -952,7 +1148,7 @@ namespace EcoSensorApi.Migrations
 
                     b.Property<Geometry>("Geom")
                         .IsRequired()
-                        .HasColumnType("geometry")
+                        .HasColumnType("geography")
                         .HasColumnName("geom");
 
                     b.Property<Guid>("Guid")
@@ -972,6 +1168,10 @@ namespace EcoSensorApi.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("lng");
 
+                    b.Property<NpgsqlTsVector>("SearchText")
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_text");
+
                     b.Property<int>("SourceData")
                         .HasColumnType("integer")
                         .HasColumnName("source_data");
@@ -983,6 +1183,11 @@ namespace EcoSensorApi.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
+                    b.HasIndex("Key");
 
                     b.ToTable("air_quality");
                 });
@@ -1001,12 +1206,18 @@ namespace EcoSensorApi.Migrations
                         .HasColumnName("city_code");
 
                     b.Property<string>("CityField")
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("city_field");
 
                     b.Property<int>("Distance")
                         .HasColumnType("integer")
                         .HasColumnName("distance_mt");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("key");
 
                     b.Property<int>("MatrixDistancePoints")
                         .HasColumnType("integer")
@@ -1014,7 +1225,8 @@ namespace EcoSensorApi.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("name");
 
                     b.Property<int>("RegionCode")
@@ -1023,14 +1235,27 @@ namespace EcoSensorApi.Migrations
 
                     b.Property<string>("RegionField")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("region_field");
+
+                    b.Property<NpgsqlTsVector>("SearchText")
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_text");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<int>("TypeSource")
                         .HasColumnType("integer")
                         .HasColumnName("type");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Key");
 
                     b.ToTable("layers");
 
@@ -1041,15 +1266,17 @@ namespace EcoSensorApi.Migrations
                             CityCode = 72021,
                             CityField = "com_istat_code_num",
                             Distance = 100,
+                            Key = "Gioia del Colle",
                             MatrixDistancePoints = 2500,
                             Name = "limits_P_72_municipalities.geojson",
                             RegionCode = 16,
                             RegionField = "reg_istat_code_num",
+                            TimeStamp = new DateTime(2024, 8, 16, 8, 16, 6, 69, DateTimeKind.Utc).AddTicks(2910),
                             TypeSource = 0
                         });
                 });
 
-            modelBuilder.Entity("TeamSviluppo.Gis.NetCoreFw.OsmPg.Properties.OsmPropertiesModel", b =>
+            modelBuilder.Entity("Gis.Net.Osm.OsmPg.Properties.OsmPropertiesModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1057,6 +1284,11 @@ namespace EcoSensorApi.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("key");
 
                     b.Property<string>("Name")
                         .HasColumnType("text")
@@ -1071,6 +1303,12 @@ namespace EcoSensorApi.Migrations
                         .HasColumnType("text[]")
                         .HasColumnName("tags");
 
+                    b.Property<DateTime>("TimeStamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp")
+                        .HasDefaultValueSql("now()");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1078,10 +1316,12 @@ namespace EcoSensorApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Key");
+
                     b.ToTable("osm_properties");
                 });
 
-            modelBuilder.Entity("TeamSviluppo.Gis.NetCoreFw.OsmPg.Vector.OsmVectorModel", b =>
+            modelBuilder.Entity("Gis.Net.Osm.OsmPg.Vector.OsmVectorModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1092,7 +1332,7 @@ namespace EcoSensorApi.Migrations
 
                     b.Property<Geometry>("Geom")
                         .IsRequired()
-                        .HasColumnType("geometry")
+                        .HasColumnType("geography")
                         .HasColumnName("geom");
 
                     b.Property<Guid>("Guid")
@@ -1108,6 +1348,10 @@ namespace EcoSensorApi.Migrations
                         .HasColumnType("text")
                         .HasColumnName("key");
 
+                    b.Property<NpgsqlTsVector>("SearchText")
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_text");
+
                     b.Property<DateTime>("TimeStamp")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -1116,7 +1360,12 @@ namespace EcoSensorApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Guid")
+                        .IsUnique();
+
                     b.HasIndex("IdProperties");
+
+                    b.HasIndex("Key");
 
                     b.ToTable("osm_vector");
                 });
@@ -1132,9 +1381,9 @@ namespace EcoSensorApi.Migrations
                     b.Navigation("Gis");
                 });
 
-            modelBuilder.Entity("TeamSviluppo.Gis.NetCoreFw.OsmPg.Vector.OsmVectorModel", b =>
+            modelBuilder.Entity("Gis.Net.Osm.OsmPg.Vector.OsmVectorModel", b =>
                 {
-                    b.HasOne("TeamSviluppo.Gis.NetCoreFw.OsmPg.Properties.OsmPropertiesModel", "Properties")
+                    b.HasOne("Gis.Net.Osm.OsmPg.Properties.OsmPropertiesModel", "Properties")
                         .WithMany()
                         .HasForeignKey("IdProperties")
                         .OnDelete(DeleteBehavior.Cascade)

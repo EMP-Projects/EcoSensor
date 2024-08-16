@@ -1,6 +1,5 @@
-using Asp.Versioning;
 using EcoSensorApi;
-using EcoSensorApi.Auth;
+using Gis.Net.Core;
 using Gis.Net.Core.Tasks;
 using Gis.Net.OpenMeteo;
 using Microsoft.AspNetCore.HttpLogging;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.HttpLogging;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddNotificationService();
-builder.AddAuthentication();
 
 // connessione al database PostGis e registrazione servizi, repository e mapper
 builder.AddEcoSensor();
@@ -21,15 +19,7 @@ builder.Services.AddHttpLogging(opt => opt.LoggingFields = HttpLoggingFields.All
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddApiVersioning(setup =>
-{
-    setup.DefaultApiVersion = new ApiVersion(1, 0);
-    setup.AssumeDefaultVersionWhenUnspecified = true;
-    setup.ReportApiVersions = true;
-    setup.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");
-    setup.ReportApiVersions = true; 
-});
+builder.Services.AddVersion(1, 0);
 
 var app = builder.Build();
 
@@ -41,8 +31,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

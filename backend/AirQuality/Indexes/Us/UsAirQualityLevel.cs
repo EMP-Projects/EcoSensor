@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using TeamSviluppo.Entities;
+using Gis.Net.Core.Entities;
+
 namespace EcoSensorApi.AirQuality.Indexes.Us;
 
 [Table("us_air_quality_index")]
@@ -14,13 +16,13 @@ public class UsAirQualityLevel : ModelBase, IAirQualityLevel
     [Column("max")]
     public double Max { get; set; }
     
-    [Column("color")]
+    [Column("color"), MaxLength(100)]
     public required string Color { get; set; }
     
     [Column("pollution")]
     public EPollution Pollution { get; set; }
     
-    [Column("unit")]
+    [Column("unit"), MaxLength(50)]
     public required string Unit { get; set; }
     
     [Column("level")]

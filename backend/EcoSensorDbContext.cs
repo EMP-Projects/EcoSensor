@@ -4,18 +4,18 @@ using EcoSensorApi.AirQuality.Indexes.Us;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Config;
+using Gis.Net.Osm.OsmPg;
+using Gis.Net.Osm.OsmPg.Properties;
+using Gis.Net.Osm.OsmPg.Vector;
+using Gis.Net.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using TeamSviluppo.Gis.NetCoreFw;
-using TeamSviluppo.Gis.NetCoreFw.OsmPg;
-using TeamSviluppo.Gis.NetCoreFw.OsmPg.Properties;
-using TeamSviluppo.Gis.NetCoreFw.OsmPg.Vector;
 
 namespace EcoSensorApi;
 
 public class EcoSensorDbContext : DbContext, IOsmDbContext
 {
     public DbSet<AirQualityVectorModel>? AirQualityVector { get; set; }
-    public DbSet<AirQualityPropertiesModel>? AirQuality { get; set; }
+    public DbSet<AirQualityPropertiesModel>? AirQualityProperties { get; set; }
     public DbSet<EuAirQualityLevel>? EuAirQualityLevels { get; set; }
     public DbSet<UsAirQualityLevel>? UsAirQualityLevels { get; set; }
     public DbSet<ConfigModel>? Config { get; set; }
@@ -28,19 +28,23 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ConfigVectorCoreDbContext<AirQualityVectorModel>();
-        modelBuilder.ConfigVectorCoreDbContext<OsmVectorModel>();
+        modelBuilder.AddExtensionPostGis();
         
-        var listEuAirQualityIndexes = AirQualityIndex.EuIndexes;
-        var listUsAirQualityIndexes = AirQualityIndex.UsIndexes;
+        modelBuilder.SetTimeStamp<AirQualityPropertiesModel>();
+        modelBuilder.SetTimeStamp<AirQualityVectorModel>();
+        modelBuilder.SetTimeStamp<OsmPropertiesModel>();
+        modelBuilder.SetTimeStamp<OsmVectorModel>();
+        modelBuilder.SetTimeStamp<EuAirQualityLevel>();
+        modelBuilder.SetTimeStamp<UsAirQualityLevel>();
+        modelBuilder.SetTimeStamp<ConfigModel>();
         
-        foreach (var entry in listEuAirQualityIndexes.Select((x, i) => new { Value = x, Index = i }) )
+        foreach (var entry in AirQualityIndex.EuIndexes.Select((x, i) => new { Value = x, Index = i }) )
         {
             entry.Value.Id = entry.Index + 1;
             modelBuilder.Entity<EuAirQualityLevel>().HasData(entry.Value);
         }
         
-        foreach (var entry in listUsAirQualityIndexes.Select((x, i) => new { Value = x, Index = i }) )
+        foreach (var entry in AirQualityIndex.UsIndexes.Select((x, i) => new { Value = x, Index = i }) )
         {
             entry.Value.Id = entry.Index + 1;
             modelBuilder.Entity<UsAirQualityLevel>().HasData(entry.Value);
@@ -50,6 +54,8 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
             new ConfigModel
             {
                 Id = 1,
+                Key = "Gioia del Colle",
+                TimeStamp = DateTime.UtcNow,
                 Distance = 100,
                 MatrixDistancePoints = 2500,
                 Name = "limits_P_72_municipalities.geojson",

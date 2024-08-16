@@ -1,5 +1,6 @@
 using EcoSensorApi.MeasurementPoints;
-using TeamSviluppo.Tasks.Notification;
+using Gis.Net.Core.Tasks.Notification;
+
 namespace EcoSensorApi.Tasks.Osm;
 
 public abstract class OsmTasks<TService> : INotificationHandler where TService : IMeasurementPointsService

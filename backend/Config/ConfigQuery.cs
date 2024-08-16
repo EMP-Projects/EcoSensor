@@ -1,9 +1,9 @@
+using Gis.Net.Core.DTO;
 using Microsoft.AspNetCore.Mvc;
-using TeamSviluppo.DTO;
 
 namespace EcoSensorApi.Config;
 
-public class ConfigQuery : QueryByParamsBase
+public class ConfigQuery : QueryBase
 {
     [FromQuery(Name = "typeSource")]
     public ETypeSourceLayer? TypeSource { get; set; }

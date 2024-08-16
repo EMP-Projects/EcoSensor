@@ -3,7 +3,7 @@ using Gis.Net.Core.DTO;
 
 namespace EcoSensorApi.Config;
 
-public class ConfigDto : DtoBase, IConfig
+public class ConfigRequest : RequestBase, IConfig
 {
     [JsonPropertyName("typeSource")]
     public ETypeSourceLayer TypeSource { get; set; }

@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using EcoSensorApi.AirQuality.Properties;
-using TeamSviluppo.Gis.NetCoreFw.Models;
+using Gis.Net.Vector.Models;
+
 namespace EcoSensorApi.AirQuality.Vector;
 
 [Table("air_quality")]

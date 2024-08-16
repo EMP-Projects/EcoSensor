@@ -1,20 +1,20 @@
-using TeamSviluppo.Auth;
-using TeamSviluppo.Exceptions;
-using TeamSviluppo.Services;
+using EcoSensorApi.AirQuality.Vector;
+using Gis.Net.Core.Services;
+
 namespace EcoSensorApi.AirQuality.Properties;
 
-public class AirQualityPropertiesService : Service<AirQualityPropertiesDto, AirQualityPropertiesModel, AirQualityPropertiesQuery>
+public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel, 
+    AirQualityPropertiesDto, 
+    AirQualityPropertiesQuery, 
+    AirQualityPropertiesRequest, 
+    EcoSensorDbContext>
 {
 
     /// <inheritdoc />
     public AirQualityPropertiesService(
         ILogger<AirQualityPropertiesService> logger, 
-        AirQualityPropertiesRepository propertiesRepository, 
-        IAuthService authService) : 
-        base(logger, propertiesRepository, authService)
+        AirQualityPropertiesRepository propertiesRepository) : 
+        base(logger, propertiesRepository)
     {
     }
-    
-    protected override Task ClearExternalRepositoriesCache() => Task.CompletedTask;
-    public override Task Validate(AirQualityPropertiesDto propertiesDto, CrudEnum crudEnum) => Task.CompletedTask;
 }

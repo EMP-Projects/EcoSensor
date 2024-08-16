@@ -1,9 +1,10 @@
 using System.Text.Json.Serialization;
 using EcoSensorApi.AirQuality.Properties;
-using TeamSviluppo.Gis.NetCoreFw.Dto;
+using Gis.Net.Vector.DTO;
+
 namespace EcoSensorApi.AirQuality.Vector;
 
-public class AirQualityVectorDto : GisCoreManyDto<AirQualityPropertiesDto>, IAirQualityVector
+public class AirQualityVectorDto : GisVectorManyDto<AirQualityPropertiesDto>, IAirQualityVector
 {
     [JsonPropertyName("sourceData")]
     public ESourceData SourceData { get; set; }

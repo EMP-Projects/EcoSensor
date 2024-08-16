@@ -2,10 +2,10 @@ using EcoSensorApi.AirQuality;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Config;
+using Gis.Net.OpenMeteo.AirQuality;
+using Gis.Net.Osm.OsmPg.Vector;
+using Gis.Net.Vector;
 using NetTopologySuite.Geometries;
-using TeamSviluppo.Gis;
-using TeamSviluppo.Gis.NetCoreFw.OsmPg.Vector;
-using TeamSviluppo.OpenMeteo.AirQuality;
 namespace EcoSensorApi.MeasurementPoints;
 
 /// <summary>
@@ -13,7 +13,7 @@ namespace EcoSensorApi.MeasurementPoints;
 /// </summary>
 public class MeasurementPointsService : IMeasurementPointsService 
 {
-    private readonly OsmVectorService _osmVectorService;
+    private readonly OsmVectorService<EcoSensorDbContext> _osmVectorService;
     private readonly AirQualityVectorService _airQualityVectorService;
     private readonly AirQualityPropertiesService _airQualityPropertiesService;
     private readonly IConfiguration _configuration;
@@ -22,7 +22,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly ConfigService _configService;
 
     public MeasurementPointsService(
-        OsmVectorService osmVectorService, 
+        OsmVectorService<EcoSensorDbContext> osmVectorService, 
         AirQualityVectorService airQualityVectorService, 
         IConfiguration configuration, 
         ILogger<MeasurementPointsService> logger, 
@@ -167,6 +167,8 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             result.Add(new AirQualityPropertiesDto
             {
+                Key = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i+1}",
+                TimeStamp = DateTime.UtcNow,
                 Date = DateTime.Parse(time.value).ToUniversalTime(),
                 PollutionText = Pollution.GetPollutionDescription(pollution),
                 Pollution = pollution,

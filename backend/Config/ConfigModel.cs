@@ -1,5 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using TeamSviluppo.Entities;
+using Gis.Net.Core.Entities;
 
 namespace EcoSensorApi.Config;
 
@@ -9,16 +10,16 @@ public class ConfigModel : ModelBase, IConfig
     [Column("type")]
     public ETypeSourceLayer TypeSource { get; set; }
     
-    [Column("name")]
+    [Column("name"), MaxLength(255)]
     public required string Name { get; set; }
     
-    [Column("region_field")]
+    [Column("region_field"), MaxLength(50)]
     public required string RegionField { get; set; }
     
     [Column("region_code")]
     public int RegionCode { get; set; }
     
-    [Column("city_field")]
+    [Column("city_field"), MaxLength(50)]
     public string? CityField { get; set; }
     
     [Column("city_code")]

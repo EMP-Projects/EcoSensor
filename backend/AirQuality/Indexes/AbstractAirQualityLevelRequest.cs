@@ -3,7 +3,7 @@ using Gis.Net.Core.DTO;
 
 namespace EcoSensorApi.AirQuality.Indexes;
 
-public abstract class AbstractAirQualityLevelDto : DtoBase, IAirQualityLevelDto
+public abstract class AbstractAirQualityLevelRequest : RequestBase, IAirQualityLevel
 {
     [JsonPropertyName("period")]
     public TimeSpan Period { get; set; }
@@ -21,7 +21,7 @@ public abstract class AbstractAirQualityLevelDto : DtoBase, IAirQualityLevelDto
     public required string Color { get; set; }
     
     [JsonPropertyName("pollution")]
-    public required string Pollution { get; set; }
+    public required EPollution Pollution { get; set; }
     
     [JsonPropertyName("unit")]
     public required string Unit { get; set; }

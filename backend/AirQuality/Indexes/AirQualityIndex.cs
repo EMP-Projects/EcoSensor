@@ -8,6 +8,8 @@ public static class AirQualityIndex
     [
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Good,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -18,6 +20,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Fair,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -28,6 +32,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Moderate,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -38,6 +44,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Poor,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -48,6 +56,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.VeryPoor,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -58,6 +68,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.ExtremelyPoor,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -68,6 +80,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Good,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -78,6 +92,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Fair,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -88,6 +104,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Moderate,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -98,6 +116,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Poor,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -108,6 +128,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.VeryPoor,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -118,6 +140,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.ExtremelyPoor,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -128,6 +152,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Good,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -138,6 +164,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Fair,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -148,6 +176,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Moderate,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -158,6 +188,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Poor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -168,6 +200,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.VeryPoor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -178,6 +212,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.ExtremelyPoor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -188,6 +224,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Good,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -198,6 +236,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Fair,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -208,6 +248,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Moderate,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -218,6 +260,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Poor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -228,6 +272,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.VeryPoor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -238,6 +284,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.ExtremelyPoor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -248,6 +296,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Good,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -258,6 +308,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Fair,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -268,6 +320,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Moderate,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -278,6 +332,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.Poor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -288,6 +344,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.VeryPoor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -298,6 +356,8 @@ public static class AirQualityIndex
         },
         new EuAirQualityLevel
         {
+            Key = "Eu AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EEuAirQualityLevel.ExtremelyPoor,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -312,6 +372,8 @@ public static class AirQualityIndex
     [
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Good,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.Ozone,
@@ -322,6 +384,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Moderate,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.Ozone,
@@ -332,6 +396,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.UnhealthyForSensitiveGroups,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.Ozone,
@@ -342,6 +408,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Unhealthy,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.Ozone,
@@ -352,6 +420,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.VeryUnhealthy,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.Ozone,
@@ -362,6 +432,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.UnhealthyForSensitiveGroups,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -372,6 +444,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Unhealthy,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -382,6 +456,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.VeryUnhealthy,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -392,6 +468,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Hazardous,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.Ozone,
@@ -402,6 +480,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Good,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -412,6 +492,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Moderate,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -422,6 +504,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.UnhealthyForSensitiveGroups,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -432,6 +516,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Unhealthy,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -442,6 +528,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.VeryUnhealthy,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -452,6 +540,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Hazardous,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm25,
@@ -462,6 +552,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Good,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -472,6 +564,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Moderate,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -482,6 +576,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.UnhealthyForSensitiveGroups,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -492,6 +588,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Unhealthy,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -502,6 +600,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.VeryUnhealthy,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -512,6 +612,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Hazardous,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.Pm10,
@@ -522,6 +624,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Good,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.CarbonMonoxide,
@@ -532,6 +636,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Moderate,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.CarbonMonoxide,
@@ -542,6 +648,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.UnhealthyForSensitiveGroups,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.CarbonMonoxide,
@@ -552,6 +660,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Unhealthy,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.CarbonMonoxide,
@@ -562,6 +672,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.VeryUnhealthy,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.CarbonMonoxide,
@@ -572,6 +684,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Hazardous,
             Period = TimeSpan.FromHours(8),
             Pollution = EPollution.CarbonMonoxide,
@@ -582,6 +696,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Good,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -592,6 +708,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Moderate,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -602,6 +720,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.UnhealthyForSensitiveGroups,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -612,6 +732,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Unhealthy,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.SulphurDioxide,
@@ -622,6 +744,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.VeryUnhealthy,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.SulphurDioxide,
@@ -632,6 +756,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Hazardous,
             Period = TimeSpan.FromDays(1),
             Pollution = EPollution.SulphurDioxide,
@@ -642,6 +768,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Good,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -652,6 +780,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Moderate,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -662,6 +792,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.UnhealthyForSensitiveGroups,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -672,6 +804,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Unhealthy,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -682,6 +816,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.VeryUnhealthy,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,
@@ -692,6 +828,8 @@ public static class AirQualityIndex
         },
         new UsAirQualityLevel
         {
+            Key = "Us AirQuality Level",
+            TimeStamp = DateTime.UtcNow,
             Level = EUsAirQualityLevel.Hazardous,
             Period = TimeSpan.FromHours(1),
             Pollution = EPollution.NitrogenDioxide,

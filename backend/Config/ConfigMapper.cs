@@ -1,8 +1,8 @@
-using TeamSviluppo.Mapper;
+using Gis.Net.Core.Mapper;
 
 namespace EcoSensorApi.Config;
 
-public class ConfigMapper : AbstractMapperProfile<ConfigDto, ConfigModel>
+public class ConfigMapper : AbstractMapperProfile<ConfigModel, ConfigDto, ConfigRequest>
 {
     
 }

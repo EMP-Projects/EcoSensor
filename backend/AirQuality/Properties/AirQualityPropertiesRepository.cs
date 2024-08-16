@@ -1,20 +1,24 @@
-using System.Globalization;
-using TeamSviluppo.Repositories;
+using AutoMapper;
+using Gis.Net.Core.Repositories;
+
 namespace EcoSensorApi.AirQuality.Properties;
 
-public class AirQualityPropertiesRepository : Repository<AirQualityPropertiesDto, AirQualityPropertiesModel, AirQualityPropertiesQuery>
+public class AirQualityPropertiesRepository : RepositoryCore<AirQualityPropertiesModel, 
+    AirQualityPropertiesDto, 
+    AirQualityPropertiesQuery, 
+    EcoSensorDbContext>
 {
 
     /// <inheritdoc />
     public AirQualityPropertiesRepository(
         ILogger<AirQualityPropertiesRepository> logger, 
         EcoSensorDbContext context, 
-        RepositoryDependencies repositoryDependencies) : 
-        base(logger, context, repositoryDependencies)
+        IMapper mapper) : 
+        base(logger, context, mapper)
     {
     }
     
-    protected override IQueryable<AirQualityPropertiesModel> ParseQueryParamsDto(IQueryable<AirQualityPropertiesModel> query, AirQualityPropertiesQuery? queryByParams)
+    protected override IQueryable<AirQualityPropertiesModel> ParseQueryParams(IQueryable<AirQualityPropertiesModel> query, AirQualityPropertiesQuery? queryByParams)
     {
         if (queryByParams?.Pollution is not null)
             query = query.Where(x => x.Pollution == (EPollution)queryByParams.Pollution);

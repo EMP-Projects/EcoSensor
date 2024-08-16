@@ -6,9 +6,9 @@ using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
 using EcoSensorApi.Tasks.Osm;
-using TeamSviluppo.Gis;
-using TeamSviluppo.Gis.NetCoreFw.OsmPg;
-using TeamSviluppo.Services;
+using Gis.Net.Core.Entities;
+using Gis.Net.Osm.OsmPg;
+
 namespace EcoSensorApi;
 
 public static class EcoSensorManager
@@ -16,7 +16,7 @@ public static class EcoSensorManager
     
     public static WebApplicationBuilder AddEcoSensor(this WebApplicationBuilder builder)
     {
-        var connection = new ConnectionPostGis(
+        var connection = new ConnectionPgSql(
             builder.Configuration["POSTGRES_HOST"]!,
             builder.Configuration["POSTGRES_PORT"]!,
             builder.Configuration["POSTGRES_DB"]!,
@@ -32,21 +32,19 @@ public static class EcoSensorManager
             builder.Environment.ApplicationName,
             builder.Environment.IsDevelopment());
         
-        builder.Services.AddScoped<IAppDbContext, EcoSensorAppDbContext>();
-        
-        builder.AddOsmPostGis<EcoSensorDbContext>();
+        builder.AddOsmPostGis<EcoSensorDbContext>(connection);
 
         // repository
         builder.Services.AddScoped<AirQualityPropertiesRepository>();
         builder.Services.AddScoped<AirQualityPropertiesService>();
-        builder.Services.AddScoped<EuAirQualityRepository>();
-        builder.Services.AddScoped<UsAirQualityRepository>();
+        builder.Services.AddScoped<EuAirQualityLevelRepository>();
+        builder.Services.AddScoped<UsAirQualityLevelRepository>();
         
         // service
         builder.Services.AddScoped<AirQualityVectorRepository>();
         builder.Services.AddScoped<AirQualityVectorService>();
-        builder.Services.AddScoped<UsAirQualityService>();
-        builder.Services.AddScoped<EuAirQualityService>();
+        builder.Services.AddScoped<UsAirQualityLevelService>();
+        builder.Services.AddScoped<EuAirQualityLevelService>();
 
         builder.Services.AddScoped<ConfigRepository>();
         builder.Services.AddScoped<ConfigService>();

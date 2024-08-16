@@ -1,8 +1,9 @@
+using Gis.Net.Vector.DTO;
 using Microsoft.AspNetCore.Mvc;
-using TeamSviluppo.Gis.NetCoreFw.Dto;
+
 namespace EcoSensorApi.AirQuality.Vector;
 
-public class AirQualityVectorQuery : GisCoreQueryByParams
+public class AirQualityVectorQuery : GisVectorQuery
 {
     [FromQuery(Name = "sourceData")]
     public ESourceData SourceData { get; set; }

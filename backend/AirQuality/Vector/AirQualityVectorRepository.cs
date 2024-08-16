@@ -1,26 +1,31 @@
+using AutoMapper;
 using EcoSensorApi.AirQuality.Properties;
-using TeamSviluppo.Gis.NetCoreFw.Repositories;
-using TeamSviluppo.Repositories;
-using TeamSviluppo.Services;
+using Gis.Net.Vector.Repositories;
+
 namespace EcoSensorApi.AirQuality.Vector;
 
 public class AirQualityVectorRepository : 
-    GisVectorCoreManyRepository<AirQualityVectorDto, AirQualityVectorModel, AirQualityVectorQuery, AirQualityPropertiesModel, AirQualityPropertiesDto>
+    GisVectorCoreManyRepository<AirQualityVectorModel, 
+        AirQualityVectorDto, 
+        AirQualityVectorQuery, 
+        EcoSensorDbContext, 
+        AirQualityPropertiesModel, 
+        AirQualityPropertiesDto>
 {
     /// <inheritdoc />
     public AirQualityVectorRepository(
-        ILogger<AirQualityVectorRepository> logger, 
-        IAppDbContext context, 
-        RepositoryDependencies repositoryDependencies) : 
-        base(logger, context.GetDbContext(), repositoryDependencies)
+        ILogger<AirQualityVectorRepository> logger,
+        EcoSensorDbContext context,
+        IMapper mapper) : 
+        base(logger, context, mapper)
     {
     }
 
-    protected override IQueryable<AirQualityVectorModel> ParseQueryParamsDto(IQueryable<AirQualityVectorModel> query, AirQualityVectorQuery? queryByParams)
+    protected override IQueryable<AirQualityVectorModel> ParseQueryParams(IQueryable<AirQualityVectorModel> query, AirQualityVectorQuery? queryByParams)
     {
         if (queryByParams?.SourceData != null) 
             query = query.Where(x => x.SourceData.Equals(queryByParams.SourceData));
         
-        return base.ParseQueryParamsDto(query, queryByParams);
+        return base.ParseQueryParams(query, queryByParams);
     }
 }

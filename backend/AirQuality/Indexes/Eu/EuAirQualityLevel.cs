@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using TeamSviluppo.Entities;
+using Gis.Net.Core.Entities;
+
 namespace EcoSensorApi.AirQuality.Indexes.Eu;
 
 [Table("eu_air_quality_index")]

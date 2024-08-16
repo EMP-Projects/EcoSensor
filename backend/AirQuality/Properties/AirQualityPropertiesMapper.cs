@@ -1,7 +1,8 @@
-using TeamSviluppo.Mapper;
+using Gis.Net.Core.Mapper;
+
 namespace EcoSensorApi.AirQuality.Properties;
 
-public class AirQualityPropertiesMapper : AbstractMapperProfile<AirQualityPropertiesDto, AirQualityPropertiesModel>
+public class AirQualityPropertiesMapper : AbstractMapperProfile<AirQualityPropertiesModel, AirQualityPropertiesDto, AirQualityPropertiesRequest>
 {
     public AirQualityPropertiesMapper()
     {

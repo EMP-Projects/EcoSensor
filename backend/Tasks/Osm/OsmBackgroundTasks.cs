@@ -1,4 +1,5 @@
-using TeamSviluppo.Tasks.Notification;
+using Gis.Net.Core.Tasks.Notification;
+
 namespace EcoSensorApi.Tasks.Osm;
 
 public class OsmBackgroundTasks : BackgroundService

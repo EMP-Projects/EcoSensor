@@ -1,8 +1,9 @@
 using EcoSensorApi.AirQuality.Properties;
-using TeamSviluppo.Gis.NetCoreFw.Mapper;
+using Gis.Net.Vector.Mapper;
+
 namespace EcoSensorApi.AirQuality.Vector;
 
-public class AirQualityVectorMapper : GisProfileManyMapper<AirQualityVectorDto, AirQualityVectorModel, AirQualityVectorRequest, AirQualityPropertiesModel, AirQualityPropertiesDto>
+public class AirQualityVectorMapper : GisProfileManyMapper<AirQualityVectorModel, AirQualityVectorDto, AirQualityVectorRequest, AirQualityPropertiesModel, AirQualityPropertiesDto>
 {
     
 }

@@ -1,8 +1,9 @@
+using Gis.Net.Core.DTO;
 using Microsoft.AspNetCore.Mvc;
-using TeamSviluppo.DTO;
+
 namespace EcoSensorApi.AirQuality.Indexes.Eu;
 
-public class EuAirQualityQuery : QueryByParamsBase, IAirQualityLevelQuery
+public class EuAirQualityQuery : QueryBase, IAirQualityLevelQuery
 {
     [FromQuery(Name="pollution")]
     public EPollution Pollution { get; set; }
