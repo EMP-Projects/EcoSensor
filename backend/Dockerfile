@@ -1,6 +1,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
+
 WORKDIR /app
+
 EXPOSE 8080
 EXPOSE 8081
 
@@ -16,8 +18,9 @@ WORKDIR /src
 COPY ["backend/EcoSensorApi.csproj", "EcoSensorApi/"]
 COPY ["backend/nuget.config", "EcoSensorApi/"]
 RUN dotnet restore "EcoSensorApi/EcoSensorApi.csproj"
-COPY . .
+
 WORKDIR "/src/EcoSensorApi"
+COPY . .
 RUN dotnet build "EcoSensorApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

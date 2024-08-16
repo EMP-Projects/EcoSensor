@@ -13,8 +13,8 @@ WORKDIR /src
 COPY ["EcoSensorApi.csproj", "EcoSensorApi/"]
 RUN dotnet nuget add source --username ${NUGET_USERNAME} --password ${NUGET_PWD} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/EMP-Projects/index.json"
 RUN dotnet restore "EcoSensorApi/EcoSensorApi.csproj"
-COPY . .
 WORKDIR "/src/EcoSensorApi"
+COPY . .
 RUN dotnet build "EcoSensorApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
