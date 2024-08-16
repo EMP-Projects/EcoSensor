@@ -27,8 +27,8 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     public EcoSensorDbContext(DbContextOptions<EcoSensorDbContext> options) : base(options) {}
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // modelBuilder.AddExtensionPostGis();
+    {  
+        modelBuilder.AddExtensionPostGis();
         
         modelBuilder.SetTimeStamp<AirQualityPropertiesModel>();
         modelBuilder.SetTimeStamp<AirQualityVectorModel>();
