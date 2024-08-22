@@ -40,10 +40,10 @@ public class MeasurementPointsService : IMeasurementPointsService
     }
 
     /// <summary>
-    /// Crea le geometrie dei punti di misurazione 
+    /// Calcola i punti di misura per la qualità dell'aria.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    /// <returns>Il numero totale di nuovi punti di misura creati.</returns>
+    /// <exception cref="Exception">Eccezione generica.</exception>
     public async Task<int> MeasurementPoints()
     {
         // leggo i records di vettori
@@ -81,7 +81,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             // leggo le configurazioni del layer
             var configDistance = (await _configService.List(new ConfigQuery
             {
-                Name = osm.Key
+                Name = osm.EntityKey
             })).FirstOrDefault();
 
             if (configDistance is null)
@@ -98,7 +98,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     Geom = c,
                     TimeStamp = DateTime.UtcNow,
                     Guid = Guid.NewGuid(),
-                    Key = osm.Key,
+                    EntityKey = osm.EntityKey,
                     Lat = c.Y,
                     Lng = c.X
                 };
@@ -118,18 +118,22 @@ public class MeasurementPointsService : IMeasurementPointsService
 
         return await _airQualityVectorService.SaveContext();
     }
-    
+
     /// <summary>
-    /// Crea le feature geografiche dalla sorgente dati da visualizzare sulla mappa
-    /// e per il calcolo della matrice di punti di misurazione
+    /// Seeds the features in the database using a list of geometries.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The number of features that were successfully seeded.</returns>
+    /// <exception cref="Exception">Thrown if there is an error while seeding the features.</exception>
     public async Task<int> SeedFeatures()
     {
         var listGeomFilters = await _configService.BBoxGeometries();
-        // salvare le nuove features di OpenStreetMap
+        return await SeedGeometries(listGeomFilters);
+    }
+    
+    private async Task<int> SeedGeometries(IEnumerable<BBoxConfig> geometries)
+    {
         var resultSeed = 0;
-        foreach (var geomFilter in listGeomFilters)
+        foreach (var geomFilter in geometries)
             resultSeed += await _osmVectorService.SeedGeometries(geomFilter.BBox, geomFilter.Config.Name);
         return resultSeed;
     }
@@ -163,11 +167,12 @@ public class MeasurementPointsService : IMeasurementPointsService
                 Longitude = lng,
                 Latitude = lat
             });
+            
             if (airQualityProps.Count != 0) continue;
             
             result.Add(new AirQualityPropertiesDto
             {
-                Key = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i+1}",
+                EntityKey = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i+1}",
                 TimeStamp = DateTime.UtcNow,
                 Date = DateTime.Parse(time.value).ToUniversalTime(),
                 PollutionText = Pollution.GetPollutionDescription(pollution),
@@ -186,7 +191,11 @@ public class MeasurementPointsService : IMeasurementPointsService
 
         return result;
     }
-    
+
+    /// <summary>
+    /// Legge i valori di qualità dell'aria dalla API e li salva nel database.
+    /// </summary>
+    /// <returns>Il numero totale di nuovi dati di qualità dell'aria registrati.</returns>
     public async Task<int> AirQuality()
     {
         // leggere i records delle coordinate geografiche dei punti di misurazione

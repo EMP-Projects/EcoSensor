@@ -9,16 +9,24 @@
         <UserSecretsId>ce75eb87-aa0a-4be3-85ff-902a124f58de</UserSecretsId>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\net8.0\EcoSensorApi.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\net8.0\EcoSensorApi.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
         <PackageReference Include="AutoMapper" Version="13.0.1" />
-        <PackageReference Include="gis.net" Version="8.0.3" />
+        <PackageReference Include="gis.net" Version="8.1.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="NetTopologySuite" Version="2.5.0" />
-        <PackageReference Include="NetTopologySuite.Features" Version="2.1.0" />
+        <PackageReference Include="NetTopologySuite.Features" Version="2.2.0" />
         <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
         <PackageReference Include="NetTopologySuite.IO.PostGis" Version="2.1.0" />
         <PackageReference Include="Npgsql" Version="8.0.3" />
@@ -27,7 +35,7 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="8.0.4" />
         <PackageReference Include="Npgsql.Json.NET" Version="8.0.3" />
         <PackageReference Include="Npgsql.NetTopologySuite" Version="8.0.3" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,7 +43,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="GeoJson\limits_P_72_municipalities.geojson">
+      <None Update="GeoJson\*">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

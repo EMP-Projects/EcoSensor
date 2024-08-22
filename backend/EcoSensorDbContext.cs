@@ -12,20 +12,51 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcoSensorApi;
 
+/// <summary>
+/// Represents the database context for the EcoSensorApi application.
+/// </summary>
 public class EcoSensorDbContext : DbContext, IOsmDbContext
 {
+    /// <summary>
+    /// Represents an air quality vector.
+    /// </summary>
     public DbSet<AirQualityVectorModel>? AirQualityVector { get; set; }
+    /// <summary>
+    /// Represents the properties of air quality measures.
+    /// </summary>
     public DbSet<AirQualityPropertiesModel>? AirQualityProperties { get; set; }
+    /// <summary>
+    /// Represents the EU air quality level.
+    /// </summary>
     public DbSet<EuAirQualityLevel>? EuAirQualityLevels { get; set; }
+    /// <summary>
+    /// Represents the air quality levels in the United States.
+    /// </summary>
     public DbSet<UsAirQualityLevel>? UsAirQualityLevels { get; set; }
+    /// <summary>
+    /// Represents the configuration settings for the EcoSensor application.
+    /// </summary>
     public DbSet<ConfigModel>? Config { get; set; }
 
+    /// <summary>
+    /// Represents the OsmProperties table in the EcoSensorDbContext.
+    /// </summary>
     public DbSet<OsmPropertiesModel>? OsmProperties { get; set; }
+    /// <summary>
+    /// Represents the OsmVector entity in the EcoSensorDbContext.
+    /// OsmVector is used to store the OpenStreetMap vector data.
+    /// </summary>
     public DbSet<OsmVectorModel>? OsmVector { get; set; }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Represents the database context for the EcoSensor API.
+    /// </summary>
     public EcoSensorDbContext(DbContextOptions<EcoSensorDbContext> options) : base(options) {}
-    
+
+    /// <summary>
+    /// Override method called by Entity Framework to configure the database model that is used for this context.
+    /// </summary>
+    /// <param name="modelBuilder">The builder being used to construct the model for this context.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     { 
         // modelBuilder.AddExtensionPostGis();
@@ -54,7 +85,7 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
             new ConfigModel
             {
                 Id = 1,
-                Key = "Gioia del Colle",
+                EntityKey = "Gioia del Colle",
                 TimeStamp = DateTime.UtcNow,
                 Distance = 100,
                 MatrixDistancePoints = 2500,

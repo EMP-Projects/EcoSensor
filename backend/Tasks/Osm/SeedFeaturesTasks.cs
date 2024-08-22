@@ -8,7 +8,11 @@ public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
     public SeedFeaturesTasks(IServiceProvider serviceProvider, ILogger<OsmTasks<MeasurementPointsService>> logger) : base(serviceProvider, logger)
     {
     }
-    
+
+    /// <summary>
+    /// Handles notifications asynchronously.
+    /// </summary>
+    /// <returns>An awaitable task.</returns>
     public override async Task HandleNotificationsAsync()
     {
         var result = await Service().SeedFeatures();
@@ -16,7 +20,13 @@ public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
         Logger.LogInformation(msg);
     }
 
+    /// <summary>
+    /// Gets or sets the due time for the task.
+    /// </summary>
     public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(5);
 
+    /// <summary>
+    /// Gets the name of the Osm task.
+    /// </summary>
     public override string Name => $"{nameof(SeedFeaturesTasks)} Task";
 }

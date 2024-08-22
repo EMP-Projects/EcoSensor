@@ -7,9 +7,15 @@ namespace EcoSensorApi.AirQuality.Vector;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/airQuality")]
-public class AirQualityVectorController : GisVectorManyController<AirQualityVectorModel, AirQualityVectorDto, AirQualityVectorQuery, AirQualityVectorRequest, EcoSensorDbContext, AirQualityPropertiesModel, AirQualityPropertiesDto>
+public class AirQualityVectorController : GisRootVectorManyController<AirQualityVectorModel, 
+    AirQualityVectorDto, 
+    AirQualityVectorQuery, 
+    AirQualityVectorRequest, 
+    EcoSensorDbContext, 
+    AirQualityPropertiesModel, 
+    AirQualityPropertiesDto>
 {
-    /// <inheritdoc />
+    
     public AirQualityVectorController(
         ILogger<AirQualityVectorController> logger, 
         IConfiguration configuration, 
