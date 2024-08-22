@@ -3,6 +3,7 @@ using Gis.Net.Vector;
 
 namespace EcoSensorApi.Config;
 
+/// <inheritdoc />
 public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, ConfigRequest, EcoSensorDbContext>
 {
     /// <inheritdoc />

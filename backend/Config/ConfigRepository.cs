@@ -3,6 +3,7 @@ using Gis.Net.Core.Repositories;
 
 namespace EcoSensorApi.Config;
 
+/// <inheritdoc />
 public class ConfigRepository : RepositoryCore<ConfigModel, ConfigDto, ConfigQuery, EcoSensorDbContext>
 {
 
@@ -12,6 +13,7 @@ public class ConfigRepository : RepositoryCore<ConfigModel, ConfigDto, ConfigQue
     {
     }
 
+    /// <inheritdoc />
     protected override IQueryable<ConfigModel> ParseQueryParams(IQueryable<ConfigModel> query, ConfigQuery? queryByParams)
     {
         if (queryByParams?.Name is not null)
