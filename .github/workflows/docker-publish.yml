@@ -78,7 +78,7 @@ jobs:
           context: .
           build-args: |
             NUGET_USERNAME=${{ secrets.NUGET_USERNAME }}
-            NUGET_PWD=${{ secrets.NUGET_PWD }}
+            NUGET_PWD=${{ secrets.NUGET_TOKEN }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
