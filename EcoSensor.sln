@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcoSensorApi", "backend\EcoSensorApi.csproj", "{35239807-07FC-4613-AA78-94328626E029}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gis.Net", "..\Gis.Net\Gis.Net\Gis.Net.csproj", "{8465A5AC-15C0-4EFF-A86F-50B89005AF81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{35239807-07FC-4613-AA78-94328626E029}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35239807-07FC-4613-AA78-94328626E029}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35239807-07FC-4613-AA78-94328626E029}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8465A5AC-15C0-4EFF-A86F-50B89005AF81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8465A5AC-15C0-4EFF-A86F-50B89005AF81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8465A5AC-15C0-4EFF-A86F-50B89005AF81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8465A5AC-15C0-4EFF-A86F-50B89005AF81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

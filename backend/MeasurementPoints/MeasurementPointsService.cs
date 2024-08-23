@@ -6,6 +6,7 @@ using Gis.Net.OpenMeteo.AirQuality;
 using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector;
 using NetTopologySuite.Geometries;
+
 namespace EcoSensorApi.MeasurementPoints;
 
 /// <summary>
@@ -16,15 +17,16 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly OsmVectorService<EcoSensorDbContext> _osmVectorService;
     private readonly AirQualityVectorService _airQualityVectorService;
     private readonly AirQualityPropertiesService _airQualityPropertiesService;
-    private readonly IConfiguration _configuration;
     private readonly ILogger<MeasurementPointsService> _logger;
     private readonly IAirQualityService _airQualityService;
     private readonly ConfigService _configService;
 
+    /// <summary>
+    /// Servizio per calcolare i punti di misura per la qualità dell'aria
+    /// </summary>
     public MeasurementPointsService(
         OsmVectorService<EcoSensorDbContext> osmVectorService, 
         AirQualityVectorService airQualityVectorService, 
-        IConfiguration configuration, 
         ILogger<MeasurementPointsService> logger, 
         IAirQualityService airQualityService, 
         AirQualityPropertiesService airQualityPropertiesService, 
@@ -32,7 +34,6 @@ public class MeasurementPointsService : IMeasurementPointsService
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
-        _configuration = configuration;
         _logger = logger;
         _airQualityService = airQualityService;
         _airQualityPropertiesService = airQualityPropertiesService;

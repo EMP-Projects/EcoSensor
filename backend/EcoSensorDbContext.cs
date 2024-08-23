@@ -21,18 +21,22 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     /// Represents an air quality vector.
     /// </summary>
     public DbSet<AirQualityVectorModel>? AirQualityVector { get; set; }
+    
     /// <summary>
     /// Represents the properties of air quality measures.
     /// </summary>
     public DbSet<AirQualityPropertiesModel>? AirQualityProperties { get; set; }
+    
     /// <summary>
     /// Represents the EU air quality level.
     /// </summary>
     public DbSet<EuAirQualityLevel>? EuAirQualityLevels { get; set; }
+    
     /// <summary>
     /// Represents the air quality levels in the United States.
     /// </summary>
     public DbSet<UsAirQualityLevel>? UsAirQualityLevels { get; set; }
+    
     /// <summary>
     /// Represents the configuration settings for the EcoSensor application.
     /// </summary>
@@ -42,6 +46,7 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     /// Represents the OsmProperties table in the EcoSensorDbContext.
     /// </summary>
     public DbSet<OsmPropertiesModel>? OsmProperties { get; set; }
+    
     /// <summary>
     /// Represents the OsmVector entity in the EcoSensorDbContext.
     /// OsmVector is used to store the OpenStreetMap vector data.
