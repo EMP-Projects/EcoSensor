@@ -17,22 +17,12 @@ public interface IConfig
     string Name { get; set; }
     
     /// <summary>
-    /// Represents a region field in the configuration.
-    /// </summary>
-    string RegionField { get; set; }
-    
-    /// <summary>
     /// Represents the region code property of a configuration model.
     /// </summary>
     /// <value>
     /// The region code.
     /// </value>
     int RegionCode { get; set; }
-    
-    /// <summary>
-    /// Represents a city field in a configuration.
-    /// </summary>
-    string? CityField { get; set; }
     
     /// <summary>
     /// Represents the city code for a sensor configuration.

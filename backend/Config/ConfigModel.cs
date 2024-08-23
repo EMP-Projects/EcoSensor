@@ -24,24 +24,12 @@ public class ConfigModel : ModelBase, IConfig
     /// </remarks>
     [Column("name"), MaxLength(255)]
     public required string Name { get; set; }
-    
-    [Column("region_field"), MaxLength(50)]
-    public required string RegionField { get; set; }
 
     /// <summary>
     /// Represents the region code of a configuration.
     /// </summary>
     [Column("region_code")]
     public int RegionCode { get; set; }
-
-    /// <summary>
-    /// Represents the city field in the ConfigModel.
-    /// </summary>
-    /// <remarks>
-    /// The city field is used to specify the field in the configuration model that contains the city information.
-    /// </remarks>
-    [Column("city_field"), MaxLength(50)]
-    public string? CityField { get; set; }
 
     /// <summary>
     /// Gets or sets the city code.

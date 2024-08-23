@@ -95,9 +95,7 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
                 Distance = 100,
                 MatrixDistancePoints = 2500,
                 Name = "limits_P_72_municipalities.geojson",
-                RegionField = "reg_istat_code_num",
                 RegionCode = 16,
-                CityField = "com_istat_code_num",
                 CityCode = 72021
             });
     }

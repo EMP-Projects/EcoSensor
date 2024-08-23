@@ -127,16 +127,8 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <exception cref="Exception">Thrown if there is an error while seeding the features.</exception>
     public async Task<int> SeedFeatures()
     {
-        var listGeomFilters = await _configService.BBoxGeometries();
-        return await SeedGeometries(listGeomFilters);
-    }
-    
-    private async Task<int> SeedGeometries(IEnumerable<BBoxConfig> geometries)
-    {
-        var resultSeed = 0;
-        foreach (var geomFilter in geometries)
-            resultSeed += await _osmVectorService.SeedGeometries(geomFilter.BBox, geomFilter.Config.Name);
-        return resultSeed;
+        var bbox = await _configService.BBoxGeometries();
+        return await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName);
     }
 
     private async Task<List<AirQualityPropertiesDto>> CreateListAqValues(
