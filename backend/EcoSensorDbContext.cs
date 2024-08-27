@@ -94,9 +94,9 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
                 TimeStamp = DateTime.UtcNow,
                 Distance = 100,
                 MatrixDistancePoints = 2500,
-                Name = "limits_P_72_municipalities.geojson",
                 RegionCode = 16,
-                CityCode = 72021
+                CityCode = 72021,
+                CityName = "Gioia del Colle",
             });
     }
 }

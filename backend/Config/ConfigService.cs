@@ -1,40 +1,22 @@
 using Gis.Net.Core.Services;
 using Gis.Net.GeoJsonImport;
+using Gis.Net.Istat;
+using Gis.Net.Istat.Models;
 using Gis.Net.Vector;
-using NetTopologySuite.Geometries;
+using Geometry = NetTopologySuite.Geometries.Geometry;
 
 namespace EcoSensorApi.Config;
 
 /// <inheritdoc />
 public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, ConfigRequest, EcoSensorDbContext>
 {
+    private readonly IIStatService<IstatContext> _istatService;
+    
     /// <inheritdoc />
-    public ConfigService(ILogger<ConfigService> logger, ConfigRepository repository) : 
-        base(logger, repository) { }
-
-    private List<FeatureImport> FindFeatureFromSource(ConfigDto layer, GeoJsonImport geoJson)
+    public ConfigService(ILogger<ConfigService> logger, ConfigRepository repository, IIStatService<IstatContext> istatService) : 
+        base(logger, repository)
     {
-        // filtro il GeoJson per il comune e regione
-        var fFiltered = geoJson.Features
-            .Where(feature => feature.Properties.RegIstatCodeNum.Equals(layer.RegionCode)).ToList();
-
-        string msg;
-        if (fFiltered is null)
-        {
-            msg = "I can't read the GeoJson of the region geometries";
-            Logger.LogError(msg);
-            throw new Exception(msg);
-        }
-            
-        if (layer.CityField is not null || layer.CityCode is not null)
-            fFiltered = fFiltered.Where(feature => feature.Properties.ComIstatCodeNum.Equals(layer.CityCode)).ToList();
-            
-        if (fFiltered.Count != 0)
-            return fFiltered;
-        
-        msg = "I can't read the GeoJson of the geometries";
-        Logger.LogError(msg);
-        throw new Exception(msg);
+        _istatService = istatService;
     }
 
     /// <summary>
@@ -43,13 +25,9 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
     /// </summary>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<BBoxConfig> BBoxGeometries()
+    public async Task<List<BBoxConfig>> BBoxGeometries()
     {
-
-        var layers = await List(new ConfigQuery
-        {
-            TypeSource = ETypeSourceLayer.GeoJson
-        });
+        var layers = await List(new ConfigQuery());
         
         if (layers is null)
         {
@@ -60,38 +38,32 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
 
         var layersKeys = layers.Select(x => x.EntityKey).ToArray();
         var key = string.Join(":", layersKeys);
-        var bboxGeom = new List<Geometry>();
-        
+        var resultBboxConfigList = new List<BBoxConfig>();
+
         foreach (var layer in layers)
         {
-            var geoJson = GeoJson.GetFeatureCollectionByGeoJson(layer.Name, "GeoJson");
-            if (geoJson is null) continue;
-
-            var features = FindFeatureFromSource(layer, geoJson);
-
-            foreach (var geom in features.Select(feature => GeoJson.CreatePolygon(feature.GeometryImport.Coordinates)))
+            var istat = await _istatService.GetMunicipalities(new LimitsItMunicipality
             {
-                if (geom is null)
-                {
-                    const string msg = "I can't create geometry for the filter";
-                    Logger.LogError(msg);
-                    continue;
-                }
-    
-                // with geoserver you can directly read geojson data with the same reference system as Osm EPSG:3857
-                // I create a bbox from geometry in EPSG:3857 coordinates
-                bboxGeom.Add(geom.Envelope);
+                RegName = layer.RegionName,
+                RegIstatCodeNum = layer.RegionCode,
+                ProvName = layer.ProvName,
+                ProvIstatCodeNum = layer.ProvCode,
+                ComIstatCodeNum = layer.CityCode,
+                NameIt = layer.CityName
+            });
+            
+            if (istat is null)
+            {
+                const string msg = "I can't read the Istat data";
+                Logger.LogError(msg);
+                throw new Exception(msg);
             }
+
+            var bboxGeometries = istat.Where(x => x.WkbGeometry?.EnvelopeInternal is not null).Select(x => GisUtility.CreateGeometryFromBBox(3857, x.WkbGeometry?.EnvelopeInternal!)).ToList();
+            var bboxConfigList = bboxGeometries.Select(bbox => new BBoxConfig(bbox, key)).ToList();
+            resultBboxConfigList.AddRange(bboxConfigList);
         }
 
-        // combine the geometries
-        Geometry bboxUnion = GisUtility.CreateGeometryFactory(3857).CreatePoint();
-        bboxUnion = bboxGeom.Aggregate(bboxUnion, (current, bbox) => current.Union(bbox));
-
-        // I convert the geographic coordinate reference system
-        var pointMinToWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(bboxUnion.EnvelopeInternal.MinX, bboxUnion.EnvelopeInternal.MinY);
-        var pointMaxToWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(bboxUnion.EnvelopeInternal.MaxX, bboxUnion.EnvelopeInternal.MaxY);
-        var bboxConverted = GisUtility.CreateEnvelopeFromBBox(pointMinToWebMercator.Y, pointMinToWebMercator.X, pointMaxToWebMercator.Y, pointMaxToWebMercator.X);
-        return new BBoxConfig(GisUtility.CreateGeometryFromBBox(3857, bboxConverted), key);
+        return resultBboxConfigList;
     }
 }

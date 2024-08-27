@@ -11,3 +11,5 @@ openmeteo-data/
 .idea/
 ./backend/bin/
 ./backend/obj/
+.DS_Store
+.env*

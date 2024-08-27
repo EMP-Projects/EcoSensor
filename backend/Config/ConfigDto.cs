@@ -8,54 +8,36 @@ namespace EcoSensorApi.Config;
 /// </summary>
 public class ConfigDto : DtoBase, IConfig
 {
-    /// <summary>
-    /// Represents a configuration data transfer object (DTO) for EcoSensorApi.
-    /// </summary>
-    [JsonPropertyName("typeSource")]
-    public ETypeSourceLayer TypeSource { get; set; }
 
-    /// <summary>
-    /// Gets or sets the name of the configuration.
-    /// </summary>
-    /// <remarks>
-    /// This property is defined in the <see cref="ConfigDto"/> class.
-    /// </remarks>
-    [JsonPropertyName("name")]
-    public required string Name { get; set; }
+    /// <inheritdoc />
+    [JsonPropertyName("regionName")]
+    public string? RegionName { get; set; }
 
-    /// <summary>
-    /// Represents a property for specifying the region field in the configuration.
-    /// </summary>
-    [JsonPropertyName("regionField")]
-    public required string RegionField { get; set; }
-
-    /// <summary>
-    /// Represents the region code for a configuration.
-    /// </summary>
+    /// <inheritdoc />
     [JsonPropertyName("regionCode")]
-    public int RegionCode { get; set; }
+    public int? RegionCode { get; set; }
 
-    /// <summary>
-    /// Represents a city field in the configuration.
-    /// </summary>
-    [JsonPropertyName("cityField")]
-    public string? CityField { get; set; }
+    /// <inheritdoc />
+    [JsonPropertyName("provName")]
+    public string? ProvName { get; set; }
 
-    /// <summary>
-    /// Represents the city code associated with a configuration.
-    /// </summary>
+    /// <inheritdoc />
+    [JsonPropertyName("provCode")]
+    public int? ProvCode { get; set; }
+
+    /// <inheritdoc />
     [JsonPropertyName("cityCode")]
     public int? CityCode { get; set; }
 
-    /// <summary>
-    /// Represents the distance property of a configuration object.
-    /// </summary>
+    /// <inheritdoc />
+    [JsonPropertyName("cityName")]
+    public string? CityName { get; set; }
+
+    /// <inheritdoc />
     [JsonPropertyName("distance")]
     public int Distance { get; set; }
 
-    /// <summary>
-    /// Represents the matrix distance points configuration.
-    /// </summary>
+    /// <inheritdoc />
     [JsonPropertyName("matrixDistancePoints")]
     public int MatrixDistancePoints { get; set; }
 }

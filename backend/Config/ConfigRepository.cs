@@ -16,14 +16,18 @@ public class ConfigRepository : RepositoryCore<ConfigModel, ConfigDto, ConfigQue
     /// <inheritdoc />
     protected override IQueryable<ConfigModel> ParseQueryParams(IQueryable<ConfigModel> query, ConfigQuery? queryByParams)
     {
-        if (queryByParams?.Name is not null)
-            query = query.Where(x => x.Name == queryByParams.Name);
-        if (queryByParams?.TypeSource is not null)
-            query = query.Where(x => x.TypeSource == queryByParams.TypeSource);
+        if (queryByParams?.RegionName is not null)
+            query = query.Where(x => x.RegionName == queryByParams.RegionName);
         if (queryByParams?.RegionCode is not null)
             query = query.Where(x => x.RegionCode == queryByParams.RegionCode);
+        if (queryByParams?.ProvName is not null)
+            query = query.Where(x => x.ProvName == queryByParams.ProvName);
+        if (queryByParams?.ProvCode is not null)
+            query = query.Where(x => x.ProvCode == queryByParams.ProvCode);
         if (queryByParams?.CityCode is not null)
             query = query.Where(x => x.CityCode == queryByParams.CityCode);
+        if (queryByParams?.CityName is not null)
+            query = query.Where(x => x.CityName == queryByParams.CityName);
         
         return query;
     }

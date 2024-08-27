@@ -80,39 +80,39 @@ public class MeasurementPointsService : IMeasurementPointsService
                 continue;
             
             // leggo le configurazioni del layer
-            var configDistance = (await _configService.List(new ConfigQuery
-            {
-                Name = osm.EntityKey
-            })).FirstOrDefault();
+            var listConfigDistance = await _configService.List();
 
-            if (configDistance is null)
+            if (listConfigDistance.Count == 0)
                 throw new Exception("Non riesco a leggere le configurazioni");
 
-            // per ogni coordinate seleziono solo quelle ad una certa distanza configurata
-            foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= configDistance.MatrixDistancePoints) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
+            foreach (var configDistance in listConfigDistance)
             {
-                measurementPoints.Add(c);
-                
-                var aqPoint = new AirQualityVectorDto
+                // per ogni coordinate seleziono solo quelle ad una certa distanza configurata
+                foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= configDistance.MatrixDistancePoints) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
                 {
-                    SourceData = ESourceData.Osm,
-                    Geom = c,
-                    TimeStamp = DateTime.UtcNow,
-                    Guid = Guid.NewGuid(),
-                    EntityKey = osm.EntityKey,
-                    Lat = c.Y,
-                    Lng = c.X
-                };
+                    measurementPoints.Add(c);
 
-                if (listMeasurementPoints?.Count == 0)
-                    // se non esistono altri punti nel database
-                    await _airQualityVectorService.Insert(aqPoint);
-                else
-                {
-                    // altrimenti solo se maggiore o uguale alla distanza configurata per il layer
-                    var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
-                    if (nearestPoint?.Geom?.Distance(c) >= configDistance.MatrixDistancePoints)
+                    var aqPoint = new AirQualityVectorDto
+                    {
+                        SourceData = ESourceData.Osm,
+                        Geom = c,
+                        TimeStamp = DateTime.UtcNow,
+                        Guid = Guid.NewGuid(),
+                        EntityKey = osm.EntityKey,
+                        Lat = c.Y,
+                        Lng = c.X
+                    };
+
+                    if (listMeasurementPoints?.Count == 0)
+                        // se non esistono altri punti nel database
                         await _airQualityVectorService.Insert(aqPoint);
+                    else
+                    {
+                        // altrimenti solo se maggiore o uguale alla distanza configurata per il layer
+                        var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
+                        if (nearestPoint?.Geom?.Distance(c) >= configDistance.MatrixDistancePoints)
+                            await _airQualityVectorService.Insert(aqPoint);
+                    }
                 }
             }
         }
@@ -127,8 +127,11 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <exception cref="Exception">Thrown if there is an error while seeding the features.</exception>
     public async Task<int> SeedFeatures()
     {
-        var bbox = await _configService.BBoxGeometries();
-        return await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName);
+        var bboxList = await _configService.BBoxGeometries();
+        var result = 0;
+        foreach (var bbox in bboxList)
+            result += await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName);
+        return result;
     }
 
     private async Task<List<AirQualityPropertiesDto>> CreateListAqValues(
