@@ -49,7 +49,7 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
                 ProvName = layer.ProvName,
                 ProvIstatCodeNum = layer.ProvCode,
                 ComIstatCodeNum = layer.CityCode,
-                NameIt = layer.CityName
+                Name = layer.CityName
             });
             
             if (istat is null)
@@ -60,7 +60,7 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
             }
 
             var bboxGeometries = istat.Where(x => x.WkbGeometry?.EnvelopeInternal is not null).Select(x => GisUtility.CreateGeometryFromBBox(3857, x.WkbGeometry?.EnvelopeInternal!)).ToList();
-            var bboxConfigList = bboxGeometries.Select(bbox => new BBoxConfig(bbox, key)).ToList();
+            var bboxConfigList = bboxGeometries.Select(bbox => new BBoxConfig(bbox, key, layer.Distance)).ToList();
             resultBboxConfigList.AddRange(bboxConfigList);
         }
 

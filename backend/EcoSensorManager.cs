@@ -42,8 +42,20 @@ public static class EcoSensorManager
             builder.Environment.ApplicationName,
             builder.Environment.IsDevelopment());
         
+        var connectionOsm = new ConnectionPgSql(
+            builder.Configuration["POSTGRES_OSM_HOST"]!,
+            builder.Configuration["POSTGRES_OSM_PORT"]!,
+            builder.Configuration["POSTGRES_OSM_DB"]!,
+            builder.Configuration["POSTGRES_OSM_USER"]!,
+            builder.Configuration["POSTGRES_OSM_PASS"]!
+        )
+        {
+            ReadBufferSize = 24000,
+            WriteBufferSize = 24000
+        };
+        
         // Add OSM PostGIS services for EcoSensorDbContext
-        builder.AddOsmPostGis<EcoSensorDbContext>(connection);
+        builder.AddOsmPostGis<EcoSensorDbContext>(connectionOsm);
         
         // Configure PostgreSQL connection for ISTAT
         var connectionIstat = new ConnectionPgSql(
