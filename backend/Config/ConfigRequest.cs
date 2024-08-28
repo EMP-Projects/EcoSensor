@@ -6,7 +6,7 @@ namespace EcoSensorApi.Config;
 /// <summary>
 /// Represents a configuration request.
 /// </summary>
-public class ConfigRequest : RequestBase, IConfig
+public class ConfigRequest : RequestBase, IConfigBase
 {
 
     /// <inheritdoc />
@@ -32,12 +32,4 @@ public class ConfigRequest : RequestBase, IConfig
     /// <inheritdoc />
     [JsonPropertyName("cityName")]
     public string? CityName { get; set; }
-
-    /// <inheritdoc />
-    [JsonPropertyName("distance")]
-    public int Distance { get; set; }
-
-    /// <inheritdoc />
-    [JsonPropertyName("matrixDistancePoints")]
-    public int MatrixDistancePoints { get; set; }
 }

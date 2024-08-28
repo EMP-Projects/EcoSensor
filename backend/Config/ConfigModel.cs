@@ -7,7 +7,7 @@ namespace EcoSensorApi.Config;
 /// Represents a configuration model.
 /// </summary>
 [Table("layers")]
-public class ConfigModel : ModelBase, IConfig
+public class ConfigModel : ModelBase
 {
     [Column("region_name")]
     public string? RegionName { get; set; }
@@ -26,10 +26,4 @@ public class ConfigModel : ModelBase, IConfig
     
     [Column("city_name")]
     public string? CityName { get; set; }
-    
-    [Column("distance")]
-    public int Distance { get; set; }
-    
-    [Column("matrix_distance_points")]
-    public int MatrixDistancePoints { get; set; }
 }

@@ -78,41 +78,32 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             if (coordinatesGeom is null)
                 continue;
-            
-            // leggo le configurazioni del layer
-            var listConfigDistance = await _configService.List();
 
-            if (listConfigDistance.Count == 0)
-                throw new Exception("Non riesco a leggere le configurazioni");
-
-            foreach (var configDistance in listConfigDistance)
+            // per ogni coordinate seleziono solo quelle ad una certa distanza configurata
+            foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= 2500) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
             {
-                // per ogni coordinate seleziono solo quelle ad una certa distanza configurata
-                foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= configDistance.MatrixDistancePoints) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
+                measurementPoints.Add(c);
+
+                var aqPoint = new AirQualityVectorDto
                 {
-                    measurementPoints.Add(c);
+                    SourceData = ESourceData.Osm,
+                    Geom = c,
+                    TimeStamp = DateTime.UtcNow,
+                    Guid = Guid.NewGuid(),
+                    EntityKey = osm.EntityKey,
+                    Lat = c.Y,
+                    Lng = c.X
+                };
 
-                    var aqPoint = new AirQualityVectorDto
-                    {
-                        SourceData = ESourceData.Osm,
-                        Geom = c,
-                        TimeStamp = DateTime.UtcNow,
-                        Guid = Guid.NewGuid(),
-                        EntityKey = osm.EntityKey,
-                        Lat = c.Y,
-                        Lng = c.X
-                    };
-
-                    if (listMeasurementPoints?.Count == 0)
-                        // se non esistono altri punti nel database
+                if (listMeasurementPoints?.Count == 0)
+                    // se non esistono altri punti nel database
+                    await _airQualityVectorService.Insert(aqPoint);
+                else
+                {
+                    // altrimenti solo se maggiore o uguale alla distanza configurata per il layer
+                    var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
+                    if (nearestPoint?.Geom?.Distance(c) >= 2500)
                         await _airQualityVectorService.Insert(aqPoint);
-                    else
-                    {
-                        // altrimenti solo se maggiore o uguale alla distanza configurata per il layer
-                        var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
-                        if (nearestPoint?.Geom?.Distance(c) >= configDistance.MatrixDistancePoints)
-                            await _airQualityVectorService.Insert(aqPoint);
-                    }
                 }
             }
         }
@@ -130,7 +121,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         var bboxList = await _configService.BBoxGeometries();
         var result = 0;
         foreach (var bbox in bboxList)
-            result += await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName, bbox.Distance);
+            result += await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName);
         return result;
     }
 

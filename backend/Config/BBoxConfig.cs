@@ -10,11 +10,10 @@ public class BBoxConfig
     /// <summary>
     /// Represents a configuration for a bounding box (BBox) and its corresponding configuration data.
     /// </summary>
-    public BBoxConfig(Geometry bBox, string keyName, int? distance)
+    public BBoxConfig(Geometry bBox, string keyName)
     {
         BBox = bBox;
         KeyName = keyName;
-        Distance = distance ?? 100;
     }
 
     /// <summary>
@@ -25,6 +24,4 @@ public class BBoxConfig
     /// Represents a configuration for a bounding box and its related settings.
     /// </summary>
     public string KeyName { get; set; }
-    
-    public int Distance { get; set; }
 }

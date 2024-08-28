@@ -6,7 +6,7 @@ namespace EcoSensorApi.Config;
 /// <summary>
 /// Represents configuration data for a sensor.
 /// </summary>
-public class ConfigDto : DtoBase, IConfig
+public class ConfigDto : DtoBase, IConfigBase
 {
 
     /// <inheritdoc />
@@ -32,12 +32,4 @@ public class ConfigDto : DtoBase, IConfig
     /// <inheritdoc />
     [JsonPropertyName("cityName")]
     public string? CityName { get; set; }
-
-    /// <inheritdoc />
-    [JsonPropertyName("distance")]
-    public int Distance { get; set; }
-
-    /// <inheritdoc />
-    [JsonPropertyName("matrixDistancePoints")]
-    public int MatrixDistancePoints { get; set; }
 }

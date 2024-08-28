@@ -61,7 +61,7 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
 
             foreach (var item in istat)
                 if (item.WkbGeometry is not null)
-                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, key, layer.Distance));
+                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, key));
         }
 
         return resultBboxConfigList;

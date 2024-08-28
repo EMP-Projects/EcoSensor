@@ -92,8 +92,6 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
                 Id = 1,
                 EntityKey = "Gioia del Colle",
                 TimeStamp = DateTime.UtcNow,
-                Distance = 100,
-                MatrixDistancePoints = 2500,
                 RegionCode = 16,
                 CityCode = 72021,
                 CityName = "Gioia del Colle",
