@@ -59,9 +59,9 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
                 throw new Exception(msg);
             }
 
-            var bboxGeometries = istat.Where(x => x.WkbGeometry?.EnvelopeInternal is not null).Select(x => GisUtility.CreateGeometryFromBBox(3857, x.WkbGeometry?.EnvelopeInternal!)).ToList();
-            var bboxConfigList = bboxGeometries.Select(bbox => new BBoxConfig(bbox, key, layer.Distance)).ToList();
-            resultBboxConfigList.AddRange(bboxConfigList);
+            foreach (var item in istat)
+                if (item.WkbGeometry is not null)
+                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, key, layer.Distance));
         }
 
         return resultBboxConfigList;
