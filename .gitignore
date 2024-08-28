@@ -13,4 +13,4 @@ istat-data/
 ./backend/bin/
 ./backend/obj/
 .DS_Store
-.env*
+.env.*
