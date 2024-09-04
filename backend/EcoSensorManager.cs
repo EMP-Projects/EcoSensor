@@ -5,6 +5,7 @@ using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
+using EcoSensorApi.Osm;
 using EcoSensorApi.Tasks.Osm;
 using Gis.Net.Core.Entities;
 using Gis.Net.Istat;
@@ -93,6 +94,7 @@ public static class EcoSensorManager
         
         // Register service for creating measurement points grid
         builder.Services.AddScoped<MeasurementPointsService>();
+        builder.Services.AddScoped<IOsmPgService, EcoSensorOsm>();
         
         // Register OpenStreetMap tasks
         builder.Services.AddSingleton<MeasurementPointsTasks>();
