@@ -4,6 +4,7 @@ using Gis.Net.Vector.Repositories;
 
 namespace EcoSensorApi.AirQuality.Vector;
 
+/// <inheritdoc />
 public class AirQualityVectorRepository : 
     GisVectorCoreManyRepository<AirQualityVectorModel, 
         AirQualityVectorDto, 
@@ -21,6 +22,7 @@ public class AirQualityVectorRepository :
     {
     }
 
+    /// <inheritdoc />
     protected override IQueryable<AirQualityVectorModel> ParseQueryParams(IQueryable<AirQualityVectorModel> query, AirQualityVectorQuery? queryByParams)
     {
         if (queryByParams?.SourceData != null) 

@@ -1,12 +1,19 @@
 using EcoSensorApi.AirQuality.Indexes.Eu;
 using EcoSensorApi.AirQuality.Indexes.Us;
+
 namespace EcoSensorApi.AirQuality.Indexes;
 
+/// <summary>
+/// Represents the Air Quality Index (AQI) for both EU and US standards.
+/// </summary>
 public static class AirQualityIndex
 {
+    /// <summary>
+    /// Gets or sets the list of EU air quality levels.
+    /// </summary>
     public static List<EuAirQualityLevel> EuIndexes { get; set; } =
     [
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -18,7 +25,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Good),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -30,7 +37,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Fair),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -42,7 +49,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Moderate),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -54,7 +61,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Poor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -66,7 +73,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.VeryPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -78,7 +85,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.ExtremelyPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -90,7 +97,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Good),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -102,7 +109,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Fair),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -114,7 +121,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Moderate),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -126,7 +133,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Poor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -138,7 +145,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.VeryPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -150,7 +157,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.ExtremelyPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -162,7 +169,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Good),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -174,7 +181,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Fair),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -186,7 +193,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Moderate),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -198,7 +205,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Poor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -210,7 +217,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.VeryPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -222,7 +229,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.ExtremelyPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -234,7 +241,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Good),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -246,7 +253,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Fair),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -258,7 +265,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Moderate),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -270,7 +277,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Poor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -282,7 +289,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.VeryPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -294,7 +301,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.ExtremelyPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -306,7 +313,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Good),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -318,7 +325,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Fair),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -330,7 +337,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Moderate),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -342,7 +349,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.Poor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -354,7 +361,7 @@ public static class AirQualityIndex
             Color = EuLevelColor(EEuAirQualityLevel.VeryPoor),
             Unit = "μg/m3"
         },
-        new EuAirQualityLevel
+        new()
         {
             EntityKey = "Eu AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -368,9 +375,12 @@ public static class AirQualityIndex
         }
     ];
     
+    /// <summary>
+    /// Gets or sets the list of US air quality levels.
+    /// </summary>
     public static List<UsAirQualityLevel> UsIndexes { get; set; } =
     [
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -382,7 +392,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Good),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -394,7 +404,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Moderate),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -406,7 +416,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.UnhealthyForSensitiveGroups),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -418,7 +428,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Unhealthy),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -430,7 +440,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.VeryUnhealthy),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -442,7 +452,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.UnhealthyForSensitiveGroups),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -454,7 +464,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Unhealthy),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -466,7 +476,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.VeryUnhealthy),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -478,7 +488,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Hazardous),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -490,7 +500,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Good),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -502,7 +512,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Moderate),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -514,7 +524,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.UnhealthyForSensitiveGroups),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -526,7 +536,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Unhealthy),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -538,7 +548,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.VeryUnhealthy),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -550,7 +560,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Hazardous),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -562,7 +572,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Good),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -574,7 +584,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Moderate),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -586,7 +596,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.UnhealthyForSensitiveGroups),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -598,7 +608,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Unhealthy),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -610,7 +620,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.VeryUnhealthy),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -622,7 +632,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Hazardous),
             Unit = "μg/m3"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -634,7 +644,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Good),
             Unit = "ppm"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -646,7 +656,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Moderate),
             Unit = "ppm"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -658,7 +668,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.UnhealthyForSensitiveGroups),
             Unit = "ppm"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -670,7 +680,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Unhealthy),
             Unit = "ppm"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -682,7 +692,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.VeryUnhealthy),
             Unit = "ppm"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -694,7 +704,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Hazardous),
             Unit = "ppm"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -706,7 +716,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Good),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -718,7 +728,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Moderate),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -730,7 +740,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.UnhealthyForSensitiveGroups),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -742,7 +752,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Unhealthy),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -754,7 +764,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.VeryUnhealthy),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -766,7 +776,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Hazardous),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -778,7 +788,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Good),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -790,7 +800,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Moderate),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -802,7 +812,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.UnhealthyForSensitiveGroups),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -814,7 +824,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.Unhealthy),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -826,7 +836,7 @@ public static class AirQualityIndex
             Color = UsLevelColor(EUsAirQualityLevel.VeryUnhealthy),
             Unit = "ppb"
         },
-        new UsAirQualityLevel
+        new()
         {
             EntityKey = "Us AirQuality Level",
             TimeStamp = DateTime.UtcNow,
@@ -853,6 +863,11 @@ public static class AirQualityIndex
         };
     }
 
+    /// <summary>
+    /// Gets the name of the EU air quality level.
+    /// </summary>
+    /// <param name="level">The EU air quality level.</param>
+    /// <returns>The name of the EU air quality level.</returns>
     public static string EuLevelName(EEuAirQualityLevel level)
     {
         return level switch {
@@ -866,6 +881,11 @@ public static class AirQualityIndex
         };
     }
 
+    /// <summary>
+    /// Gets the name of the US air quality level.
+    /// </summary>
+    /// <param name="level">The US air quality level.</param>
+    /// <returns>The name of the US air quality level.</returns>
     public static string UsLevelName(EUsAirQualityLevel level)
     {
         return level switch

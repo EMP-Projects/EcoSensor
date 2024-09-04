@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EcoSensorApi.AirQuality.Vector;
 
+/// <inheritdoc />
 [ApiController]
 [Route("api/v{version:apiVersion}/airQuality")]
 public class AirQualityVectorController : GisRootVectorManyController<AirQualityVectorModel, 
@@ -15,7 +16,7 @@ public class AirQualityVectorController : GisRootVectorManyController<AirQuality
     AirQualityPropertiesModel, 
     AirQualityPropertiesDto>
 {
-    
+    /// <inheritdoc />
     public AirQualityVectorController(
         ILogger<AirQualityVectorController> logger, 
         IConfiguration configuration, 

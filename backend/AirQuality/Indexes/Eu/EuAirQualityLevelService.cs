@@ -1,6 +1,7 @@
 
 namespace EcoSensorApi.AirQuality.Indexes.Eu;
 
+/// <inheritdoc />
 public class EuAirQualityLevelService : AbstractAirQualityLevelService<EuAirQualityLevel, EuAirQualityLevelDto, EuAirQualityQuery, EuAirQualityLevelRequest>
 {
 

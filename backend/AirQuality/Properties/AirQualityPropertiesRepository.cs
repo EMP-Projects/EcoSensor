@@ -3,6 +3,7 @@ using Gis.Net.Core.Repositories;
 
 namespace EcoSensorApi.AirQuality.Properties;
 
+/// <inheritdoc />
 public class AirQualityPropertiesRepository : RepositoryCore<AirQualityPropertiesModel, 
     AirQualityPropertiesDto, 
     AirQualityPropertiesQuery, 
@@ -17,7 +18,8 @@ public class AirQualityPropertiesRepository : RepositoryCore<AirQualityPropertie
         base(logger, context, mapper)
     {
     }
-    
+
+    /// <inheritdoc />
     protected override IQueryable<AirQualityPropertiesModel> ParseQueryParams(IQueryable<AirQualityPropertiesModel> query, AirQualityPropertiesQuery? queryByParams)
     {
         if (queryByParams?.Pollution is not null)

@@ -45,13 +45,13 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     /// <summary>
     /// Represents the OsmProperties table in the EcoSensorDbContext.
     /// </summary>
-    public DbSet<OsmPropertiesModel>? OsmProperties { get; set; }
+    public DbSet<OsmPropertiesModel> OsmProperties { get; set; }
     
     /// <summary>
     /// Represents the OsmVector entity in the EcoSensorDbContext.
     /// OsmVector is used to store the OpenStreetMap vector data.
     /// </summary>
-    public DbSet<OsmVectorModel>? OsmVector { get; set; }
+    public DbSet<OsmVectorModel> OsmVector { get; set; }
 
     /// <summary>
     /// Represents the database context for the EcoSensor API.

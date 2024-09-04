@@ -1,6 +1,7 @@
 using EcoSensorApi.MeasurementPoints;
 namespace EcoSensorApi.Tasks.Osm;
 
+/// <inheritdoc />
 public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
 {
 

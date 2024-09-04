@@ -5,6 +5,7 @@ using Gis.Net.Core.Repositories;
 
 namespace EcoSensorApi.AirQuality.Indexes;
 
+/// <inheritdoc />
 public abstract class AbstractAirQualityLevelRepository<TModel, TDto, TQuery> : 
     RepositoryCore<TModel, TDto, TQuery, EcoSensorDbContext>
 where TDto: DtoBase, IAirQualityLevelDto
@@ -20,6 +21,7 @@ where TQuery: QueryBase, IAirQualityLevelQuery
     {
     }
 
+    /// <inheritdoc />
     protected override IQueryable<TModel> ParseQueryParams(IQueryable<TModel> query, TQuery? queryByParams)
     {
         if (queryByParams?.Pollution is not null)

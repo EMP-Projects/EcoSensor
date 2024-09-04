@@ -1,6 +1,7 @@
 namespace EcoSensorApi.AirQuality.Properties;
 
-public interface IAirQualityPropertiesRequest : IAirQualityPropertiesModel
+/// <inheritdoc />
+public interface IAirQualityPropertiesRequest : IAirQualityBase
 {
     
 }
