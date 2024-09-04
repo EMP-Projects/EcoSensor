@@ -3,6 +3,7 @@ using Gis.Net.Core.Services;
 
 namespace EcoSensorApi.AirQuality.Properties;
 
+/// <inheritdoc />
 public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel, 
     AirQualityPropertiesDto, 
     AirQualityPropertiesQuery, 

@@ -5,6 +5,7 @@ using Gis.Net.Core.Services;
 
 namespace EcoSensorApi.AirQuality.Indexes;
 
+/// <inheritdoc />
 public abstract class AbstractAirQualityLevelService<TModel, TDto, TQuery, TRequest> : 
     ServiceCore<TModel, TDto, TQuery, TRequest, EcoSensorDbContext>
     where TDto: DtoBase, IAirQualityLevelDto

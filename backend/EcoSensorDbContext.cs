@@ -45,13 +45,13 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     /// <summary>
     /// Represents the OsmProperties table in the EcoSensorDbContext.
     /// </summary>
-    public DbSet<OsmPropertiesModel>? OsmProperties { get; set; }
+    public DbSet<OsmPropertiesModel> OsmProperties { get; set; }
     
     /// <summary>
     /// Represents the OsmVector entity in the EcoSensorDbContext.
     /// OsmVector is used to store the OpenStreetMap vector data.
     /// </summary>
-    public DbSet<OsmVectorModel>? OsmVector { get; set; }
+    public DbSet<OsmVectorModel> OsmVector { get; set; }
 
     /// <summary>
     /// Represents the database context for the EcoSensor API.
@@ -92,13 +92,9 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
                 Id = 1,
                 EntityKey = "Gioia del Colle",
                 TimeStamp = DateTime.UtcNow,
-                Distance = 100,
-                MatrixDistancePoints = 2500,
-                Name = "limits_P_72_municipalities.geojson",
-                RegionField = "reg_istat_code_num",
                 RegionCode = 16,
-                CityField = "com_istat_code_num",
-                CityCode = 72021
+                CityCode = 72021,
+                CityName = "Gioia del Colle",
             });
     }
 }

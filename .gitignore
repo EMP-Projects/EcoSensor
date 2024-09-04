@@ -8,6 +8,9 @@ osm-data-dev/
 ecosensor-data/
 ecosensor-data-dev/
 openmeteo-data/
+istat-data/
 .idea/
 ./backend/bin/
 ./backend/obj/
+.DS_Store
+.env.*

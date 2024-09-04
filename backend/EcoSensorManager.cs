@@ -5,17 +5,27 @@ using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
+using EcoSensorApi.Osm;
 using EcoSensorApi.Tasks.Osm;
 using Gis.Net.Core.Entities;
+using Gis.Net.Istat;
 using Gis.Net.Osm.OsmPg;
 
 namespace EcoSensorApi;
 
+/// <summary>
+/// Provides extension methods for configuring EcoSensor services.
+/// </summary>
 public static class EcoSensorManager
 {
-    
+    /// <summary>
+    /// Adds EcoSensor services to the specified <see cref="WebApplicationBuilder"/>.
+    /// </summary>
+    /// <param name="builder">The <see cref="WebApplicationBuilder"/> to configure.</param>
+    /// <returns>The configured <see cref="WebApplicationBuilder"/>.</returns>
     public static WebApplicationBuilder AddEcoSensor(this WebApplicationBuilder builder)
     {
+        // Configure PostgreSQL connection for EcoSensor
         var connection = new ConnectionPgSql(
             builder.Configuration["POSTGRES_HOST"]!,
             builder.Configuration["POSTGRES_PORT"]!,
@@ -28,19 +38,49 @@ public static class EcoSensorManager
             WriteBufferSize = 24000
         };
         
+        // Add PostGIS services for EcoSensorDbContext
         builder.Services.AddPostGis<EcoSensorDbContext>(connection, 
             builder.Environment.ApplicationName,
             builder.Environment.IsDevelopment());
         
-        builder.AddOsmPostGis<EcoSensorDbContext>(connection);
+        var connectionOsm = new ConnectionPgSql(
+            builder.Configuration["POSTGRES_OSM_HOST"]!,
+            builder.Configuration["POSTGRES_OSM_PORT"]!,
+            builder.Configuration["POSTGRES_OSM_DB"]!,
+            builder.Configuration["POSTGRES_OSM_USER"]!,
+            builder.Configuration["POSTGRES_OSM_PASS"]!
+        )
+        {
+            ReadBufferSize = 24000,
+            WriteBufferSize = 24000
+        };
+        
+        // Add OSM PostGIS services for EcoSensorDbContext
+        builder.AddOsmPostGis<EcoSensorDbContext>(connectionOsm);
+        
+        // Configure PostgreSQL connection for ISTAT
+        var connectionIstat = new ConnectionPgSql(
+            builder.Configuration["POSTGRES_ISTAT_HOST"]!,
+            builder.Configuration["POSTGRES_ISTAT_PORT"]!,
+            builder.Configuration["POSTGRES_ISTAT_DB"]!,
+            builder.Configuration["POSTGRES_ISTAT_USER"]!,
+            builder.Configuration["POSTGRES_ISTAT_PASS"]!
+        )
+        {
+            ReadBufferSize = 24000,
+            WriteBufferSize = 24000
+        };
+        
+        // Add ISTAT GIS services
+        builder.AddIstatGis(connectionIstat);
 
-        // repository
+        // Register repositories
         builder.Services.AddScoped<AirQualityPropertiesRepository>();
         builder.Services.AddScoped<AirQualityPropertiesService>();
         builder.Services.AddScoped<EuAirQualityLevelRepository>();
         builder.Services.AddScoped<UsAirQualityLevelRepository>();
         
-        // service
+        // Register services
         builder.Services.AddScoped<AirQualityVectorRepository>();
         builder.Services.AddScoped<AirQualityVectorService>();
         builder.Services.AddScoped<UsAirQualityLevelService>();
@@ -49,13 +89,14 @@ public static class EcoSensorManager
         builder.Services.AddScoped<ConfigRepository>();
         builder.Services.AddScoped<ConfigService>();
         
-        // mappers 
+        // Register AutoMapper with the executing assembly
         builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
-        // servizio per creare la griglia dei punti di misurazione
+        // Register service for creating measurement points grid
         builder.Services.AddScoped<MeasurementPointsService>();
+        builder.Services.AddScoped<IOsmPgService, EcoSensorOsm>();
         
-        // OpenStreetMap tasks
+        // Register OpenStreetMap tasks
         builder.Services.AddSingleton<MeasurementPointsTasks>();
         builder.Services.AddSingleton<SeedFeaturesTasks>();
         builder.Services.AddSingleton<AirQualityTasks>();

@@ -2,8 +2,10 @@ using Gis.Net.Core.Mapper;
 
 namespace EcoSensorApi.AirQuality.Indexes.Eu;
 
+/// <inheritdoc />
 public class EuAirQualityLevelMapper : AbstractMapperProfile<EuAirQualityLevel, EuAirQualityLevelDto, EuAirQualityLevelRequest>
 {
+    /// <inheritdoc />
     public EuAirQualityLevelMapper()
     {
         ModelToDtoMapper

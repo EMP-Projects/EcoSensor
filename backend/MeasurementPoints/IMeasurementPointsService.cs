@@ -1,5 +1,8 @@
 namespace EcoSensorApi.MeasurementPoints;
 
+/// <summary>
+/// Provides methods for synchronizing measurement points, seeding geographic features, and reading air quality values.
+/// </summary>
 public interface IMeasurementPointsService
 {
     /// <summary>

@@ -78,21 +78,12 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             if (coordinatesGeom is null)
                 continue;
-            
-            // leggo le configurazioni del layer
-            var configDistance = (await _configService.List(new ConfigQuery
-            {
-                Name = osm.EntityKey
-            })).FirstOrDefault();
-
-            if (configDistance is null)
-                throw new Exception("Non riesco a leggere le configurazioni");
 
             // per ogni coordinate seleziono solo quelle ad una certa distanza configurata
-            foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= configDistance.MatrixDistancePoints) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
+            foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= 2500) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
             {
                 measurementPoints.Add(c);
-                
+
                 var aqPoint = new AirQualityVectorDto
                 {
                     SourceData = ESourceData.Osm,
@@ -111,7 +102,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                 {
                     // altrimenti solo se maggiore o uguale alla distanza configurata per il layer
                     var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
-                    if (nearestPoint?.Geom?.Distance(c) >= configDistance.MatrixDistancePoints)
+                    if (nearestPoint?.Geom?.Distance(c) >= 2500)
                         await _airQualityVectorService.Insert(aqPoint);
                 }
             }
@@ -127,16 +118,11 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <exception cref="Exception">Thrown if there is an error while seeding the features.</exception>
     public async Task<int> SeedFeatures()
     {
-        var listGeomFilters = await _configService.BBoxGeometries();
-        return await SeedGeometries(listGeomFilters);
-    }
-    
-    private async Task<int> SeedGeometries(IEnumerable<BBoxConfig> geometries)
-    {
-        var resultSeed = 0;
-        foreach (var geomFilter in geometries)
-            resultSeed += await _osmVectorService.SeedGeometries(geomFilter.BBox, geomFilter.Config.Name);
-        return resultSeed;
+        var bboxList = await _configService.BBoxGeometries();
+        var result = 0;
+        foreach (var bbox in bboxList)
+            result += await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName);
+        return result;
     }
 
     private async Task<List<AirQualityPropertiesDto>> CreateListAqValues(

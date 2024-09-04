@@ -5,6 +5,7 @@ using NetTopologySuite.Features;
 
 namespace EcoSensorApi.AirQuality.Vector;
 
+/// <inheritdoc />
 public class AirQualityVectorService : 
     GisVectorCoreManyService<AirQualityVectorModel, 
         AirQualityVectorDto, 
@@ -23,12 +24,14 @@ public class AirQualityVectorService :
         
     }
 
+    /// <inheritdoc />
     protected override Task<Feature> OnLoadProperties(Feature feature, AirQualityVectorDto dto)
     {
         feature.Attributes.Add(NameProperties, new AirQualityLatLng(dto.Lat, dto.Lng));
         return Task.FromResult(feature);
     }
 
+    /// <inheritdoc />
     protected override Task<long[]?> QueryParamsByProperties(AirQualityVectorQuery query) => Task.FromResult<long[]?>(null);
     
 }

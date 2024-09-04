@@ -1,5 +1,6 @@
 namespace EcoSensorApi.AirQuality.Indexes.Us;
 
+/// <inheritdoc />
 public class UsAirQualityLevelService : AbstractAirQualityLevelService<UsAirQualityLevel, UsAirQualityLevelDto, UsAirQualityQuery, UsAirQualityLevelRequest>
 {
     /// <inheritdoc />

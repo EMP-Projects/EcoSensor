@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EcoSensorApi.AirQuality.Properties;
 
+/// <inheritdoc />
 [ApiController]
 [Route("api/v{version:apiVersion}/measures")]
 public class AirQualityPropertiesController : RootReadOnlyController<AirQualityPropertiesModel, AirQualityPropertiesDto, AirQualityPropertiesQuery, AirQualityPropertiesRequest, EcoSensorDbContext>

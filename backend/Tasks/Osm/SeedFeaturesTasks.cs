@@ -1,6 +1,7 @@
 using EcoSensorApi.MeasurementPoints;
 namespace EcoSensorApi.Tasks.Osm;
 
+/// <inheritdoc />
 public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
 {
 
@@ -23,7 +24,7 @@ public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(10);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(5);
 
     /// <summary>
     /// Gets the name of the Osm task.

@@ -2,6 +2,7 @@ using AutoMapper;
 
 namespace EcoSensorApi.AirQuality.Indexes.Us;
 
+/// <inheritdoc />
 public class UsAirQualityLevelRepository : AbstractAirQualityLevelRepository<UsAirQualityLevel, UsAirQualityLevelDto, UsAirQualityQuery>
 {
 
@@ -13,6 +14,7 @@ public class UsAirQualityLevelRepository : AbstractAirQualityLevelRepository<UsA
     {
     }
 
+    /// <inheritdoc />
     protected override IQueryable<UsAirQualityLevel> ParseQueryParams(IQueryable<UsAirQualityLevel> query, UsAirQualityQuery? queryByParams)
     {
         if (queryByParams?.Level is not null)
