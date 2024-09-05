@@ -185,21 +185,21 @@ public class MeasurementPointsService : IMeasurementPointsService
     }
 
     /// <summary>
-    /// Legge i valori di qualità dell'aria dalla API e li salva nel database.
+    /// Reads air quality values from the API and saves them in the database.
     /// </summary>
-    /// <returns>Il numero totale di nuovi dati di qualità dell'aria registrati.</returns>
+    /// <returns>The total number of new air quality data recorded.</returns>
     public async Task<int> AirQuality()
     {
-        // leggere i records delle coordinate geografiche dei punti di misurazione
+        // read the records of the geographical coordinates of the measurement points
         var pointsFeatures = await _airQualityVectorService.FeatureCollection();
 
         if (pointsFeatures is null)
         {
-            _logger.LogWarning("Non sono riuscito a leggere le features dei punti di misurazione");
+            _logger.LogWarning("I was unable to read the features of the measurement points");
             return 0;
         }
 
-        // estrarre le coordinate ed effettuare la chiamata API a OpenMeteo eliminando quelle null
+        // extract the coordinates and make the API call to OpenMeteo eliminating the null ones
         var coordinates = pointsFeatures
             .Select(features => features.Attributes.GetOptionalValue(_airQualityVectorService.NameProperties) as AirQualityLatLng)
             .Where(x => x is not null)
@@ -207,7 +207,7 @@ public class MeasurementPointsService : IMeasurementPointsService
 
         if (coordinates.Length == 0)
         {
-            const string msg = "Non sono riuscito a leggere le coordinate dei punti di misura";
+            const string msg = "I was unable to read the coordinates of the measurement points";
             _logger.LogError(msg);
             return 0;
         }
@@ -228,7 +228,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             var resultAq = await _airQualityService.AirQuality(openMeteoOptions);
             if (resultAq is null)
             {
-                const string msg = "Non sono riuscito a leggere dalla API di OpenMeteo";
+                const string msg = "I was unable to read from the OpenMeteo API";
                 _logger.LogError(msg);
                 return 0;
             }
@@ -238,14 +238,14 @@ public class MeasurementPointsService : IMeasurementPointsService
                 if (r.Longitude is null && r.Latitude is null) continue;
                 var pointWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(r.Longitude!.Value, r.Latitude!.Value);
                 
-                // prendo la feature più vicina alle coordinate della risposta dalle API di OpenMeteo
+                // I take the feature closest to the response coordinates from the OpenMeteo API
                 var nearestPoint = pointsFeatures?.MinBy(x => x.Geometry.Distance(pointWebMercator));
                 
-                // leggo Id della feature
+                // read the feature ID
                 var propId = nearestPoint?.Attributes.GetOptionalValue("Id").ToString();
                 if (propId is null)
                 {
-                    const string msg = "Non riesco a leggere l'Id del punto di misura";
+                    const string msg = "I cannot read the measuring point ID";
                     _logger.LogError(msg);
                     return 0;
                 }
@@ -324,7 +324,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             }
         }
         
-        // aggiungere e salvare i dto nel database
+        // add and save data in the database
         foreach (var dto in listAllNewAirQualityDto)
             await _airQualityPropertiesService.Insert(dto);
         

@@ -29,7 +29,7 @@ public class MeasurementPointsTasks : OsmTasks<MeasurementPointsService>
     public override async Task HandleNotificationsAsync()
     {
         var result = await Service().MeasurementPoints();
-        Logger.LogInformation($"Sono stati trovati {result} nuovi punti di misurazione");
+        Logger.LogInformation($"{result} new measurement points were found");
     }
 
     /// <summary>

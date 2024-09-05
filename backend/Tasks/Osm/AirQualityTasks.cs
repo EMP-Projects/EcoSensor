@@ -37,6 +37,6 @@ public class AirQualityTasks : OsmTasks<MeasurementPointsService>
     public override async Task HandleNotificationsAsync()
     {
         var result = await Service().AirQuality();
-        Logger.LogInformation($"Sono stati registrati {result} nuovi dati di qualità dell'aria");
+        Logger.LogInformation($"{result} new air quality data has been recorded");
     }
 }

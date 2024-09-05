@@ -17,7 +17,7 @@ public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
     public override async Task HandleNotificationsAsync()
     {
         var result = await Service().SeedFeatures();
-        var msg = $"Sono stati trovati {result} nuove features geografiche";
+        var msg = $"{result} new geographic features have been found";
         Logger.LogInformation(msg);
     }
 
