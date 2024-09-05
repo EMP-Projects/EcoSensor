@@ -120,8 +120,13 @@ public class MeasurementPointsService : IMeasurementPointsService
     {
         var bboxList = await _configService.BBoxGeometries();
         var result = 0;
-        foreach (var bbox in bboxList)
+        var index = 0;
+        for (; index < bboxList.Count; index++)
+        {
+            var bbox = bboxList[index];
             result += await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName);
+        }
+
         return result;
     }
 

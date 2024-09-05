@@ -64,8 +64,6 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     /// <param name="modelBuilder">The builder being used to construct the model for this context.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     { 
-        // modelBuilder.AddExtensionPostGis();
-        
         modelBuilder.SetTimeStamp<AirQualityPropertiesModel>();
         modelBuilder.SetTimeStamp<AirQualityVectorModel>();
         modelBuilder.SetTimeStamp<OsmPropertiesModel>();
@@ -86,15 +84,6 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
             modelBuilder.Entity<UsAirQualityLevel>().HasData(entry.Value);
         }
         
-        modelBuilder.Entity<ConfigModel>().HasData(
-            new ConfigModel
-            {
-                Id = 1,
-                EntityKey = "Gioia del Colle",
-                TimeStamp = DateTime.UtcNow,
-                RegionCode = 16,
-                CityCode = 72021,
-                CityName = "Gioia del Colle",
-            });
+        modelBuilder.Add_GioiadelColle();
     }
 }
