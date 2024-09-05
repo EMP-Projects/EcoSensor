@@ -84,6 +84,6 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
             modelBuilder.Entity<UsAirQualityLevel>().HasData(entry.Value);
         }
         
-        modelBuilder.Add_GioiadelColle();
+        modelBuilder.AddInitConfiguration();
     }
 }

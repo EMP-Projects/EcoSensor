@@ -36,8 +36,6 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
             throw new Exception(msg);
         }
 
-        var layersKeys = layers.Select(x => x.EntityKey).ToArray();
-        var key = string.Join(":", layersKeys);
         var resultBboxConfigList = new List<BBoxConfig>();
 
         foreach (var layer in layers)
@@ -61,7 +59,7 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
 
             foreach (var item in istat)
                 if (item.WkbGeometry is not null)
-                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, key));
+                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, layer.EntityKey));
         }
 
         return resultBboxConfigList;

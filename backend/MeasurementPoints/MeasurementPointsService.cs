@@ -10,7 +10,7 @@ using NetTopologySuite.Geometries;
 namespace EcoSensorApi.MeasurementPoints;
 
 /// <summary>
-/// Servizio per calcolare i punti di misura per la qualità dell'aria
+/// Service to calculate measurement points for air quality
 /// </summary>
 public class MeasurementPointsService : IMeasurementPointsService 
 {
@@ -22,7 +22,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly ConfigService _configService;
 
     /// <summary>
-    /// Servizio per calcolare i punti di misura per la qualità dell'aria
+    /// Service to calculate measurement points for air quality
     /// </summary>
     public MeasurementPointsService(
         OsmVectorService<EcoSensorDbContext> osmVectorService, 
@@ -41,10 +41,10 @@ public class MeasurementPointsService : IMeasurementPointsService
     }
 
     /// <summary>
-    /// Calcola i punti di misura per la qualità dell'aria.
+    /// Calculate measurement points for air quality.
     /// </summary>
-    /// <returns>Il numero totale di nuovi punti di misura creati.</returns>
-    /// <exception cref="Exception">Eccezione generica.</exception>
+    /// <returns>The total number of new measurement points created.</returns>
+    /// <exception cref="Exception">Generic exception.</exception>
     public async Task<int> MeasurementPoints()
     {
         // leggo i records di vettori
@@ -55,12 +55,12 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         if (listOsm.Count == 0)
         {
-            const string msg = "Non riesco a leggere le geometrie da OpenStreet Map";
+            const string msg = "I can't read geometries from OpenStreetMap";
             _logger.LogError(msg);
             return 0;
         }
 
-        // leggo la collection di features di tutti i punti di misurazione per controllare eventuali duplicati
+        // read the feature collection of all measurement points to check for any duplicates
         var listMeasurementPoints = await _airQualityVectorService.List(new AirQualityVectorQuery
         {
             SrCode = 3857
@@ -68,18 +68,18 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         var measurementPoints = new List<Point>();
         
-        // leggo tutti i punti creati dalle coordinate delle geometrie
+        // read all the points created from the geometry coordinates
         foreach (var osm in listOsm)
         {
-            // leggo tutte le coordinate
+            // read all the coordinates
             var coordinates = osm.Geom?.Coordinates;
-            // creo una collection di punti geografici dalle coordinate
+            // I create a collection of geographic points from coordinates
             var coordinatesGeom = coordinates?.Select(coordinate => GisUtility.CreatePoint(3857, coordinate)).ToList();
             
             if (coordinatesGeom is null)
                 continue;
 
-            // per ogni coordinate seleziono solo quelle ad una certa distanza configurata
+            // for each coordinate I select only those at a certain configured distance
             foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= 2500) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
             {
                 measurementPoints.Add(c);
@@ -96,11 +96,11 @@ public class MeasurementPointsService : IMeasurementPointsService
                 };
 
                 if (listMeasurementPoints?.Count == 0)
-                    // se non esistono altri punti nel database
+                    // if no other points exist in the database
                     await _airQualityVectorService.Insert(aqPoint);
                 else
                 {
-                    // altrimenti solo se maggiore o uguale alla distanza configurata per il layer
+                    // otherwise only if greater than or equal to the distance configured for the layer
                     var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
                     if (nearestPoint?.Geom?.Distance(c) >= 2500)
                         await _airQualityVectorService.Insert(aqPoint);
@@ -108,6 +108,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             }
         }
 
+        // save the data in the database
         return await _airQualityVectorService.SaveContext();
     }
 
@@ -164,7 +165,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             result.Add(new AirQualityPropertiesDto
             {
-                EntityKey = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i+1}",
+                EntityKey = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i}",
                 TimeStamp = DateTime.UtcNow,
                 Date = DateTime.Parse(time.value).ToUniversalTime(),
                 PollutionText = Pollution.GetPollutionDescription(pollution),
@@ -190,6 +191,14 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns>The total number of new air quality data recorded.</returns>
     public async Task<int> AirQuality()
     {
+        // controllo se ultimo dato rilevato è inferiore a 1 ora
+        var ifLastAirQuality = await _airQualityPropertiesService.CheckIfLastMeasureIsOlderThanHourAsync();
+        if (ifLastAirQuality)
+        {
+            _logger.LogInformation("The last air quality measurement is less than one hour old");
+            return 0;
+        }
+        
         // read the records of the geographical coordinates of the measurement points
         var pointsFeatures = await _airQualityVectorService.FeatureCollection();
 

@@ -13,7 +13,7 @@ public static class ConfigManager
     /// </summary>
     /// <param name="modelBuilder">The <see cref="ModelBuilder"/> to configure.</param>
     /// <returns>The configured <see cref="ModelBuilder"/>.</returns>
-    public static ModelBuilder Add_GioiadelColle(this ModelBuilder modelBuilder)
+    public static ModelBuilder AddInitConfiguration(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ConfigModel>().HasData(
             new ConfigModel
@@ -24,6 +24,17 @@ public static class ConfigManager
                 RegionCode = 16,
                 CityCode = 72021,
                 CityName = "Gioia del Colle",
+            });
+        
+        modelBuilder.Entity<ConfigModel>().HasData(
+            new ConfigModel
+            {
+                Id = 2,
+                EntityKey = "Siena",
+                TimeStamp = DateTime.UtcNow,
+                RegionCode = 9,
+                CityCode = 52032,
+                CityName = "Siena",
             });
 
         return modelBuilder;
