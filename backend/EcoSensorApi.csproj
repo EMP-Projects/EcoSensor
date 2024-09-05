@@ -7,6 +7,14 @@
         <LangVersion>default</LangVersion>
         <TargetFramework>net8.0</TargetFramework>
         <UserSecretsId>ce75eb87-aa0a-4be3-85ff-902a124f58de</UserSecretsId>
+        <Title>EcoSensorApi</Title>
+        <Description>APi per il monitoraggio ambientale</Description>
+        <Copyright>https://github.com/EMP-Projects/EcoSensor</Copyright>
+        <PackageProjectUrl>https://github.com/EMP-Projects/EcoSensor</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/EMP-Projects/EcoSensor/LICENSE.md</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/EMP-Projects/EcoSensor</RepositoryUrl>
+        <PackageTags>.net iot</PackageTags>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
