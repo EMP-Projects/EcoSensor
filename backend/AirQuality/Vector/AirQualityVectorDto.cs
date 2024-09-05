@@ -26,4 +26,8 @@ public class AirQualityVectorDto : GisVectorManyDto<AirQualityPropertiesDto>, IA
     /// </summary>
     [JsonPropertyName("lng")]
     public double Lng { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("entityVectorId")]
+    public long EntityVectorId { get; set; }
 }

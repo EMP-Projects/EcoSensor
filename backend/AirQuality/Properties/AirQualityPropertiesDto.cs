@@ -70,7 +70,7 @@ public class AirQualityPropertiesDto : DtoBase, IAirQualityPropertiesDto, IGisPr
     /// </summary>
     [JsonPropertyName("sourceText"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? SourceText { get; set; }
-    
+
     /// <summary>
     /// Gets or sets the source of the air quality data.
     /// </summary>

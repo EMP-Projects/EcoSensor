@@ -24,7 +24,7 @@ public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(5);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(15);
 
     /// <summary>
     /// Gets the name of the Osm task.

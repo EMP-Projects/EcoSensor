@@ -32,7 +32,8 @@ public class AirQualityVectorService :
     {
         // Load the properties of the feature from the DTO object and add them to the feature attributes collection.
         var properties = dto.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList();
-        feature.Attributes.Add(NameProperties, properties);
+        if (properties != null && properties.Count != 0)
+            feature.Attributes.Add(NameProperties, properties);
         return Task.FromResult(feature);
     }
 

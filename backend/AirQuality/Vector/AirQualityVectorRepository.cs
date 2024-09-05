@@ -28,6 +28,9 @@ public class AirQualityVectorRepository :
         if (queryByParams?.SourceData != null) 
             query = query.Where(x => x.SourceData.Equals(queryByParams.SourceData));
         
+        if (queryByParams?.EntityVectorId != null)
+            query = query.Where(x => x.EntityVectorId.Equals(queryByParams.EntityVectorId));
+        
         return base.ParseQueryParams(query, queryByParams);
     }
 }

@@ -92,6 +92,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     TimeStamp = DateTime.UtcNow,
                     Guid = Guid.NewGuid(),
                     EntityKey = osm.EntityKey,
+                    EntityVectorId = osm.Id,
                     Lat = c.Y,
                     Lng = c.X
                 };
@@ -211,7 +212,7 @@ public class MeasurementPointsService : IMeasurementPointsService
 
         // extract the coordinates and make the API call to OpenMeteo eliminating the null ones
         var coordinates = pointsFeatures
-            .Select(features => features.Attributes.GetOptionalValue(_airQualityVectorService.NameProperties) as AirQualityLatLng)
+            .Select(features => features.Attributes.GetOptionalValue(_airQualityVectorService.NameProperties) as AirQualityPropertiesDto)
             .Where(x => x is not null)
             .ToArray();
 
@@ -275,6 +276,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                         pointWebMercator.X,
                         r.Elevation!.Value,
                         long.Parse(propId),
+                        
                         r.HourlyUnits?.Pm10,
                         r.Hourly?.Time,
                         r.Hourly?.Pm10,
@@ -357,19 +359,19 @@ public class MeasurementPointsService : IMeasurementPointsService
     }
     
     /// <summary>
-    /// Retrieves the air quality features for a given key.
+    /// Retrieves the air quality features based on the provided query parameters.
     /// </summary>
-    /// <param name="key">The key to filter the OpenStreetMap vector features.</param>
-    /// <returns>A <see cref="FeatureCollection"/> containing the air quality features, or null if an error occurs.</returns>
-    public async Task<FeatureCollection?> AirQualityFeatures(string? key)
+    /// <param name="query">The query parameters for filtering the air quality features.</param>
+    /// <returns>A <see cref="FeatureCollection"/> containing the air quality features or null if an error occurs.</returns>
+    public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery? query)
     {
         // read the features openstreetmap vector
         var osmFeatures = await _osmVectorService.FeatureCollection(new OsmVectorQuery
         {
             SrCode = 3857,
-            EntityKey = key
+            EntityKey = query?.City
         });
-    
+
         if (osmFeatures is null)
         {
             const string msg = "I can't read the features of the OpenStreetMap vector";
@@ -379,14 +381,14 @@ public class MeasurementPointsService : IMeasurementPointsService
 
         foreach (var feature in osmFeatures)
         {
+            var osmId = feature.Attributes.GetOptionalValue("Id");
             // read the air quality features
             var airQualityFeatures = await _airQualityVectorService.FeatureCollection(new AirQualityVectorQuery
             {
                 SrCode = 3857,
-                LatY = feature.Geometry.Centroid.Y,
-                LngX = feature.Geometry.Centroid.X
+                EntityVectorId = osmId is not null ? long.Parse(osmId.ToString()!) : null
             });
-        
+    
             if (airQualityFeatures is null)
             {
                 const string msg = "I can't read the features of the air quality vector";
@@ -394,18 +396,22 @@ public class MeasurementPointsService : IMeasurementPointsService
                 continue;
             }
 
-            // read the properties of the air quality vector
-            if (feature.Attributes.GetOptionalValue(_airQualityVectorService.NameProperties) is not AirQualityPropertiesDto properties)
+            var properties = new List<AirQualityPropertiesDto>();
+            foreach (var airQualityFeature in airQualityFeatures)
             {
-                const string msg = "I can't read the properties of the air quality vector";
-                _logger.LogError(msg);
-                continue;
+                if (airQualityFeature.Attributes.GetOptionalValue(_airQualityVectorService.NameProperties) is
+                    not List<AirQualityPropertiesDto> airQualityProperties) continue;
+                
+                // add the properties to the feature
+                if (airQualityProperties.Count > 0)
+                    properties.AddRange(airQualityProperties);
             }
-        
-            // add the properties to the feature
-            feature.Attributes.Add(_airQualityVectorService.NameProperties, properties);
-        }
     
+            // add the properties to the feature
+            if (properties.Count > 0)
+                feature.Attributes.Add(_airQualityVectorService.NameProperties, properties);
+        }
+
         return osmFeatures;
     }
 }

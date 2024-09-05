@@ -29,4 +29,10 @@ public class AirQualityVectorModel : GisCoreManyModel<AirQualityPropertiesModel>
     /// </summary>
     [Column("lng")]
     public double Lng { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the entity vector ID.
+    /// </summary>
+    [Column("entity_vector_id")]
+    public long EntityVectorId { get; set; }
 }

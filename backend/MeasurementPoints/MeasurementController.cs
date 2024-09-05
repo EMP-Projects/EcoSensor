@@ -4,7 +4,7 @@ namespace EcoSensorApi.MeasurementPoints;
 
 /// <inheritdoc />
 [ApiController]
-[Route("api/v{version:apiVersion}/measurement")]
+[Route("api/v{version:apiVersion}/measurements")]
 public class MeasurementController : ControllerBase
 {
     private readonly MeasurementPointsService _measurementPointsService;
@@ -18,16 +18,16 @@ public class MeasurementController : ControllerBase
     }
     
     /// <summary>
-    /// Retrieves the measurement points for a given city.
+    /// Retrieves the measurement points based on the provided query parameters.
     /// </summary>
-    /// <param name="city">The name of the city to filter the measurement points.</param>
+    /// <param name="query">The query parameters for filtering the measurement points.</param>
     /// <returns>An <see cref="IActionResult"/> containing the measurement points or an error message.</returns>
-    [HttpGet("{city}")]
-    public async Task<IActionResult> GetMeasurementPoints(string? city)
+    [HttpGet]
+    public async Task<IActionResult> GetMeasurements([FromQuery] MeasurementsQuery query)
     {
         try
         {
-            var result = await _measurementPointsService.AirQualityFeatures(city);
+            var result = await _measurementPointsService.AirQualityFeatures(query);
             if (result == null)
                 return NotFound("No measurement points found");
             return Ok(result);
