@@ -25,9 +25,14 @@ public class AirQualityVectorService :
     }
 
     /// <inheritdoc />
+    public override string? NameProperties { get; set; } = "AirQuality";
+
+    /// <inheritdoc />
     protected override Task<Feature> OnLoadProperties(Feature feature, AirQualityVectorDto dto)
     {
-        feature.Attributes.Add(NameProperties, new AirQualityLatLng(dto.Lat, dto.Lng));
+        // Load the properties of the feature from the DTO object and add them to the feature attributes collection.
+        var properties = dto.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList();
+        feature.Attributes.Add(NameProperties, properties);
         return Task.FromResult(feature);
     }
 

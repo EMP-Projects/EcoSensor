@@ -5,6 +5,7 @@ using EcoSensorApi.Config;
 using Gis.Net.OpenMeteo.AirQuality;
 using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector;
+using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 
 namespace EcoSensorApi.MeasurementPoints;
@@ -227,13 +228,19 @@ public class MeasurementPointsService : IMeasurementPointsService
         for (var c = 0; c < coordinates.Length; c += step)
         {
             var nextItem = c + step - 1;
+            
+            // I take the coordinates in chunks of 10
             var chunkCoordinates = coordinates[c..(nextItem < coordinates.Length ? nextItem : coordinates.Length - 1)]
                 .Select(coords =>
                 {
                     var p = CoordinateConverter.ConvertWebMercatorToWgs84(coords!.Lng, coords.Lat);
                     return new AirQualityLatLng(p.Y, p.X);
                 }).ToArray();
+            
+            // create the options for the OpenMeteo API
             var openMeteoOptions = new AirQualityOptions(chunkCoordinates);
+            
+            // read the data from the OpenMeteo API
             var resultAq = await _airQualityService.AirQuality(openMeteoOptions);
             if (resultAq is null)
             {
@@ -245,6 +252,8 @@ public class MeasurementPointsService : IMeasurementPointsService
             foreach (var r in resultAq)
             {
                 if (r.Longitude is null && r.Latitude is null) continue;
+                
+                // convert the coordinates to WebMercator
                 var pointWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(r.Longitude!.Value, r.Latitude!.Value);
                 
                 // I take the feature closest to the response coordinates from the OpenMeteo API
@@ -259,6 +268,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     return 0;
                 }
                 
+                // add the PM10 data
                 listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                         EPollution.Pm10,
                         pointWebMercator.Y,
@@ -271,6 +281,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                         r.Hourly?.EuropeanAqiPm10
                     ));
                 
+                // add the PM2.5 data
                 listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.Pm25,
                     pointWebMercator.Y,
@@ -283,6 +294,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     r.Hourly?.EuropeanAqiPm25
                 ));
                 
+                // add the carbon monoxide data
                 listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.CarbonMonoxide,
                     pointWebMercator.Y,
@@ -295,6 +307,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     r.Hourly?.EuropeanAqi
                 ));
                 
+                // add the ozone data
                 listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.Ozone,
                     pointWebMercator.Y,
@@ -307,6 +320,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     r.Hourly?.EuropeanAqiOzone
                 ));
                 
+                // add the sulphur dioxide data
                 listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.SulphurDioxide,
                     pointWebMercator.Y,
@@ -319,6 +333,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                     r.Hourly?.EuropeanAqiSulphurDioxide
                 ));
                 
+                // add the nitrogen dioxide data
                 listAllNewAirQualityDto.AddRange(await CreateListAqValues(
                     EPollution.NitrogenDioxide,
                     pointWebMercator.Y,
@@ -337,6 +352,60 @@ public class MeasurementPointsService : IMeasurementPointsService
         foreach (var dto in listAllNewAirQualityDto)
             await _airQualityPropertiesService.Insert(dto);
         
+        // save the data in the database
         return await _airQualityPropertiesService.SaveContext();
+    }
+    
+    /// <summary>
+    /// Retrieves the air quality features for a given key.
+    /// </summary>
+    /// <param name="key">The key to filter the OpenStreetMap vector features.</param>
+    /// <returns>A <see cref="FeatureCollection"/> containing the air quality features, or null if an error occurs.</returns>
+    public async Task<FeatureCollection?> AirQualityFeatures(string? key)
+    {
+        // read the features openstreetmap vector
+        var osmFeatures = await _osmVectorService.FeatureCollection(new OsmVectorQuery
+        {
+            SrCode = 3857,
+            EntityKey = key
+        });
+    
+        if (osmFeatures is null)
+        {
+            const string msg = "I can't read the features of the OpenStreetMap vector";
+            _logger.LogError(msg);
+            return null;
+        }
+
+        foreach (var feature in osmFeatures)
+        {
+            // read the air quality features
+            var airQualityFeatures = await _airQualityVectorService.FeatureCollection(new AirQualityVectorQuery
+            {
+                SrCode = 3857,
+                LatY = feature.Geometry.Centroid.Y,
+                LngX = feature.Geometry.Centroid.X
+            });
+        
+            if (airQualityFeatures is null)
+            {
+                const string msg = "I can't read the features of the air quality vector";
+                _logger.LogError(msg);
+                continue;
+            }
+
+            // read the properties of the air quality vector
+            if (feature.Attributes.GetOptionalValue(_airQualityVectorService.NameProperties) is not AirQualityPropertiesDto properties)
+            {
+                const string msg = "I can't read the properties of the air quality vector";
+                _logger.LogError(msg);
+                continue;
+            }
+        
+            // add the properties to the feature
+            feature.Attributes.Add(_airQualityVectorService.NameProperties, properties);
+        }
+    
+        return osmFeatures;
     }
 }
