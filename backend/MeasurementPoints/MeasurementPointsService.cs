@@ -276,7 +276,6 @@ public class MeasurementPointsService : IMeasurementPointsService
                         pointWebMercator.X,
                         r.Elevation!.Value,
                         long.Parse(propId),
-                        
                         r.HourlyUnits?.Pm10,
                         r.Hourly?.Time,
                         r.Hourly?.Pm10,
