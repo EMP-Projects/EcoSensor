@@ -3,7 +3,6 @@ using Gis.Net.Vector.DTO;
 
 namespace EcoSensorApi.AirQuality.Vector;
 
-
 /// <summary>
 /// Represents a request for air quality vector data.
 /// </summary>
@@ -26,4 +25,8 @@ public class AirQualityVectorRequest : GisVectorRequest, IAirQualityVector
     /// </summary>
     [JsonPropertyName("lng")]
     public double Lng { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("entityVectorId")]
+    public long EntityVectorId { get; set; }
 }

@@ -70,4 +70,11 @@ public class AirQualityPropertiesModel : GisManyPropertiesModel<AirQualityVector
     /// </summary>
     [Column("pollution")]
     public EPollution Pollution { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the color associated with the air quality data.
+    /// </summary>
+    /// <value>The color as a string.</value>
+    [Column("color")]
+    public string? Color { get; set; }
 }

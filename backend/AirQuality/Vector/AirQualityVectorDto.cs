@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using EcoSensorApi.AirQuality.Properties;
+using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector.DTO;
 
 namespace EcoSensorApi.AirQuality.Vector;
@@ -26,4 +27,15 @@ public class AirQualityVectorDto : GisVectorManyDto<AirQualityPropertiesDto>, IA
     /// </summary>
     [JsonPropertyName("lng")]
     public double Lng { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("entityVectorId")]
+    public long EntityVectorId { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the entity vector.
+    /// </summary>
+    /// <value>The entity vector.</value>
+    [JsonPropertyName("entityVector"), JsonIgnore]
+    public OsmVectorDto? EntityVector { get; set; }
 }

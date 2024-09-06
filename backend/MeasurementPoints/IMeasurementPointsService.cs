@@ -6,21 +6,21 @@ namespace EcoSensorApi.MeasurementPoints;
 public interface IMeasurementPointsService
 {
     /// <summary>
-    /// Sincronizza le geometrie lette dalle sorgenti di Dati (OpenStreetMap,ecc.) e rileva i punti di misura
-    /// partendo dal centroide di ogni geometria, le coordinate Sud-Ovest e Nord-Est, se sono distanti più
-    /// di una distanza costante predefinita
+    /// Synchronize the geometries read from the data sources (OpenStreetMap, etc.) and detect the measurement points
+    /// starting from the centroid of each geometry, the South-West and North-East coordinates, if they are further away
+    /// by a predefined constant distance from the centroid.
     /// </summary>
     /// <exception cref="Exception"></exception>
     Task<int> MeasurementPoints();
 
     /// <summary>
-    /// crea la base dati per features geografiche
+    /// Creates the database for geographic features and populates it with the data read from the data sources
     /// </summary>
     /// <returns></returns>
     Task<int> SeedFeatures();
 
     /// <summary>
-    /// legge dalle API i valori di qualità dell'aria
+    /// Reads air quality values from the API and stores them in the database
     /// </summary>
     /// <returns></returns>
     Task<int> AirQuality();

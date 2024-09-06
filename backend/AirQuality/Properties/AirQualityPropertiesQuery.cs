@@ -37,11 +37,11 @@ public class AirQualityPropertiesQuery : QueryBase, IAirQualityPropertiesQuery
     /// </summary>
     [FromQuery(Name="gisId")]
     public long? GisId { get; set; }
-    
+
     /// <summary>
     /// Gets or sets the start date for the query.
     /// </summary>
-    [FromQuery(Name="begin")]
+    [FromQuery(Name = "begin")]
     public DateTime? Begin { get; set; }
     
     /// <summary>

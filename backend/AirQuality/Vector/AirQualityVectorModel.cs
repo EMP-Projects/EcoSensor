@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using EcoSensorApi.AirQuality.Properties;
+using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector.Models;
 
 namespace EcoSensorApi.AirQuality.Vector;
@@ -29,4 +30,10 @@ public class AirQualityVectorModel : GisCoreManyModel<AirQualityPropertiesModel>
     /// </summary>
     [Column("lng")]
     public double Lng { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the entity vector ID.
+    /// </summary>
+    [Column("entity_vector_id")]
+    public long EntityVectorId { get; set; }
 }

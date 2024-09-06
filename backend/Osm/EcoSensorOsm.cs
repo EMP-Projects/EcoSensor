@@ -14,6 +14,16 @@ public class EcoSensorOsm : OsmService<Osm2PgsqlDbContext>
     }
 
     /// <inheritdoc />
+    protected override OsmOptions<PlanetOsmPolygon> OsmOptionsPolygon(Geometry geom)
+    {
+        var options = base.OsmOptionsPolygon(geom);
+        options.OnBeforeQuery = query => query.Where(x => x.Landuse != null);
+        options.Tags = ["residential", "industrial"];
+        options.OnAfterQuery = (query, tags) => query.Where(x => tags.Contains(x.Landuse)).ToList();
+        return options;
+    }
+
+    /// <inheritdoc />
     protected override OsmOptions<PlanetOsmRoads> OsmOptionsRoads(Geometry geom)
     {
         var options = base.OsmOptionsRoads(geom);
