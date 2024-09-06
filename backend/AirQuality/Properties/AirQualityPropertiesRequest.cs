@@ -69,4 +69,8 @@ public class AirQualityPropertiesRequest : RequestBase, IAirQualityPropertiesReq
     [JsonConverter(typeof(JsonStringEnumConverter))]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public EPollution Pollution { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("color")]
+    public string? Color { get; set; }
 }

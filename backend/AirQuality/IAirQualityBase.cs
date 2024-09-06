@@ -54,4 +54,10 @@ public interface IAirQualityBase
     /// Gets or sets the type of pollution measured.
     /// </summary>
     EPollution Pollution { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the color associated with the air quality data.
+    /// </summary>
+    /// <value>The color as a string.</value>
+    string? Color { get; set; }
 }

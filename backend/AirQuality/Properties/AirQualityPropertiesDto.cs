@@ -92,6 +92,13 @@ public class AirQualityPropertiesDto : DtoBase, IAirQualityPropertiesDto, IGisPr
     /// <summary>
     /// Gets or sets the GIS vector data.
     /// </summary>
-    [JsonPropertyName("gis"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("gis"), JsonIgnore]
     public AirQualityVectorDto? Gis { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the color associated with the air quality data.
+    /// </summary>
+    /// <value>The color as a string.</value>
+    [JsonPropertyName("color")]
+    public string? Color { get; set; }
 }

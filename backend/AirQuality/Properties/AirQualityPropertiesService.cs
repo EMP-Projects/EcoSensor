@@ -1,4 +1,5 @@
 using EcoSensorApi.AirQuality.Vector;
+using Gis.Net.Core.Repositories;
 using Gis.Net.Core.Services;
 
 namespace EcoSensorApi.AirQuality.Properties;
@@ -18,7 +19,7 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         base(logger, propertiesRepository)
     {
     }
-    
+
     /// <summary>
     /// Checks if the last air quality measurement is older than one hour.
     /// </summary>

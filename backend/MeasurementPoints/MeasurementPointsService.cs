@@ -1,4 +1,6 @@
 using EcoSensorApi.AirQuality;
+using EcoSensorApi.AirQuality.Indexes.Eu;
+using EcoSensorApi.AirQuality.Indexes.Us;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Config;
@@ -21,6 +23,8 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly ILogger<MeasurementPointsService> _logger;
     private readonly IAirQualityService _airQualityService;
     private readonly ConfigService _configService;
+    private readonly EuAirQualityLevelService _euAirQualityLevelService;
+    private readonly UsAirQualityLevelService _usAirQualityLevelService;
 
     /// <summary>
     /// Service to calculate measurement points for air quality
@@ -31,7 +35,9 @@ public class MeasurementPointsService : IMeasurementPointsService
         ILogger<MeasurementPointsService> logger, 
         IAirQualityService airQualityService, 
         AirQualityPropertiesService airQualityPropertiesService, 
-        ConfigService configService)
+        ConfigService configService, 
+        EuAirQualityLevelService euAirQualityLevelService, 
+        UsAirQualityLevelService usAirQualityLevelService)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
@@ -39,6 +45,8 @@ public class MeasurementPointsService : IMeasurementPointsService
         _airQualityService = airQualityService;
         _airQualityPropertiesService = airQualityPropertiesService;
         _configService = configService;
+        _euAirQualityLevelService = euAirQualityLevelService;
+        _usAirQualityLevelService = usAirQualityLevelService;
     }
 
     /// <summary>
@@ -167,6 +175,20 @@ public class MeasurementPointsService : IMeasurementPointsService
             });
             
             if (airQualityProps.Count != 0) continue;
+
+            var color = string.Empty;
+            
+            if (indexAq?[time.i] is not null)
+            {
+                var colorIndexAq = (await _euAirQualityLevelService.List(new EuAirQualityQuery
+                    {
+                        Value = (double)indexAq[time.i]!,
+                        Pollution = pollution,
+                    })).FirstOrDefault();
+                
+                if (colorIndexAq is not null)
+                    color = colorIndexAq.Color;
+            }
             
             result.Add(new AirQualityPropertiesDto
             {
@@ -176,6 +198,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                 PollutionText = Pollution.GetPollutionDescription(pollution),
                 Pollution = pollution,
                 Unit = unit,
+                Color = color,
                 Value = values[time.i]!.Value,
                 EuropeanAqi = indexAq?[time.i],
                 Lat = lat,
@@ -355,7 +378,10 @@ public class MeasurementPointsService : IMeasurementPointsService
             if (aq.EntityVector?.Geom is null) return null;
             var feature = GisUtility.CreateEmptyFeature(3857, aq.EntityVector?.Geom!);
             feature.Attributes.Add("Id", aq.Id);
+            feature.Attributes.Add("Latitude", aq.Lat);
+            feature.Attributes.Add("Longitude", aq.Lng);
             feature.Attributes.Add("Data", aq.PropertiesCollection);
+            feature.Attributes.Add("OSM", aq.EntityVector?.Properties);
             return feature;
         }).ToArray();
         
