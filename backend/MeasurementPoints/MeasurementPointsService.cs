@@ -158,36 +158,39 @@ public class MeasurementPointsService : IMeasurementPointsService
         var result = new List<AirQualityPropertiesDto>();
         if (times is null) return result;
         
+        // get the color index for the air quality
+        var colorIndexAqList = await _euAirQualityLevelService.List(new EuAirQualityQuery
+        {
+            Pollution = pollution
+        });
+        
+        // get the air quality properties
+        var airQualityPropsList = await _airQualityPropertiesService.List(new AirQualityPropertiesQuery
+        {
+            Pollution = pollution,
+            GisId = gisId,
+            Source = EAirQualitySource.OpenMeteo,
+            Longitude = lng,
+            Latitude = lat
+        });
+        
         foreach (var time in times.Select((value, i) => new { i, value}))
         {
             if (time.value is null) continue;
             if (values?[time.i] is null) continue;
             if (unit is null) continue;
             
-            var airQualityProps = await _airQualityPropertiesService.List(new AirQualityPropertiesQuery
-            {
-                Begin = DateTime.Parse(time.value).ToUniversalTime(),
-                Pollution = pollution,
-                GisId = gisId,
-                Source = EAirQualitySource.OpenMeteo,
-                Longitude = lng,
-                Latitude = lat
-            });
-            
-            if (airQualityProps.Count != 0) continue;
+            // get the air quality properties
+            var airQualityProps = airQualityPropsList.FirstOrDefault(x => x.Date.Equals(DateTime.Parse(time.value).ToUniversalTime()));
+            if (airQualityProps != null) continue;
 
+            // get the color index for the air quality
             var color = string.Empty;
-            
             if (indexAq?[time.i] is not null)
             {
-                var colorIndexAq = (await _euAirQualityLevelService.List(new EuAirQualityQuery
-                    {
-                        Pollution = pollution,
-                        Value = indexAq[time.i]
-                    })).FirstOrDefault();
-
-                if (colorIndexAq is not null)
-                    color = colorIndexAq.Color;
+                // get the color based on the index
+                var colorIndexAq = colorIndexAqList.FirstOrDefault(x => x.Min <= indexAq[time.i] && x.Max >= indexAq[time.i]);
+                if (colorIndexAq is not null) color = colorIndexAq.Color;
             }
             
             result.Add(new AirQualityPropertiesDto
@@ -380,7 +383,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             feature.Attributes.Add("Id", aq.Id);
             feature.Attributes.Add("Latitude", aq.Lat);
             feature.Attributes.Add("Longitude", aq.Lng);
-            feature.Attributes.Add("Data", aq.PropertiesCollection);
+            feature.Attributes.Add("Data", aq.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList());
             feature.Attributes.Add("OSM", aq.EntityVector?.Properties);
             return feature;
         }).ToArray();
