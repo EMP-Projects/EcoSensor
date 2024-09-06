@@ -182,10 +182,10 @@ public class MeasurementPointsService : IMeasurementPointsService
             {
                 var colorIndexAq = (await _euAirQualityLevelService.List(new EuAirQualityQuery
                     {
-                        Value = (double)indexAq[time.i]!,
                         Pollution = pollution,
+                        Value = indexAq[time.i]
                     })).FirstOrDefault();
-                
+
                 if (colorIndexAq is not null)
                     color = colorIndexAq.Color;
             }

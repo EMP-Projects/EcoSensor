@@ -8,10 +8,10 @@ public interface IAirQualityLevelQuery
     /// <summary>
     /// Gets or sets the type of pollution measured.
     /// </summary>
-    EPollution Pollution { get; set; }
+    EPollution? Pollution { get; set; }
 
     /// <summary>
     /// Gets or sets the value of the air quality measurement.
     /// </summary>
-    double Value { get; set; }
+    double? Value { get; set; }
 }
