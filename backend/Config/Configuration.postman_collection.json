@@ -1,0 +1,36 @@
+{
+	"info": {
+		"_postman_id": "814fd584-c0df-4fcf-b8ca-34d27d5cd06d",
+		"name": "Configuration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38154214"
+	},
+	"item": [
+		{
+			"name": "Lista configurazioni",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Lista citta",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Api_Url}}/config/cities",
+					"host": [
+						"{{Api_Url}}"
+					],
+					"path": [
+						"config",
+						"cities"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,6 +1,7 @@
 using AutoMapper;
 using EcoSensorApi.AirQuality.Properties;
 using Gis.Net.Vector.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcoSensorApi.AirQuality.Vector;
 
