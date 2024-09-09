@@ -14,4 +14,11 @@ public class AirQualityVectorQuery : GisVectorQuery
     /// <value>The source data type.</value>
     [FromQuery(Name = "sourceData")]
     public ESourceData SourceData { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the entity vector ID.
+    /// </summary>
+    /// <value>The entity vector ID.</value>
+    [FromQuery(Name = "entityVectorId")]
+    public long? EntityVectorId { get; set; }
 }

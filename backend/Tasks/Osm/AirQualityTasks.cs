@@ -28,7 +28,7 @@ public class AirQualityTasks : OsmTasks<MeasurementPointsService>
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(5);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(15);
 
     /// <summary>
     /// Handles notifications asynchronously.
@@ -37,6 +37,6 @@ public class AirQualityTasks : OsmTasks<MeasurementPointsService>
     public override async Task HandleNotificationsAsync()
     {
         var result = await Service().AirQuality();
-        Logger.LogInformation($"Sono stati registrati {result} nuovi dati di qualità dell'aria");
+        Logger.LogInformation($"{result} new air quality data has been recorded");
     }
 }

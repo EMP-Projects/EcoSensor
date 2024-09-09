@@ -45,13 +45,13 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     /// <summary>
     /// Represents the OsmProperties table in the EcoSensorDbContext.
     /// </summary>
-    public DbSet<OsmPropertiesModel> OsmProperties { get; set; }
+    public DbSet<OsmPropertiesModel>? OsmProperties { get; set; }
     
     /// <summary>
     /// Represents the OsmVector entity in the EcoSensorDbContext.
     /// OsmVector is used to store the OpenStreetMap vector data.
     /// </summary>
-    public DbSet<OsmVectorModel> OsmVector { get; set; }
+    public DbSet<OsmVectorModel>? OsmVector { get; set; }
 
     /// <summary>
     /// Represents the database context for the EcoSensor API.
@@ -64,8 +64,6 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
     /// <param name="modelBuilder">The builder being used to construct the model for this context.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     { 
-        // modelBuilder.AddExtensionPostGis();
-        
         modelBuilder.SetTimeStamp<AirQualityPropertiesModel>();
         modelBuilder.SetTimeStamp<AirQualityVectorModel>();
         modelBuilder.SetTimeStamp<OsmPropertiesModel>();
@@ -86,15 +84,6 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
             modelBuilder.Entity<UsAirQualityLevel>().HasData(entry.Value);
         }
         
-        modelBuilder.Entity<ConfigModel>().HasData(
-            new ConfigModel
-            {
-                Id = 1,
-                EntityKey = "Gioia del Colle",
-                TimeStamp = DateTime.UtcNow,
-                RegionCode = 16,
-                CityCode = 72021,
-                CityName = "Gioia del Colle",
-            });
+        modelBuilder.AddInitConfiguration();
     }
 }

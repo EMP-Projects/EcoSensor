@@ -7,9 +7,13 @@ using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
 using EcoSensorApi.Osm;
 using EcoSensorApi.Tasks.Osm;
+using Gis.Net.Core;
 using Gis.Net.Core.Entities;
+using Gis.Net.Core.Tasks;
 using Gis.Net.Istat;
+using Gis.Net.OpenMeteo;
 using Gis.Net.Osm.OsmPg;
+using Microsoft.AspNetCore.HttpLogging;
 
 namespace EcoSensorApi;
 
@@ -18,6 +22,37 @@ namespace EcoSensorApi;
 /// </summary>
 public static class EcoSensorManager
 {
+
+    /// <summary>
+    /// Configures and starts the EcoSensor services.
+    /// </summary>
+    /// <param name="builder">The <see cref="WebApplicationBuilder"/> to configure.</param>
+    /// <returns>The configured <see cref="WebApplicationBuilder"/>.</returns>
+    public static WebApplicationBuilder StartEcoSensor(this WebApplicationBuilder builder)
+    {
+        // Add notification service
+        builder.Services.AddNotificationService();
+
+        // Connection to the PostGis database and registration of services, repositories, and mappers
+        builder.AddEcoSensor();
+
+        // Add air quality services
+        builder.Services.AddAirQuality(builder.Configuration["OpenMeteo:Url"]);
+
+        // Add controllers
+        builder.Services.AddControllers();
+
+        // Add HTTP logging with all logging fields
+        builder.Services.AddHttpLogging(opt => opt.LoggingFields = HttpLoggingFields.All);
+    
+        // Configure Swagger/OpenAPI
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        builder.Services.AddVersion(1, 0);
+    
+        return builder;
+    }
+    
     /// <summary>
     /// Adds EcoSensor services to the specified <see cref="WebApplicationBuilder"/>.
     /// </summary>

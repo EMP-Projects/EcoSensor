@@ -1,16 +1,19 @@
 using EcoSensorApi.AirQuality;
+using EcoSensorApi.AirQuality.Indexes.Eu;
+using EcoSensorApi.AirQuality.Indexes.Us;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Config;
 using Gis.Net.OpenMeteo.AirQuality;
 using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector;
+using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 
 namespace EcoSensorApi.MeasurementPoints;
 
 /// <summary>
-/// Servizio per calcolare i punti di misura per la qualità dell'aria
+/// Service to calculate measurement points for air quality
 /// </summary>
 public class MeasurementPointsService : IMeasurementPointsService 
 {
@@ -20,9 +23,11 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly ILogger<MeasurementPointsService> _logger;
     private readonly IAirQualityService _airQualityService;
     private readonly ConfigService _configService;
+    private readonly EuAirQualityLevelService _euAirQualityLevelService;
+    private readonly UsAirQualityLevelService _usAirQualityLevelService;
 
     /// <summary>
-    /// Servizio per calcolare i punti di misura per la qualità dell'aria
+    /// Service to calculate measurement points for air quality
     /// </summary>
     public MeasurementPointsService(
         OsmVectorService<EcoSensorDbContext> osmVectorService, 
@@ -30,7 +35,9 @@ public class MeasurementPointsService : IMeasurementPointsService
         ILogger<MeasurementPointsService> logger, 
         IAirQualityService airQualityService, 
         AirQualityPropertiesService airQualityPropertiesService, 
-        ConfigService configService)
+        ConfigService configService, 
+        EuAirQualityLevelService euAirQualityLevelService, 
+        UsAirQualityLevelService usAirQualityLevelService)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
@@ -38,16 +45,21 @@ public class MeasurementPointsService : IMeasurementPointsService
         _airQualityService = airQualityService;
         _airQualityPropertiesService = airQualityPropertiesService;
         _configService = configService;
+        _euAirQualityLevelService = euAirQualityLevelService;
+        _usAirQualityLevelService = usAirQualityLevelService;
     }
 
     /// <summary>
-    /// Calcola i punti di misura per la qualità dell'aria.
+    /// Calculate measurement points for air quality.
     /// </summary>
-    /// <returns>Il numero totale di nuovi punti di misura creati.</returns>
-    /// <exception cref="Exception">Eccezione generica.</exception>
+    /// <returns>The total number of new measurement points created.</returns>
+    /// <exception cref="Exception">Generic exception.</exception>
     public async Task<int> MeasurementPoints()
     {
-        // leggo i records di vettori
+        // distance between the points in meters
+        const int matrixDistance = 2500;
+        
+        // read the feature collection of all OpenStreetMap geometries
         var listOsm = await _osmVectorService.List(new OsmVectorQuery
         {
             SrCode = 3857
@@ -55,12 +67,12 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         if (listOsm.Count == 0)
         {
-            const string msg = "Non riesco a leggere le geometrie da OpenStreet Map";
+            const string msg = "I can't read geometries from OpenStreetMap";
             _logger.LogError(msg);
             return 0;
         }
 
-        // leggo la collection di features di tutti i punti di misurazione per controllare eventuali duplicati
+        // read the feature collection of all measurement points to check for any duplicates
         var listMeasurementPoints = await _airQualityVectorService.List(new AirQualityVectorQuery
         {
             SrCode = 3857
@@ -68,19 +80,19 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         var measurementPoints = new List<Point>();
         
-        // leggo tutti i punti creati dalle coordinate delle geometrie
+        // read all the points created from the geometry coordinates
         foreach (var osm in listOsm)
         {
-            // leggo tutte le coordinate
+            // read all the coordinates
             var coordinates = osm.Geom?.Coordinates;
-            // creo una collection di punti geografici dalle coordinate
+            // I create a collection of geographic points from coordinates
             var coordinatesGeom = coordinates?.Select(coordinate => GisUtility.CreatePoint(3857, coordinate)).ToList();
             
             if (coordinatesGeom is null)
                 continue;
 
-            // per ogni coordinate seleziono solo quelle ad una certa distanza configurata
-            foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => x.Distance(c) <= 2500) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
+            // for each coordinate I select only those at a certain configured distance (2500 mt)
+            foreach (var c in from c in coordinatesGeom let isExistPointWithinDistance = measurementPoints.Any(x => !x.IsWithinDistance(c, matrixDistance)) where !isExistPointWithinDistance || measurementPoints.Count <= 0 select c)
             {
                 measurementPoints.Add(c);
 
@@ -91,23 +103,25 @@ public class MeasurementPointsService : IMeasurementPointsService
                     TimeStamp = DateTime.UtcNow,
                     Guid = Guid.NewGuid(),
                     EntityKey = osm.EntityKey,
+                    EntityVectorId = osm.Id,
                     Lat = c.Y,
                     Lng = c.X
                 };
 
                 if (listMeasurementPoints?.Count == 0)
-                    // se non esistono altri punti nel database
+                    // if no other points exist in the database
                     await _airQualityVectorService.Insert(aqPoint);
                 else
                 {
-                    // altrimenti solo se maggiore o uguale alla distanza configurata per il layer
+                    // otherwise only if greater than or equal to the distance configured for the layer (2500 mt)
                     var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
-                    if (nearestPoint?.Geom?.Distance(c) >= 2500)
+                    if (!(bool)nearestPoint?.Geom?.IsWithinDistance(c, matrixDistance))
                         await _airQualityVectorService.Insert(aqPoint);
                 }
             }
         }
 
+        // save the data in the database
         return await _airQualityVectorService.SaveContext();
     }
 
@@ -120,8 +134,13 @@ public class MeasurementPointsService : IMeasurementPointsService
     {
         var bboxList = await _configService.BBoxGeometries();
         var result = 0;
-        foreach (var bbox in bboxList)
+        var index = 0;
+        for (; index < bboxList.Count; index++)
+        {
+            var bbox = bboxList[index];
             result += await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName);
+        }
+
         return result;
     }
 
@@ -139,32 +158,50 @@ public class MeasurementPointsService : IMeasurementPointsService
         var result = new List<AirQualityPropertiesDto>();
         if (times is null) return result;
         
+        // get the color index for the air quality
+        var colorIndexAqList = await _euAirQualityLevelService.List(new EuAirQualityQuery
+        {
+            Pollution = pollution
+        });
+        
+        // get the air quality properties
+        var airQualityPropsList = await _airQualityPropertiesService.List(new AirQualityPropertiesQuery
+        {
+            Pollution = pollution,
+            GisId = gisId,
+            Source = EAirQualitySource.OpenMeteo,
+            Longitude = lng,
+            Latitude = lat
+        });
+        
         foreach (var time in times.Select((value, i) => new { i, value}))
         {
             if (time.value is null) continue;
             if (values?[time.i] is null) continue;
             if (unit is null) continue;
             
-            var airQualityProps = await _airQualityPropertiesService.List(new AirQualityPropertiesQuery
+            // get the air quality properties
+            var airQualityProps = airQualityPropsList.FirstOrDefault(x => x.Date.Equals(DateTime.Parse(time.value).ToUniversalTime()));
+            if (airQualityProps != null) continue;
+
+            // get the color index for the air quality
+            var color = string.Empty;
+            if (indexAq?[time.i] is not null)
             {
-                Begin = DateTime.Parse(time.value).ToUniversalTime(),
-                Pollution = pollution,
-                GisId = gisId,
-                Source = EAirQualitySource.OpenMeteo,
-                Longitude = lng,
-                Latitude = lat
-            });
-            
-            if (airQualityProps.Count != 0) continue;
+                // get the color based on the index
+                var colorIndexAq = colorIndexAqList.FirstOrDefault(x => x.Min <= indexAq[time.i] && x.Max >= indexAq[time.i]);
+                if (colorIndexAq is not null) color = colorIndexAq.Color;
+            }
             
             result.Add(new AirQualityPropertiesDto
             {
-                EntityKey = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i+1}",
+                EntityKey = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i}",
                 TimeStamp = DateTime.UtcNow,
                 Date = DateTime.Parse(time.value).ToUniversalTime(),
                 PollutionText = Pollution.GetPollutionDescription(pollution),
                 Pollution = pollution,
                 Unit = unit,
+                Color = color,
                 Value = values[time.i]!.Value,
                 EuropeanAqi = indexAq?[time.i],
                 Lat = lat,
@@ -180,149 +217,198 @@ public class MeasurementPointsService : IMeasurementPointsService
     }
 
     /// <summary>
-    /// Legge i valori di qualità dell'aria dalla API e li salva nel database.
+    /// Reads air quality values from the API and saves them in the database.
     /// </summary>
-    /// <returns>Il numero totale di nuovi dati di qualità dell'aria registrati.</returns>
+    /// <returns>The total number of new air quality data recorded.</returns>
     public async Task<int> AirQuality()
     {
-        // leggere i records delle coordinate geografiche dei punti di misurazione
-        var pointsFeatures = await _airQualityVectorService.FeatureCollection();
-
-        if (pointsFeatures is null)
+        // check if last data detected is less than 1 hour
+        var ifLastAirQuality = await _airQualityPropertiesService.CheckIfLastMeasureIsOlderThanHourAsync();
+        if (ifLastAirQuality)
         {
-            _logger.LogWarning("Non sono riuscito a leggere le features dei punti di misurazione");
+            _logger.LogInformation("The last air quality measurement is less than one hour old");
+            return 0;
+        }
+        
+        // read the records of the geographical coordinates of the measurement points
+        var listAirQuality = (await _airQualityVectorService.List(new AirQualityVectorQuery())).ToList();;
+
+        if (listAirQuality.Count == 0)
+        {
+            _logger.LogWarning("I was unable to read the features of the measurement points");
             return 0;
         }
 
-        // estrarre le coordinate ed effettuare la chiamata API a OpenMeteo eliminando quelle null
-        var coordinates = pointsFeatures
-            .Select(features => features.Attributes.GetOptionalValue(_airQualityVectorService.NameProperties) as AirQualityLatLng)
-            .Where(x => x is not null)
-            .ToArray();
-
-        if (coordinates.Length == 0)
-        {
-            const string msg = "Non sono riuscito a leggere le coordinate dei punti di misura";
-            _logger.LogError(msg);
-            return 0;
-        }
-
-        const int step = 10;
         var listAllNewAirQualityDto = new List<AirQualityPropertiesDto>();
 
-        for (var c = 0; c < coordinates.Length; c += step)
+        foreach (var airQuality in listAirQuality)
         {
-            var nextItem = c + step - 1;
-            var chunkCoordinates = coordinates[c..(nextItem < coordinates.Length ? nextItem : coordinates.Length - 1)]
-                .Select(coords =>
-                {
-                    var p = CoordinateConverter.ConvertWebMercatorToWgs84(coords!.Lng, coords.Lat);
-                    return new AirQualityLatLng(p.Y, p.X);
-                }).ToArray();
-            var openMeteoOptions = new AirQualityOptions(chunkCoordinates);
+            // convert the coordinates to WGS84
+            var pointWgs84 = CoordinateConverter.ConvertWebMercatorToWgs84(airQuality.Lng, airQuality.Lat);
+            
+            // create the object with the coordinates in WGS84
+            // and create the options for the OpenMeteo API
+            var openMeteoOptions = new AirQualityOptions(new AirQualityLatLng(pointWgs84.Y, pointWgs84.X));
+            
+            // read the data from the OpenMeteo API
             var resultAq = await _airQualityService.AirQuality(openMeteoOptions);
+            
+            // check if the result is null
             if (resultAq is null)
             {
-                const string msg = "Non sono riuscito a leggere dalla API di OpenMeteo";
+                const string msg = "I was unable to read from the OpenMeteo API";
                 _logger.LogError(msg);
                 return 0;
             }
-
-            foreach (var r in resultAq)
-            {
-                if (r.Longitude is null && r.Latitude is null) continue;
-                var pointWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(r.Longitude!.Value, r.Latitude!.Value);
-                
-                // prendo la feature più vicina alle coordinate della risposta dalle API di OpenMeteo
-                var nearestPoint = pointsFeatures?.MinBy(x => x.Geometry.Distance(pointWebMercator));
-                
-                // leggo Id della feature
-                var propId = nearestPoint?.Attributes.GetOptionalValue("Id").ToString();
-                if (propId is null)
-                {
-                    const string msg = "Non riesco a leggere l'Id del punto di misura";
-                    _logger.LogError(msg);
-                    return 0;
-                }
-                
-                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
-                        EPollution.Pm10,
-                        pointWebMercator.Y,
-                        pointWebMercator.X,
-                        r.Elevation!.Value,
-                        long.Parse(propId),
-                        r.HourlyUnits?.Pm10,
-                        r.Hourly?.Time,
-                        r.Hourly?.Pm10,
-                        r.Hourly?.EuropeanAqiPm10
-                    ));
-                
-                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
-                    EPollution.Pm25,
+            
+            // check if the coordinates are null
+            if (resultAq.Longitude is null && resultAq.Latitude is null) continue;
+            
+            // convert the coordinates to WebMercator
+            var pointWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(resultAq.Longitude!.Value, resultAq.Latitude!.Value);
+            
+            // read the feature ID
+            var propId = airQuality.Id;
+            
+            // add the PM10 data
+            listAllNewAirQualityDto.AddRange(await CreateListAqValues(
+                    EPollution.Pm10,
                     pointWebMercator.Y,
                     pointWebMercator.X,
-                    r.Elevation!.Value,
-                    long.Parse(propId),
-                    r.HourlyUnits?.Pm25,
-                    r.Hourly?.Time,
-                    r.Hourly?.Pm25,
-                    r.Hourly?.EuropeanAqiPm25
+                    resultAq.Elevation!.Value,
+                    propId,
+                    resultAq.HourlyUnits?.Pm10,
+                    resultAq.Hourly?.Time,
+                    resultAq.Hourly?.Pm10,
+                    resultAq.Hourly?.EuropeanAqiPm10
                 ));
-                
-                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
-                    EPollution.CarbonMonoxide,
-                    pointWebMercator.Y,
-                    pointWebMercator.X,
-                    r.Elevation!.Value,
-                    long.Parse(propId),
-                    r.HourlyUnits?.CarbonMonoxide,
-                    r.Hourly?.Time,
-                    r.Hourly?.CarbonMonoxide,
-                    r.Hourly?.EuropeanAqi
-                ));
-                
-                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
-                    EPollution.Ozone,
-                    pointWebMercator.Y,
-                    pointWebMercator.X,
-                    r.Elevation!.Value,
-                    long.Parse(propId),
-                    r.HourlyUnits?.Ozone,
-                    r.Hourly?.Time,
-                    r.Hourly?.Ozone,
-                    r.Hourly?.EuropeanAqiOzone
-                ));
-                
-                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
-                    EPollution.SulphurDioxide,
-                    pointWebMercator.Y,
-                    pointWebMercator.X,
-                    r.Elevation!.Value,
-                    long.Parse(propId),
-                    r.HourlyUnits?.SulphurDioxide,
-                    r.Hourly?.Time,
-                    r.Hourly?.SulphurDioxide,
-                    r.Hourly?.EuropeanAqiSulphurDioxide
-                ));
-                
-                listAllNewAirQualityDto.AddRange(await CreateListAqValues(
-                    EPollution.NitrogenDioxide,
-                    pointWebMercator.Y,
-                    pointWebMercator.X,
-                    r.Elevation!.Value,
-                    long.Parse(propId),
-                    r.HourlyUnits?.NitrogenDioxide,
-                    r.Hourly?.Time,
-                    r.Hourly?.NitrogenDioxide,
-                    r.Hourly?.EuropeanAqiNitrogenDioxide
-                ));
-            }
+            
+            // add the PM2.5 data
+            listAllNewAirQualityDto.AddRange(await CreateListAqValues(
+                EPollution.Pm25,
+                pointWebMercator.Y,
+                pointWebMercator.X,
+                resultAq.Elevation!.Value,
+                propId,
+                resultAq.HourlyUnits?.Pm25,
+                resultAq.Hourly?.Time,
+                resultAq.Hourly?.Pm25,
+                resultAq.Hourly?.EuropeanAqiPm25
+            ));
+            
+            // add the carbon monoxide data
+            listAllNewAirQualityDto.AddRange(await CreateListAqValues(
+                EPollution.CarbonMonoxide,
+                pointWebMercator.Y,
+                pointWebMercator.X,
+                resultAq.Elevation!.Value,
+                propId,
+                resultAq.HourlyUnits?.CarbonMonoxide,
+                resultAq.Hourly?.Time,
+                resultAq.Hourly?.CarbonMonoxide,
+                resultAq.Hourly?.EuropeanAqi
+            ));
+            
+            // add the ozone data
+            listAllNewAirQualityDto.AddRange(await CreateListAqValues(
+                EPollution.Ozone,
+                pointWebMercator.Y,
+                pointWebMercator.X,
+                resultAq.Elevation!.Value,
+                propId,
+                resultAq.HourlyUnits?.Ozone,
+                resultAq.Hourly?.Time,
+                resultAq.Hourly?.Ozone,
+                resultAq.Hourly?.EuropeanAqiOzone
+            ));
+            
+            // add the sulphur dioxide data
+            listAllNewAirQualityDto.AddRange(await CreateListAqValues(
+                EPollution.SulphurDioxide,
+                pointWebMercator.Y,
+                pointWebMercator.X,
+                resultAq.Elevation!.Value,
+                propId,
+                resultAq.HourlyUnits?.SulphurDioxide,
+                resultAq.Hourly?.Time,
+                resultAq.Hourly?.SulphurDioxide,
+                resultAq.Hourly?.EuropeanAqiSulphurDioxide
+            ));
+            
+            // add the nitrogen dioxide data
+            listAllNewAirQualityDto.AddRange(await CreateListAqValues(
+                EPollution.NitrogenDioxide,
+                pointWebMercator.Y,
+                pointWebMercator.X,
+                resultAq.Elevation!.Value,
+                propId,
+                resultAq.HourlyUnits?.NitrogenDioxide,
+                resultAq.Hourly?.Time,
+                resultAq.Hourly?.NitrogenDioxide,
+                resultAq.Hourly?.EuropeanAqiNitrogenDioxide
+            ));
         }
         
-        // aggiungere e salvare i dto nel database
+        // add and save data in the database
         foreach (var dto in listAllNewAirQualityDto)
             await _airQualityPropertiesService.Insert(dto);
         
+        // save the data in the database
         return await _airQualityPropertiesService.SaveContext();
+    }
+    
+    /// <summary>
+    /// Retrieves the air quality features based on the provided query parameters.
+    /// </summary>
+    /// <param name="query">The query parameters for filtering the air quality features.</param>
+    /// <returns>A <see cref="FeatureCollection"/> containing the air quality features or null if an error occurs.</returns>
+    public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery? query)
+    {
+        // read the list of air quality vectors
+        var airQualityList = await _airQualityVectorService.List(new AirQualityVectorQuery
+        {
+            EntityKey = query?.City
+        });
+        
+        if (airQualityList.Count == 0)
+        {
+            // if the list is empty, I return null
+            const string msg = "I can't read the features of the air quality vector";
+            _logger.LogError(msg);
+            return null;
+        }
+        
+        // create a list of features
+        var features = new List<IFeature>();
+        
+        // for each air quality vector
+        foreach (var aq in airQualityList)
+        {
+            // check if the geometry is null
+            if (aq.EntityVector?.Geom is null) continue;
+            // create a new feature
+            var newFeature = GisUtility.CreateEmptyFeature(3857, aq.EntityVector?.Geom!);
+            // check if the feature already exists
+            var feature = features.FirstOrDefault(x => x.Geometry.EqualsExact(newFeature.Geometry));
+            // get the properties
+            var props = aq.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList();
+
+            if (feature is null) {
+                // if the feature does not exist, I create a new one
+                newFeature.Attributes.Add("Data", props);
+                newFeature.Attributes.Add("OSM", aq.EntityVector?.Properties);
+                features.Add(newFeature);
+                continue;
+            }
+            
+            // if the feature exists, I add the properties to the existing feature
+            var listProps = feature.Attributes["Data"] as List<AirQualityPropertiesDto>;
+            listProps?.AddRange(props!);
+        }
+        
+        // create a feature collection
+        var featureCollection = new FeatureCollection(features.ToArray());
+        
+        return featureCollection;
     }
 }

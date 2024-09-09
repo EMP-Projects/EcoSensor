@@ -1,0 +1,33 @@
+{
+	"info": {
+		"_postman_id": "bd435759-cf8d-4b07-82a5-f6e13bb19337",
+		"name": "Measurements",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38154214"
+	},
+	"item": [
+		{
+			"name": "Air Quality",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Api_Url}}/measurements?city=Gioia del Colle",
+					"host": [
+						"{{Api_Url}}"
+					],
+					"path": [
+						"measurements"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "Gioia del Colle"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

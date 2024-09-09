@@ -7,6 +7,14 @@
         <LangVersion>default</LangVersion>
         <TargetFramework>net8.0</TargetFramework>
         <UserSecretsId>ce75eb87-aa0a-4be3-85ff-902a124f58de</UserSecretsId>
+        <Title>EcoSensorApi</Title>
+        <Description>APi per il monitoraggio ambientale</Description>
+        <Copyright>https://github.com/EMP-Projects/EcoSensor</Copyright>
+        <PackageProjectUrl>https://github.com/EMP-Projects/EcoSensor</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/EMP-Projects/EcoSensor/LICENSE.md</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/EMP-Projects/EcoSensor</RepositoryUrl>
+        <PackageTags>.net iot</PackageTags>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -20,6 +28,7 @@
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
         <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Gis.Net" Version="8.3.10" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -38,10 +47,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Update="GeoJson\*">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -51,10 +56,6 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\Gis.Net\Gis.Net\Gis.Net.csproj" />
     </ItemGroup>
 
 </Project>

@@ -62,15 +62,15 @@ public class AirQualityPropertiesDto : DtoBase, IAirQualityPropertiesDto, IGisPr
     /// <summary>
     /// Gets or sets the text description of the pollution.
     /// </summary>
-    [JsonPropertyName("pollutionText")]
-    public required string? PollutionText { get; set; }
+    [JsonPropertyName("pollutionText"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? PollutionText { get; set; }
     
     /// <summary>
     /// Gets or sets the text description of the source.
     /// </summary>
-    [JsonPropertyName("sourceText")]
-    public required string? SourceText { get; set; }
-    
+    [JsonPropertyName("sourceText"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? SourceText { get; set; }
+
     /// <summary>
     /// Gets or sets the source of the air quality data.
     /// </summary>
@@ -92,6 +92,13 @@ public class AirQualityPropertiesDto : DtoBase, IAirQualityPropertiesDto, IGisPr
     /// <summary>
     /// Gets or sets the GIS vector data.
     /// </summary>
-    [JsonPropertyName("gis")]
+    [JsonPropertyName("gis"), JsonIgnore]
     public AirQualityVectorDto? Gis { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the color associated with the air quality data.
+    /// </summary>
+    /// <value>The color as a string.</value>
+    [JsonPropertyName("color")]
+    public string? Color { get; set; }
 }

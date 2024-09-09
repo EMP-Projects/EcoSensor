@@ -28,9 +28,7 @@ where TQuery: QueryBase, IAirQualityLevelQuery
             query = query.Where(x => x.Pollution == queryByParams.Pollution);
         
         if (queryByParams?.Value is not null)
-            query = query
-                .Where(x => x.Min >= queryByParams.Value)
-                .Where(x => x.Max <= queryByParams.Value);
+            query = query.Where(x => x.Min <= queryByParams.Value && x.Max >= queryByParams.Value);
         
         return query;
     }

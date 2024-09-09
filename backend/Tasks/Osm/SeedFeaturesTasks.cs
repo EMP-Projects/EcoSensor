@@ -17,14 +17,14 @@ public class SeedFeaturesTasks : OsmTasks<MeasurementPointsService>
     public override async Task HandleNotificationsAsync()
     {
         var result = await Service().SeedFeatures();
-        var msg = $"Sono stati trovati {result} nuove features geografiche";
+        var msg = $"{result} new geographic features have been found";
         Logger.LogInformation(msg);
     }
 
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(5);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(5);
 
     /// <summary>
     /// Gets the name of the Osm task.

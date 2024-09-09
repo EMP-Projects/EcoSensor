@@ -12,7 +12,15 @@ public class AirQualityPropertiesMapper : AbstractMapperProfile<AirQualityProper
     /// </summary>
     public AirQualityPropertiesMapper()
     {
-        ModelToDtoMapper.ForMember(dest => dest.SourceText, opt => opt.Ignore());
-        ModelToDtoMapper.ForMember(dest => dest.PollutionText, opt => opt.Ignore());
+        ModelToDtoMapper
+            .ForMember(dest => dest.SourceText, opt => opt.MapFrom(src => Pollution.GetPollutionSource(src.Source)))
+            .ForMember(dest => dest.PollutionText,
+                opt => opt.MapFrom(src => Pollution.GetPollutionDescription(src.Pollution)))
+            .ForMember(dest => dest.Gis, opt => opt.Ignore())
+            .ForMember(dest => dest.Lat, opt => opt.Ignore())
+            .ForMember(dest => dest.Lng, opt => opt.Ignore())
+            .ForMember(dest => dest.EntityKey, opt => opt.Ignore())
+            .ForMember(dest => dest.TimeStamp, opt => opt.Ignore());
+
     }
 }

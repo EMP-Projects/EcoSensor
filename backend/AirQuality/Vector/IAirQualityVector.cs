@@ -19,4 +19,9 @@ public interface IAirQualityVector
     /// Gets or sets the longitude.
     /// </summary>
     double Lng { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the entity vector ID.
+    /// </summary>
+    long EntityVectorId { get; set; }
 }
