@@ -364,6 +364,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns>A <see cref="FeatureCollection"/> containing the air quality features or null if an error occurs.</returns>
     public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery? query)
     {
+        // read the list of air quality vectors
         var airQualityList = await _airQualityVectorService.List(new AirQualityVectorQuery
         {
             EntityKey = query?.City
@@ -371,24 +372,42 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         if (airQualityList.Count == 0)
         {
+            // if the list is empty, I return null
             const string msg = "I can't read the features of the air quality vector";
             _logger.LogError(msg);
             return null;
         }
-
-        var features = airQualityList.Select(aq =>
-        {
-            if (aq.EntityVector?.Geom is null) return null;
-            var feature = GisUtility.CreateEmptyFeature(3857, aq.EntityVector?.Geom!);
-            feature.Attributes.Add("Id", aq.Id);
-            feature.Attributes.Add("Latitude", aq.Lat);
-            feature.Attributes.Add("Longitude", aq.Lng);
-            feature.Attributes.Add("Data", aq.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList());
-            feature.Attributes.Add("OSM", aq.EntityVector?.Properties);
-            return feature;
-        }).ToArray();
         
-        var featureCollection = new FeatureCollection(features);
+        // create a list of features
+        var features = new List<IFeature>();
+        
+        // for each air quality vector
+        foreach (var aq in airQualityList)
+        {
+            // check if the geometry is null
+            if (aq.EntityVector?.Geom is null) continue;
+            // create a new feature
+            var newFeature = GisUtility.CreateEmptyFeature(3857, aq.EntityVector?.Geom!);
+            // check if the feature already exists
+            var feature = features.FirstOrDefault(x => x.Geometry.EqualsExact(newFeature.Geometry));
+            // get the properties
+            var props = aq.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList();
+
+            if (feature is null) {
+                // if the feature does not exist, I create a new one
+                newFeature.Attributes.Add("Data", props);
+                newFeature.Attributes.Add("OSM", aq.EntityVector?.Properties);
+                features.Add(newFeature);
+                continue;
+            }
+            
+            // if the feature exists, I add the properties to the existing feature
+            var listProps = feature.Attributes["Data"] as List<AirQualityPropertiesDto>;
+            listProps?.AddRange(props!);
+        }
+        
+        // create a feature collection
+        var featureCollection = new FeatureCollection(features.ToArray());
         
         return featureCollection;
     }
