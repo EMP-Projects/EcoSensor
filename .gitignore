@@ -1,12 +1,9 @@
 bin/
 obj/
-/packages/
 riderModule.iml
 /_ReSharper.Caches/
 osm-data/
-osm-data-dev/
 ecosensor-data/
-ecosensor-data-dev/
 openmeteo-data/
 istat-data/
 .idea/
