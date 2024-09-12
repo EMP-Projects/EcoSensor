@@ -32,4 +32,25 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         var lastMeasure = lastMeasures.OrderByDescending(x => x.Date).FirstOrDefault();
         return lastMeasure?.Date < DateTime.UtcNow.AddHours(hours * -1);
     }
+    
+    
+    /// <summary>
+    /// Deletes air quality records older than the specified number of days.
+    /// </summary>
+    /// <param name="days">The number of days to use as the threshold for deleting old records. Defaults to 3 days.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public async Task<int> DeleteOldRecordsAsync(int days = 3)
+    {
+        // Get all records
+        var oldRecords = await List(new AirQualityPropertiesQuery());
+        // Filter records older than the specified number of days
+        var recordsToDelete = oldRecords.Where(x => x.Date < DateTime.UtcNow.AddDays(days * -1));
+
+        // Delete the records
+        foreach (var dto in recordsToDelete)
+            await Delete(dto);
+
+        // Save changes
+        return await SaveContext();
+    }
 }

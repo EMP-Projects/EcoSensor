@@ -22,7 +22,6 @@ namespace EcoSensorApi;
 /// </summary>
 public static class EcoSensorManager
 {
-
     /// <summary>
     /// Configures and starts the EcoSensor services.
     /// </summary>

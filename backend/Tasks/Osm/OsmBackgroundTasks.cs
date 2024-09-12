@@ -26,6 +26,11 @@ public class OsmBackgroundTasks : BackgroundService
     /// The tasks related to air quality.
     /// </summary>
     private readonly AirQualityTasks _airQualityTasks;
+    
+    /// <summary>
+    /// The tasks related to deleting old data.
+    /// </summary>
+    private readonly DeleteOldDataTasks _deleteOldDataTasks;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OsmBackgroundTasks"/> class.
@@ -34,16 +39,19 @@ public class OsmBackgroundTasks : BackgroundService
     /// <param name="notificationService">The notification service.</param>
     /// <param name="seedFeaturesTasks">The seed features tasks.</param>
     /// <param name="airQualityTasks">The air quality tasks.</param>
+    /// <param name="deleteOldDataTasks">The tasks related to deleting old data.</param>
     public OsmBackgroundTasks(
         MeasurementPointsTasks measurementPointsTasks, 
         NotificationService notificationService, 
         SeedFeaturesTasks seedFeaturesTasks, 
-        AirQualityTasks airQualityTasks)
+        AirQualityTasks airQualityTasks, 
+        DeleteOldDataTasks deleteOldDataTasks)
     {
         _measurementPointsTasks = measurementPointsTasks;
         _notificationService = notificationService;
         _seedFeaturesTasks = seedFeaturesTasks;
         _airQualityTasks = airQualityTasks;
+        _deleteOldDataTasks = deleteOldDataTasks;
     }
 
     /// <summary>
@@ -56,6 +64,7 @@ public class OsmBackgroundTasks : BackgroundService
         _notificationService.AddNotificationHandler(_measurementPointsTasks);
         _notificationService.AddNotificationHandler(_seedFeaturesTasks);
         _notificationService.AddNotificationHandler(_airQualityTasks);
+        _notificationService.AddNotificationHandler(_deleteOldDataTasks);
         return Task.CompletedTask;
     }
 }
