@@ -7,6 +7,7 @@ using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
 using EcoSensorApi.Osm;
 using EcoSensorApi.Tasks.Osm;
+using Gis.Net.Aws.AWSCore.S3;
 using Gis.Net.Core;
 using Gis.Net.Core.Entities;
 using Gis.Net.Core.Tasks;
@@ -38,6 +39,9 @@ public static class EcoSensorManager
         // Add air quality services
         builder.Services.AddAirQuality(builder.Configuration["OpenMeteo:Url"]);
 
+        // Add AWS S3 bucket services
+        builder.AddBucketS3();
+
         // Add controllers
         builder.Services.AddControllers();
 
@@ -57,7 +61,7 @@ public static class EcoSensorManager
     /// </summary>
     /// <param name="builder">The <see cref="WebApplicationBuilder"/> to configure.</param>
     /// <returns>The configured <see cref="WebApplicationBuilder"/>.</returns>
-    public static WebApplicationBuilder AddEcoSensor(this WebApplicationBuilder builder)
+    private static WebApplicationBuilder AddEcoSensor(this WebApplicationBuilder builder)
     {
         // Configure PostgreSQL connection for EcoSensor
         var connection = new ConnectionPgSql(
@@ -105,7 +109,7 @@ public static class EcoSensorManager
             WriteBufferSize = 24000
         };
         
-        // Add ISTAT GIS services
+        // Add Istat Gis services
         builder.AddIstatGis(connectionIstat);
 
         // Register repositories
@@ -130,10 +134,12 @@ public static class EcoSensorManager
         builder.Services.AddScoped<MeasurementPointsService>();
         builder.Services.AddScoped<IOsmPgService, EcoSensorOsm>();
         
-        // Register OpenStreetMap tasks
+        // Register tasks
         builder.Services.AddSingleton<MeasurementPointsTasks>();
         builder.Services.AddSingleton<SeedFeaturesTasks>();
         builder.Services.AddSingleton<AirQualityTasks>();
+        builder.Services.AddSingleton<DeleteOldDataTasks>();
+        builder.Services.AddSingleton<GeoJsonToS3Tasks>();
         builder.Services.AddHostedService<OsmBackgroundTasks>();
         
         return builder;
