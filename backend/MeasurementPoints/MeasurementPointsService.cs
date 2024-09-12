@@ -1,14 +1,18 @@
+using System.Text;
 using EcoSensorApi.AirQuality;
 using EcoSensorApi.AirQuality.Indexes.Eu;
-using EcoSensorApi.AirQuality.Indexes.Us;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Config;
+using Gis.Net.Aws.AWSCore.Exceptions;
+using Gis.Net.Aws.AWSCore.S3.Dto;
+using Gis.Net.Aws.AWSCore.S3.Services;
 using Gis.Net.OpenMeteo.AirQuality;
 using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
+using Newtonsoft.Json;
 
 namespace EcoSensorApi.MeasurementPoints;
 
@@ -24,6 +28,8 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly IAirQualityService _airQualityService;
     private readonly ConfigService _configService;
     private readonly EuAirQualityLevelService _euAirQualityLevelService;
+    private readonly IConfiguration _configuration;
+    private readonly IAwsBucketService _awsBucketService;
 
     /// <summary>
     /// Service to calculate measurement points for air quality
@@ -35,7 +41,9 @@ public class MeasurementPointsService : IMeasurementPointsService
         IAirQualityService airQualityService, 
         AirQualityPropertiesService airQualityPropertiesService, 
         ConfigService configService, 
-        EuAirQualityLevelService euAirQualityLevelService)
+        EuAirQualityLevelService euAirQualityLevelService, 
+        IConfiguration configuration, 
+        IAwsBucketService awsBucketService)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
@@ -44,6 +52,8 @@ public class MeasurementPointsService : IMeasurementPointsService
         _airQualityPropertiesService = airQualityPropertiesService;
         _configService = configService;
         _euAirQualityLevelService = euAirQualityLevelService;
+        _configuration = configuration;
+        _awsBucketService = awsBucketService;
     }
 
     /// <summary>
@@ -233,7 +243,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         }
         
         // read the records of the geographical coordinates of the measurement points
-        var listAirQuality = (await _airQualityVectorService.List(new AirQualityVectorQuery())).ToList();;
+        var listAirQuality = (await _airQualityVectorService.List(new AirQualityVectorQuery())).ToList();
 
         if (listAirQuality.Count == 0)
         {
@@ -364,7 +374,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// </summary>
     /// <param name="query">The query parameters for filtering the air quality features.</param>
     /// <returns>A <see cref="FeatureCollection"/> containing the air quality features or null if an error occurs.</returns>
-    public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery? query)
+    public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery? query = null)
     {
         // read the list of air quality vectors
         var airQualityList = await _airQualityVectorService.List(new AirQualityVectorQuery
@@ -413,7 +423,80 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         return featureCollection;
     }
+    
+    /// <summary>
+    /// Serializes a FeatureCollection object to a .geojson file and uploads it to an S3 bucket.
+    /// </summary>
+    /// <returns>An awaitable task.</returns>
+    public async Task SerializeAndUploadToS3Async()
+    {
+        // check if the bucket name or key is null or empty
+        if (string.IsNullOrEmpty(_configuration["Api:Aws:S3:Bucket"]) || string.IsNullOrEmpty(_configuration["Api:Aws:S3:Key"]))
+        {
+            const string msg = "The S3 bucket name or key is null or empty";
+            _logger.LogWarning(msg);
+            return;
+        }
 
+        var bucketName = _configuration["Api:Aws:S3:Bucket"];
+        var key = _configuration["Api:Aws:S3:Key"];
+        
+        var featureCollection = await AirQualityFeatures();
+        if (featureCollection is null)
+        {
+            const string msg = "The feature collection is null";
+            _logger.LogWarning(msg);
+            return;
+        }
+
+        // Serialize the FeatureCollection to GeoJSON
+        var geoJson = JsonConvert.SerializeObject(featureCollection);
+
+        // Create a memory stream from the GeoJSON string
+        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
+
+        try
+        {
+            // Check if the bucket exists
+            await _awsBucketService.CheckExistBucket(bucketName);
+        }
+        catch (AwsExceptions awsEx)
+        {
+            // Log the exception
+            _logger.LogWarning(awsEx, awsEx.Message);
+            
+            // Create the bucket if it does not exist
+            if (await _awsBucketService.CreateBucket(new AwsS3BucketDto { BucketName = bucketName }, default))
+                _logger.LogInformation("The bucket was successfully created");
+            else
+            {
+                // Log the error
+                _logger.LogError("An error occurred while creating the bucket");
+                return;
+            }
+        }
+
+        try
+        {
+            // Upload the FeatureCollection to S3
+            var resultS3 = await _awsBucketService.Upload(new AwsS3BucketUploadDto(memoryStream)
+            {
+                BucketName = bucketName,
+                Key = key,
+                Replace = true
+            }, default);
+
+            _logger.LogInformation("The FeatureCollection was successfully uploaded to S3 with the result: {0}",
+                resultS3.FileName);
+        } catch (AwsExceptions awsEx)
+        {
+            // Log the exception
+            var msg =
+                $"An error occurred while serializing and uploading the FeatureCollection to S3 - {awsEx.Message}";
+            _logger.LogError(msg);
+        }
+    }
+    
     /// <inheritdoc />
     public async Task<int> DeleteOldRecords() => await _airQualityPropertiesService.DeleteOldRecordsAsync();
 }
