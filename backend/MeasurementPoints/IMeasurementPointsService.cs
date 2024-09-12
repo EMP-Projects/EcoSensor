@@ -24,4 +24,10 @@ public interface IMeasurementPointsService
     /// </summary>
     /// <returns></returns>
     Task<int> AirQuality();
+    
+    /// <summary>
+    /// Deletes old records from the database.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation, with an integer result indicating the number of records deleted.</returns>
+    Task<int> DeleteOldRecords();
 }

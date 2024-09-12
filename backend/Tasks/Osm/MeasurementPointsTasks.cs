@@ -32,8 +32,11 @@ public class MeasurementPointsTasks : OsmTasks<MeasurementPointsService>
         Logger.LogInformation($"{result} new measurement points were found");
     }
 
+    /// <inheritdoc />
+    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(15);
+
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(10);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(2);
 }

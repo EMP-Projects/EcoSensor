@@ -24,7 +24,6 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly IAirQualityService _airQualityService;
     private readonly ConfigService _configService;
     private readonly EuAirQualityLevelService _euAirQualityLevelService;
-    private readonly UsAirQualityLevelService _usAirQualityLevelService;
 
     /// <summary>
     /// Service to calculate measurement points for air quality
@@ -36,8 +35,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         IAirQualityService airQualityService, 
         AirQualityPropertiesService airQualityPropertiesService, 
         ConfigService configService, 
-        EuAirQualityLevelService euAirQualityLevelService, 
-        UsAirQualityLevelService usAirQualityLevelService)
+        EuAirQualityLevelService euAirQualityLevelService)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
@@ -46,7 +44,6 @@ public class MeasurementPointsService : IMeasurementPointsService
         _airQualityPropertiesService = airQualityPropertiesService;
         _configService = configService;
         _euAirQualityLevelService = euAirQualityLevelService;
-        _usAirQualityLevelService = usAirQualityLevelService;
     }
 
     /// <summary>
@@ -174,14 +171,17 @@ public class MeasurementPointsService : IMeasurementPointsService
             Latitude = lat
         });
         
+        // for each time, I create the air quality properties
         foreach (var time in times.Select((value, i) => new { i, value}))
         {
+            // check if the values are null
             if (time.value is null) continue;
             if (values?[time.i] is null) continue;
             if (unit is null) continue;
             
             // get the air quality properties
             var airQualityProps = airQualityPropsList.FirstOrDefault(x => x.Date.Equals(DateTime.Parse(time.value).ToUniversalTime()));
+            // check if the air quality properties already exist
             if (airQualityProps != null) continue;
 
             // get the color index for the air quality
@@ -190,9 +190,11 @@ public class MeasurementPointsService : IMeasurementPointsService
             {
                 // get the color based on the index
                 var colorIndexAq = colorIndexAqList.FirstOrDefault(x => x.Min <= indexAq[time.i] && x.Max >= indexAq[time.i]);
+                // check if the color index is null
                 if (colorIndexAq is not null) color = colorIndexAq.Color;
             }
             
+            // create the air quality properties
             result.Add(new AirQualityPropertiesDto
             {
                 EntityKey = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i}",
@@ -411,4 +413,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         return featureCollection;
     }
+
+    /// <inheritdoc />
+    public async Task<int> DeleteOldRecords() => await _airQualityPropertiesService.DeleteOldRecordsAsync();
 }
