@@ -12,7 +12,7 @@ using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
-using Newtonsoft.Json;
+using NetTopologySuite.IO;
 
 namespace EcoSensorApi.MeasurementPoints;
 
@@ -437,6 +437,14 @@ public class MeasurementPointsService : IMeasurementPointsService
             _logger.LogWarning(msg);
             return;
         }
+        
+        // check if last data detected is less than 1 hour
+        var ifLastAirQuality = await _airQualityPropertiesService.CheckIfLastMeasureIsOlderThanHourAsync();
+        if (ifLastAirQuality)
+        {
+            _logger.LogWarning("The last air quality measurement is less than one hour old");
+            return;
+        }
 
         var bucketName = _configuration["Api:Aws:S3:Bucket"];
         var key = _configuration["Api:Aws:S3:Key"];
@@ -448,10 +456,10 @@ public class MeasurementPointsService : IMeasurementPointsService
             _logger.LogWarning(msg);
             return;
         }
-
+        
         // Serialize the FeatureCollection to GeoJSON
-        var geoJson = JsonConvert.SerializeObject(featureCollection);
-
+        var geoJson = GisUtility.SerializeFeatureCollection(featureCollection);
+        
         // Create a memory stream from the GeoJSON string
         using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
 

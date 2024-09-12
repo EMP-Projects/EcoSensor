@@ -12,6 +12,9 @@ public class GeoJsonToS3Tasks : OsmTasks<MeasurementPointsService>
 
     /// <inheritdoc />
     public override string Name => $"{nameof(GeoJsonToS3Tasks)} Task";
+    
+    /// <inheritdoc />
+    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(1);
 
     /// <inheritdoc />
     public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(15);
