@@ -10,5 +10,5 @@ public class MeasurementsQuery
     /// <summary>
     /// Gets or sets the city to filter the measurements.
     /// </summary>
-    [FromQuery(Name = "city")] public string? City { get; set; }
+    [FromQuery(Name = "place")] public string? Place { get; set; }
 }

@@ -69,10 +69,10 @@ public class OsmBackgroundTasks : BackgroundService
     /// <returns>A task that represents the asynchronous operation.</returns>
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _notificationService.AddNotificationHandler(_measurementPointsTasks);
-        _notificationService.AddNotificationHandler(_seedFeaturesTasks);
-        _notificationService.AddNotificationHandler(_airQualityTasks);
-        _notificationService.AddNotificationHandler(_deleteOldDataTasks);
+        // _notificationService.AddNotificationHandler(_measurementPointsTasks);
+        // _notificationService.AddNotificationHandler(_seedFeaturesTasks);
+        // _notificationService.AddNotificationHandler(_airQualityTasks);
+        // _notificationService.AddNotificationHandler(_deleteOldDataTasks);
         _notificationService.AddNotificationHandler(_geoJsonToS3Tasks);
         return Task.CompletedTask;
     }

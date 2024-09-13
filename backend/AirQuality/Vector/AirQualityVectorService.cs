@@ -1,6 +1,5 @@
 using EcoSensorApi.AirQuality.Properties;
 using Gis.Net.Core.Repositories;
-using Gis.Net.OpenMeteo.AirQuality;
 using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector.Services;
 using NetTopologySuite.Features;

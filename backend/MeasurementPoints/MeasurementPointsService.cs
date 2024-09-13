@@ -121,7 +121,7 @@ public class MeasurementPointsService : IMeasurementPointsService
                 else
                 {
                     // otherwise only if greater than or equal to the distance configured for the layer (2500 mt)
-                    var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.Distance(c));
+                    var nearestPoint = listMeasurementPoints?.MinBy(p => p.Geom?.IsWithinDistance(c, matrixDistance));
                     if (!(bool)nearestPoint?.Geom?.IsWithinDistance(c, matrixDistance))
                         await _airQualityVectorService.Insert(aqPoint);
                 }
@@ -379,7 +379,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         // read the list of air quality vectors
         var airQualityList = await _airQualityVectorService.List(new AirQualityVectorQuery
         {
-            EntityKey = query?.City
+            EntityKey = query?.Place
         });
         
         if (airQualityList.Count == 0)
@@ -468,10 +468,6 @@ public class MeasurementPointsService : IMeasurementPointsService
 
         var bucketName = _configuration["Api:Aws:S3:Bucket"];
 
-        // create the bucket if it does not exist
-        if (!await CreateBucketS3(bucketName!))
-            return;
-        
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery());
         foreach (var layer in layers)
@@ -479,7 +475,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             // get the prefix data (Es. "rome_latest.json")
             var prefixData = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
             // get the feature collection
-            var featureCollection = await AirQualityFeatures(new MeasurementsQuery { City = layer.EntityKey });
+            var featureCollection = await AirQualityFeatures(new MeasurementsQuery { Place = layer.EntityKey });
             if (featureCollection is null)
             {
                 const string msg = "The feature collection is null";
