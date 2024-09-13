@@ -17,7 +17,7 @@ public class GeoJsonToS3Tasks : OsmTasks<MeasurementPointsService>
     public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(15);
 
     /// <inheritdoc />
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(1);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(15);
 
     /// <inheritdoc />
     public override async Task HandleNotificationsAsync()
