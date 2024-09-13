@@ -423,46 +423,9 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         return featureCollection;
     }
-    
-    /// <summary>
-    /// Serializes a FeatureCollection object to a .geojson file and uploads it to an S3 bucket.
-    /// </summary>
-    /// <returns>An awaitable task.</returns>
-    public async Task SerializeAndUploadToS3Async()
+
+    private async Task<bool> CreateBucketS3(string bucketName)
     {
-        // check if the bucket name or key is null or empty
-        if (string.IsNullOrEmpty(_configuration["Api:Aws:S3:Bucket"]) || string.IsNullOrEmpty(_configuration["Api:Aws:S3:Key"]))
-        {
-            const string msg = "The S3 bucket name or key is null or empty";
-            _logger.LogWarning(msg);
-            return;
-        }
-        
-        // check if last data detected is less than 1 hour
-        var ifLastAirQuality = await _airQualityPropertiesService.CheckIfLastMeasureIsOlderThanHourAsync();
-        if (ifLastAirQuality)
-        {
-            _logger.LogWarning("The last air quality measurement is less than one hour old");
-            return;
-        }
-
-        var bucketName = _configuration["Api:Aws:S3:Bucket"];
-        var key = _configuration["Api:Aws:S3:Key"];
-        
-        var featureCollection = await AirQualityFeatures();
-        if (featureCollection is null)
-        {
-            const string msg = "The feature collection is null";
-            _logger.LogWarning(msg);
-            return;
-        }
-        
-        // Serialize the FeatureCollection to GeoJSON
-        var geoJson = GisUtility.SerializeFeatureCollection(featureCollection);
-        
-        // Create a memory stream from the GeoJSON string
-        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
-
         try
         {
             // Check if the bucket exists
@@ -474,34 +437,79 @@ public class MeasurementPointsService : IMeasurementPointsService
             _logger.LogWarning(awsEx, awsEx.Message);
             
             // Create the bucket if it does not exist
-            if (await _awsBucketService.CreateBucket(new AwsS3BucketDto { BucketName = bucketName }, default))
-                _logger.LogInformation("The bucket was successfully created");
+            var region = _configuration["Aws:Region"] ?? "us-east-1";
+            
+            if (await _awsBucketService.CreateBucket(new AwsS3BucketDto { BucketName = bucketName, Region = region }, default))
+                _logger.LogInformation("The bucket was successfully created or already exists");
             else
             {
                 // Log the error
                 _logger.LogError("An error occurred while creating the bucket");
-                return;
+                return false;
             }
         }
 
-        try
+        return true;
+    }
+    
+    /// <summary>
+    /// Serializes a FeatureCollection object to a .geojson file and uploads it to an S3 bucket.
+    /// </summary>
+    /// <returns>An awaitable task.</returns>
+    public async Task SerializeAndUploadToS3Async()
+    {
+        // check if the bucket name or key is null or empty
+        if (string.IsNullOrEmpty(_configuration["Api:Aws:S3:Bucket"]))
         {
-            // Upload the FeatureCollection to S3
-            var resultS3 = await _awsBucketService.Upload(new AwsS3BucketUploadDto(memoryStream)
-            {
-                BucketName = bucketName,
-                Key = key,
-                Replace = true
-            }, default);
+            const string msg = "The S3 bucket name or key is null or empty";
+            _logger.LogWarning(msg);
+            return;
+        }
 
-            _logger.LogInformation("The FeatureCollection was successfully uploaded to S3 with the result: {0}",
-                resultS3.FileName);
-        } catch (AwsExceptions awsEx)
+        var bucketName = _configuration["Api:Aws:S3:Bucket"];
+
+        // create the bucket if it does not exist
+        if (!await CreateBucketS3(bucketName!))
+            return;
+        
+        // read the list of configuration layers
+        var layers = await _configService.List(new ConfigQuery());
+        foreach (var layer in layers)
         {
-            // Log the exception
-            var msg =
-                $"An error occurred while serializing and uploading the FeatureCollection to S3 - {awsEx.Message}";
-            _logger.LogError(msg);
+            // get the prefix data (Es. "rome_latest.json")
+            var prefixData = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
+            // get the feature collection
+            var featureCollection = await AirQualityFeatures(new MeasurementsQuery { City = layer.EntityKey });
+            if (featureCollection is null)
+            {
+                const string msg = "The feature collection is null";
+                _logger.LogWarning(msg);
+                continue;
+            }
+            
+            // Serialize the FeatureCollection to GeoJSON
+            var geoJson = GisUtility.SerializeFeatureCollection(featureCollection);
+            // Create a memory stream from the GeoJSON string
+            using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
+            
+            try
+            {
+                // Upload the FeatureCollection to S3
+                var resultS3 = await _awsBucketService.Upload(new AwsS3BucketUploadDto(memoryStream)
+                {
+                    BucketName = bucketName,
+                    Prefix = prefixData,
+                    Replace = true
+                }, default);
+
+                _logger.LogInformation("The FeatureCollection was successfully uploaded to S3 with the result: {0}", resultS3.FileName);
+            } catch (AwsExceptions awsEx)
+            {
+                // Log the exception
+                var msg =
+                    $"An error occurred while serializing and uploading the FeatureCollection to S3 - {awsEx.Message}";
+                _logger.LogError(msg);
+            }
         }
     }
     
