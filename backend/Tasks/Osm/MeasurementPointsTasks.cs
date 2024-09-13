@@ -33,7 +33,7 @@ public class MeasurementPointsTasks : OsmTasks<MeasurementPointsService>
     }
 
     /// <inheritdoc />
-    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(5);
+    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(10);
 
     /// <summary>
     /// Gets or sets the due time for the task.
