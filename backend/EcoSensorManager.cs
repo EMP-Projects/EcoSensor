@@ -141,6 +141,8 @@ public static class EcoSensorManager
         builder.Services.AddSingleton<DeleteOldDataTasks>();
         builder.Services.AddSingleton<GeoJsonToS3Tasks>();
         builder.Services.AddHostedService<OsmBackgroundTasks>();
+
+        builder.Services.AddScoped<EcoSensorAddDbContext>();
         
         return builder;
     }

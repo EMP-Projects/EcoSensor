@@ -85,5 +85,6 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
         }
         
         modelBuilder.AddInitConfiguration();
+        
     }
 }
