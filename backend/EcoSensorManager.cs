@@ -3,10 +3,12 @@ using EcoSensorApi.AirQuality.Indexes.Eu;
 using EcoSensorApi.AirQuality.Indexes.Us;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
+using EcoSensorApi.Aws;
 using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
 using EcoSensorApi.Osm;
 using EcoSensorApi.Tasks.Osm;
+using Gis.Net.Aws.AWSCore.DynamoDb;
 using Gis.Net.Aws.AWSCore.S3;
 using Gis.Net.Core;
 using Gis.Net.Core.Entities;
@@ -40,7 +42,8 @@ public static class EcoSensorManager
         builder.Services.AddAirQuality(builder.Configuration["OpenMeteo:Url"]);
 
         // Add AWS S3 bucket services
-        builder.AddBucketS3();
+        builder.AddAwsBucketS3();
+        builder.AddAwsDynamoDb();
 
         // Add controllers
         builder.Services.AddControllers();
@@ -139,10 +142,11 @@ public static class EcoSensorManager
         builder.Services.AddSingleton<SeedFeaturesTasks>();
         builder.Services.AddSingleton<AirQualityTasks>();
         builder.Services.AddSingleton<DeleteOldDataTasks>();
-        builder.Services.AddSingleton<GeoJsonToS3Tasks>();
+        builder.Services.AddSingleton<CreateGeoJson>();
         builder.Services.AddHostedService<OsmBackgroundTasks>();
 
         builder.Services.AddScoped<EcoSensorAddDbContext>();
+        builder.Services.AddScoped<DynamoDbEcoSensorService>();
         
         return builder;
     }

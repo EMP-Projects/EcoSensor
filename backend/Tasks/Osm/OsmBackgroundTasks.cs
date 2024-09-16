@@ -35,7 +35,7 @@ public class OsmBackgroundTasks : BackgroundService
     /// <summary>
     /// The tasks related to handling GeoJSON data and uploading it to S3.
     /// </summary>
-    private readonly GeoJsonToS3Tasks _geoJsonToS3Tasks;
+    private readonly CreateGeoJson _createGeoJson;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OsmBackgroundTasks"/> class.
@@ -45,21 +45,21 @@ public class OsmBackgroundTasks : BackgroundService
     /// <param name="seedFeaturesTasks">The seed features tasks.</param>
     /// <param name="airQualityTasks">The air quality tasks.</param>
     /// <param name="deleteOldDataTasks">The tasks related to deleting old data.</param>
-    /// <param name="geoJsonToS3Tasks">The tasks related to handling GeoJSON data and uploading it to S3.</param>
+    /// <param name="createGeoJson">The tasks related to handling GeoJSON data and uploading it to S3.</param>
     public OsmBackgroundTasks(
         MeasurementPointsTasks measurementPointsTasks, 
         NotificationService notificationService, 
         SeedFeaturesTasks seedFeaturesTasks, 
         AirQualityTasks airQualityTasks, 
         DeleteOldDataTasks deleteOldDataTasks, 
-        GeoJsonToS3Tasks geoJsonToS3Tasks)
+        CreateGeoJson createGeoJson)
     {
         _measurementPointsTasks = measurementPointsTasks;
         _notificationService = notificationService;
         _seedFeaturesTasks = seedFeaturesTasks;
         _airQualityTasks = airQualityTasks;
         _deleteOldDataTasks = deleteOldDataTasks;
-        _geoJsonToS3Tasks = geoJsonToS3Tasks;
+        _createGeoJson = createGeoJson;
     }
 
     /// <summary>
@@ -69,11 +69,11 @@ public class OsmBackgroundTasks : BackgroundService
     /// <returns>A task that represents the asynchronous operation.</returns>
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // _notificationService.AddNotificationHandler(_measurementPointsTasks);
-        // _notificationService.AddNotificationHandler(_seedFeaturesTasks);
-        // _notificationService.AddNotificationHandler(_airQualityTasks);
-        // _notificationService.AddNotificationHandler(_deleteOldDataTasks);
-        _notificationService.AddNotificationHandler(_geoJsonToS3Tasks);
+        _notificationService.AddNotificationHandler(_measurementPointsTasks);
+        _notificationService.AddNotificationHandler(_seedFeaturesTasks);
+        _notificationService.AddNotificationHandler(_airQualityTasks);
+        _notificationService.AddNotificationHandler(_deleteOldDataTasks);
+        _notificationService.AddNotificationHandler(_createGeoJson);
         return Task.CompletedTask;
     }
 }
