@@ -428,63 +428,35 @@ public class MeasurementPointsService : IMeasurementPointsService
         return featureCollection;
     }
 
-    private async Task<bool> CreateBucketS3(string bucketName)
+    private async Task SaveFeatureCollectionToDynamoDb(string key, AwsS3ObjectDto objS3)
     {
         try
-        {
-            // Check if the bucket exists
-            await _awsBucketService.CheckExistBucket(bucketName);
-        }
-        catch (AwsExceptions awsEx)
-        {
-            // Log the exception
-            _logger.LogWarning(awsEx, awsEx.Message);
-            
-            // Create the bucket if it does not exist
-            var region = _configuration["Aws:Region"] ?? "us-east-1";
-            
-            if (await _awsBucketService.CreateBucket(new AwsS3BucketDto { BucketName = bucketName, Region = region }, default))
-                _logger.LogInformation("The bucket was successfully created or already exists");
-            else
-            {
-                // Log the error
-                _logger.LogError("An error occurred while creating the bucket");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private async Task SaveFeatureCollectionToDynamoDb(string key, FeatureCollection featureCollection)
-    {
-        try
-        {
+        { 
             var item = new DynamoDbEcoSensorModel
             {
-                TimeStamp = DateTime.UtcNow,
                 Key = key,
-                Author = "EcoSensor",
-                Data = featureCollection
+                Data = objS3
             };
-            
+        
             await _dynamoDbEcoSensorService.InsertOrUpdateAsync(item);
         }
         catch (Exception ex)
         {
             // Log the exception
-            var msg = $"An error occurred while save FeatureCollection to DynamoDb - {ex.Message}";
+            var msg = $"An error occurred while save object to DynamoDb - {ex.Message}";
             _logger.LogError(msg);
         }
     }
     
-    private async Task SaveFeatureCollectionToS3(string bucketName, string prefixData, FeatureCollection featureCollection)
+    private async Task<AwsS3ObjectDto?> SaveFeatureCollectionToS3(string bucketName, string prefixData, FeatureCollection? featureCollection)
     {
         // Serialize the FeatureCollection to GeoJSON
         var geoJson = GisUtility.SerializeFeatureCollection(featureCollection);
         
         // Create a memory stream from the GeoJSON string
         using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
+        
+        _dynamoDbEcoSensorService.AddConverter<AwsS3ObjectDto>();
             
         try
         {
@@ -497,12 +469,15 @@ public class MeasurementPointsService : IMeasurementPointsService
             }, default);
 
             _logger.LogInformation("The FeatureCollection was successfully uploaded to S3 with the result: {0}", resultS3.FileName);
+
+            return resultS3;
         } catch (AwsExceptions awsEx)
         {
             // Log the exception
             var msg =
                 $"An error occurred while serializing and uploading the FeatureCollection to S3 - {awsEx.Message}";
             _logger.LogError(msg);
+            return null;
         }
     }
     
@@ -512,15 +487,6 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns>A task that represents the asynchronous upload operation.</returns>
     public async Task UploadFeatureCollection()
     {
-        var apiType = _configuration["Api:Type"];
-        
-        if (apiType is null)
-        {
-            const string msg = "The API type is null";
-            _logger.LogWarning(msg);
-            return;
-        }
-
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery());
         
@@ -537,16 +503,13 @@ public class MeasurementPointsService : IMeasurementPointsService
             }
             
             // save the data in S3
-            if (apiType.Equals("S3", StringComparison.CurrentCultureIgnoreCase))
-            {
-                // get the prefix data (Es. "rome_latest.json")
-                var prefixData = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
-                await SaveFeatureCollectionToS3("ecosensor-data", prefixData, featureCollection);
-            }
-
+            // get the prefix data (Es. "rome_latest.json")
+            var prefixData = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
+            var objS3 = await SaveFeatureCollectionToS3("ecosensor-data", prefixData, featureCollection);
+            
             // save the data in DynamoDb
-            if (apiType.Equals("DYNAMODB", StringComparison.CurrentCultureIgnoreCase))
-                await SaveFeatureCollectionToDynamoDb(layer.EntityKey, featureCollection);
+            // if (objS3 is not null)
+            //     await SaveFeatureCollectionToDynamoDb(layer.EntityKey, objS3);
         }
     }
     

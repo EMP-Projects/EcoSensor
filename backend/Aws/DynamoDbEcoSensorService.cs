@@ -1,10 +1,12 @@
 using Gis.Net.Aws.AWSCore.DynamoDb;
-using NetTopologySuite.Features;
 
 namespace EcoSensorApi.Aws;
 
 /// <inheritdoc />
-public class DynamoDbEcoSensorService : AwsDynamoDbService<DynamoDbEcoSensorModel, FeatureCollection>
+public class DynamoDbEcoSensorService : AwsDynamoDbService<DynamoDbEcoSensorModel>
 {
-    
+    /// <inheritdoc />
+    public DynamoDbEcoSensorService(IConfiguration configuration) : base(configuration)
+    {
+    }
 }

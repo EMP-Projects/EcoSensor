@@ -1,12 +1,20 @@
 using Amazon.DynamoDBv2.DataModel;
+using Gis.Net.Aws.AWSCore.DynamoDb;
 using Gis.Net.Aws.AWSCore.DynamoDb.Models;
-using NetTopologySuite.Features;
+using Gis.Net.Aws.AWSCore.S3.Dto;
 
 namespace EcoSensorApi.Aws;
 
 /// <inheritdoc />
-[DynamoDBTable("ecosensor-data")]
-public class DynamoDbEcoSensorModel : AwsDynamoDbTable<FeatureCollection>
+[DynamoDBTable("EcoSensor", LowerCamelCaseProperties=true)]
+public class DynamoDbEcoSensorModel : AwsDynamoDbTableBase
 {
-    
+    /// <summary>
+    /// Gets or sets the GeoJson feature collection.
+    /// </summary>
+    /// <remarks>
+    /// The property is mapped to the "geoJson" attribute in the DynamoDB table.
+    /// </remarks>
+    [DynamoDBProperty("data", typeof(AwsDynamoDbConverter<AwsS3ObjectDto>))]
+    public AwsS3ObjectDto? Data { get; set; }
 }
