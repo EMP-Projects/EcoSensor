@@ -3,7 +3,9 @@ using EcoSensorApi.AirQuality;
 using EcoSensorApi.AirQuality.Indexes.Eu;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
+using EcoSensorApi.Aws;
 using EcoSensorApi.Config;
+using Gis.Net.Aws.AWSCore.DynamoDb.Models;
 using Gis.Net.Aws.AWSCore.Exceptions;
 using Gis.Net.Aws.AWSCore.S3.Dto;
 using Gis.Net.Aws.AWSCore.S3.Services;
@@ -12,7 +14,6 @@ using Gis.Net.Osm.OsmPg.Vector;
 using Gis.Net.Vector;
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.IO;
 
 namespace EcoSensorApi.MeasurementPoints;
 
@@ -30,6 +31,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly EuAirQualityLevelService _euAirQualityLevelService;
     private readonly IConfiguration _configuration;
     private readonly IAwsBucketService _awsBucketService;
+    private readonly DynamoDbEcoSensorService _dynamoDbEcoSensorService;
 
     /// <summary>
     /// Service to calculate measurement points for air quality
@@ -43,7 +45,8 @@ public class MeasurementPointsService : IMeasurementPointsService
         ConfigService configService, 
         EuAirQualityLevelService euAirQualityLevelService, 
         IConfiguration configuration, 
-        IAwsBucketService awsBucketService)
+        IAwsBucketService awsBucketService, 
+        DynamoDbEcoSensorService dynamoDbEcoSensorService)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
@@ -54,6 +57,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         _euAirQualityLevelService = euAirQualityLevelService;
         _configuration = configuration;
         _awsBucketService = awsBucketService;
+        _dynamoDbEcoSensorService = dynamoDbEcoSensorService;
     }
 
     /// <summary>
@@ -451,31 +455,80 @@ public class MeasurementPointsService : IMeasurementPointsService
 
         return true;
     }
+
+    private async Task SaveFeatureCollectionToDynamoDb(string key, FeatureCollection featureCollection)
+    {
+        try
+        {
+            var item = new DynamoDbEcoSensorModel
+            {
+                TimeStamp = DateTime.UtcNow,
+                Key = key,
+                Author = "EcoSensor",
+                Data = featureCollection
+            };
+            
+            await _dynamoDbEcoSensorService.InsertOrUpdateAsync(item);
+        }
+        catch (Exception ex)
+        {
+            // Log the exception
+            var msg = $"An error occurred while save FeatureCollection to DynamoDb - {ex.Message}";
+            _logger.LogError(msg);
+        }
+    }
+    
+    private async Task SaveFeatureCollectionToS3(string bucketName, string prefixData, FeatureCollection featureCollection)
+    {
+        // Serialize the FeatureCollection to GeoJSON
+        var geoJson = GisUtility.SerializeFeatureCollection(featureCollection);
+        
+        // Create a memory stream from the GeoJSON string
+        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
+            
+        try
+        {
+            // Upload the FeatureCollection to S3
+            var resultS3 = await _awsBucketService.Upload(new AwsS3BucketUploadDto(memoryStream)
+            {
+                BucketName = bucketName,
+                Prefix = prefixData,
+                Replace = true
+            }, default);
+
+            _logger.LogInformation("The FeatureCollection was successfully uploaded to S3 with the result: {0}", resultS3.FileName);
+        } catch (AwsExceptions awsEx)
+        {
+            // Log the exception
+            var msg =
+                $"An error occurred while serializing and uploading the FeatureCollection to S3 - {awsEx.Message}";
+            _logger.LogError(msg);
+        }
+    }
     
     /// <summary>
-    /// Serializes a FeatureCollection object to a .geojson file and uploads it to an S3 bucket.
+    /// Uploads the feature collection to either S3 or DynamoDB based on the API type specified in the configuration.
     /// </summary>
-    /// <returns>An awaitable task.</returns>
-    public async Task SerializeAndUploadToS3Async()
+    /// <returns>A task that represents the asynchronous upload operation.</returns>
+    public async Task UploadFeatureCollection()
     {
-        // check if the bucket name or key is null or empty
-        if (string.IsNullOrEmpty(_configuration["Api:Aws:S3:Bucket"]))
+        var apiType = _configuration["Api:Type"];
+        
+        if (apiType is null)
         {
-            const string msg = "The S3 bucket name or key is null or empty";
+            const string msg = "The API type is null";
             _logger.LogWarning(msg);
             return;
         }
 
-        var bucketName = _configuration["Api:Aws:S3:Bucket"];
-
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery());
+        
         foreach (var layer in layers)
         {
-            // get the prefix data (Es. "rome_latest.json")
-            var prefixData = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
             // get the feature collection
             var featureCollection = await AirQualityFeatures(new MeasurementsQuery { Place = layer.EntityKey });
+            
             if (featureCollection is null)
             {
                 const string msg = "The feature collection is null";
@@ -483,29 +536,17 @@ public class MeasurementPointsService : IMeasurementPointsService
                 continue;
             }
             
-            // Serialize the FeatureCollection to GeoJSON
-            var geoJson = GisUtility.SerializeFeatureCollection(featureCollection);
-            // Create a memory stream from the GeoJSON string
-            using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
-            
-            try
+            // save the data in S3
+            if (apiType.Equals("S3", StringComparison.CurrentCultureIgnoreCase))
             {
-                // Upload the FeatureCollection to S3
-                var resultS3 = await _awsBucketService.Upload(new AwsS3BucketUploadDto(memoryStream)
-                {
-                    BucketName = bucketName,
-                    Prefix = prefixData,
-                    Replace = true
-                }, default);
-
-                _logger.LogInformation("The FeatureCollection was successfully uploaded to S3 with the result: {0}", resultS3.FileName);
-            } catch (AwsExceptions awsEx)
-            {
-                // Log the exception
-                var msg =
-                    $"An error occurred while serializing and uploading the FeatureCollection to S3 - {awsEx.Message}";
-                _logger.LogError(msg);
+                // get the prefix data (Es. "rome_latest.json")
+                var prefixData = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
+                await SaveFeatureCollectionToS3("ecosensor-data", prefixData, featureCollection);
             }
+
+            // save the data in DynamoDb
+            if (apiType.Equals("DYNAMODB", StringComparison.CurrentCultureIgnoreCase))
+                await SaveFeatureCollectionToDynamoDb(layer.EntityKey, featureCollection);
         }
     }
     

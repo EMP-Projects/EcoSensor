@@ -35,5 +35,5 @@ public interface IMeasurementPointsService
     /// Serializes the measurements query and uploads the result to an S3 bucket.
     /// </summary>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task SerializeAndUploadToS3Async();
+    Task UploadFeatureCollection();
 }
