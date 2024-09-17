@@ -74,7 +74,8 @@ public class EcoSensorAws : IEcoSensorAws
                 BucketName = bucketName,
                 Prefix = prefix,
                 Key = key,
-                Replace = true
+                Replace = true,
+                Share = false
             }, default);
 
             _logger.LogInformation("The FeatureCollection was successfully uploaded to S3 with the result: {0}", key);
