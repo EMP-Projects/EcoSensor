@@ -6,7 +6,7 @@ using Gis.Net.Aws.AWSCore.S3.Dto;
 namespace EcoSensorApi.Aws;
 
 /// <inheritdoc />
-[DynamoDBTable("EcoSensor", LowerCamelCaseProperties=true)]
+[DynamoDBTable("EcoSensor-Data", LowerCamelCaseProperties=true)]
 public class DynamoDbEcoSensorModel : AwsDynamoDbTableBase
 {
     /// <summary>
@@ -15,6 +15,6 @@ public class DynamoDbEcoSensorModel : AwsDynamoDbTableBase
     /// <remarks>
     /// The property is mapped to the "geoJson" attribute in the DynamoDB table.
     /// </remarks>
-    [DynamoDBProperty("data", typeof(AwsDynamoDbConverter<AwsS3ObjectDto>))]
+    [DynamoDBProperty("Data", typeof(AwsDynamoDbConverter<AwsS3ObjectDto>))]
     public AwsS3ObjectDto? Data { get; set; }
 }
