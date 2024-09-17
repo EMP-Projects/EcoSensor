@@ -145,6 +145,7 @@ public static class EcoSensorManager
         builder.Services.AddSingleton<CreateGeoJson>();
         builder.Services.AddHostedService<OsmBackgroundTasks>();
 
+        builder.Services.AddScoped<IEcoSensorAws, EcoSensorAws>();
         builder.Services.AddScoped<EcoSensorAddDbContext>();
         builder.Services.AddScoped<DynamoDbEcoSensorService>();
         
