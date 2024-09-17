@@ -101,10 +101,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             // get the prefix data (Es. "rome_latest.json")
             var prefixData = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
             var objS3 = await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor-data", prefixData, featureCollection);
-            
-            // save the data in DynamoDb
-            if (objS3 is not null)
-                await _ecoSensorAws.SaveFeatureCollectionToDynamoDb(layer.EntityKey, objS3);
+            _logger.LogInformation("The feature collection was successfully uploaded to S3 with the result: {0}", objS3?.FileName);
         }
     }
     
