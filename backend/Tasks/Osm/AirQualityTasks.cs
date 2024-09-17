@@ -20,15 +20,13 @@ public class AirQualityTasks : OsmTasks<MeasurementPointsService>
     /// </summary>
     public override string Name => $"{nameof(AirQualityTasks)} Task";
 
-    /// <summary>
-    /// Gets or sets the period for the task.
-    /// </summary>
-    public override TimeSpan? Period { get; set; } = TimeSpan.FromHours(1);
+    /// <inheritdoc />
+    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(15);
 
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(15);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(15);
 
     /// <summary>
     /// Handles notifications asynchronously.

@@ -24,4 +24,16 @@ public interface IMeasurementPointsService
     /// </summary>
     /// <returns></returns>
     Task<int> AirQuality();
+    
+    /// <summary>
+    /// Deletes old records from the database.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation, with an integer result indicating the number of records deleted.</returns>
+    Task<int> DeleteOldRecords();
+    
+    /// <summary>
+    /// Serializes the measurements query and uploads the result to an S3 bucket.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UploadFeatureCollection();
 }
