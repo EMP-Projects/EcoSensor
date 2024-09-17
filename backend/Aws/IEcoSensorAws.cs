@@ -20,8 +20,9 @@ public interface IEcoSensorAws
     /// Saves a FeatureCollection to S3.
     /// </summary>
     /// <param name="bucketName">The name of the S3 bucket.</param>
-    /// <param name="prefixData">The prefix for the S3 object key.</param>
+    /// <param name="prefix">The prefix for the S3 object key.</param>
+    /// <param name="key">The file name to upload S3</param>
     /// <param name="featureCollection">The FeatureCollection to save.</param>
     /// <returns>A task that represents the asynchronous save operation. The task result contains the saved S3 object.</returns>
-    Task<AwsS3ObjectDto?> SaveFeatureCollectionToS3(string bucketName, string prefixData, FeatureCollection? featureCollection);
+    Task<AwsS3ObjectDto?> SaveFeatureCollectionToS3(string bucketName, string prefix, string key, FeatureCollection? featureCollection);
 }

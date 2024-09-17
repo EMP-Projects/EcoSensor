@@ -99,8 +99,8 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             // save the data in S3
             // get the prefix data (Es. "rome_latest.json")
-            var prefixData = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
-            var objS3 = await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor-data", prefixData, featureCollection);
+            var key = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
+            var objS3 = await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor", "data", key, featureCollection);
             _logger.LogInformation("The feature collection was successfully uploaded to S3 with the result: {0}", objS3?.FileName);
         }
     }

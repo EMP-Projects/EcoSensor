@@ -19,7 +19,7 @@ public class DeleteOldDataTasks : OsmTasks<MeasurementPointsService>
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(25);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(5);
 
     /// <inheritdoc />
     public override async Task HandleNotificationsAsync()

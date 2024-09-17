@@ -26,7 +26,7 @@ public class AirQualityTasks : OsmTasks<MeasurementPointsService>
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(15);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(3);
 
     /// <summary>
     /// Handles notifications asynchronously.
