@@ -172,8 +172,6 @@ public class AirQualityVectorService :
                 
                 // insert new air quality point
                 await Insert(aqPoint);
-
-                
             }
         }
         
