@@ -208,12 +208,12 @@ public class AirQualityVectorService :
             // select only the polygons
             var listOsmPolygons = listOsm.Where(x => x.Geom != null && GisGeometries.IsPolygon(x.Geom)).ToList();
             // create the points with a distance of 1250 mt
-            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 1250, listOsmPolygons);
+            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 1500, listOsmPolygons);
             
             // select only the lines
             var listOsmLines = listOsm.Where(x => x.Geom != null && GisGeometries.IsLineString(x.Geom)).ToList();
             // create the points with a distance of 500 mt
-            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 500, listOsmLines);
+            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 1000, listOsmLines);
             
         }
         
