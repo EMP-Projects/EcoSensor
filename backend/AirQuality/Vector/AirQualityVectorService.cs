@@ -106,6 +106,73 @@ public class AirQualityVectorService :
         Logger.LogError(msg);
         return null;
     }
+
+    private async Task<int> CreateMatrixPoints(string entityKey, double matrixDistance, ICollection<OsmVectorDto> listOsm)
+    {
+        if (listOsm.Count == 0)
+        {
+            Logger.LogWarning("The list of OSM vectors is empty");
+            return 0;
+        }
+        
+        // create a list of points
+        var measurementPoints = new List<Point>();
+    
+        // read all the points created from the geometry coordinates
+        foreach (var osm in listOsm)
+        {
+            // read all the coordinates
+            var coordinates = osm.Geom?.Coordinates;
+            // I create a collection of geographic points from coordinates
+            var coordinatesGeom = coordinates?.Select(coordinate => GisUtility.CreatePoint(3857, coordinate)).ToList();
+
+            if (coordinatesGeom is null)
+            {
+                Logger.LogWarning("I can't read the coordinates of the geometry - {0} - {1}", osm.Id, entityKey);
+                continue;
+            }
+
+            // I select only the first point
+            foreach (var coords in coordinatesGeom)
+            {
+                // if the list is empty, I add the first point
+                if (measurementPoints.Count == 0)
+                    measurementPoints.Add(coords);
+                else
+                {
+                    // otherwise only if greater than or equal to the distance configured for the layer (2500 mt)
+                    var nearestPoint = measurementPoints.MinBy(p => p.Distance(coords));
+                    var distance = nearestPoint?.Distance(coords) ?? 0;
+                    if (distance >= matrixDistance)
+                        measurementPoints.Add(coords);
+                    else
+                    {
+                        Logger.LogWarning("The distance between the points is less than the configured value - {0} - {1}", osm.Id, entityKey);
+                        continue;
+                    }
+                }
+                
+                // create a new air quality point
+                var aqPoint = new AirQualityVectorDto
+                {
+                    SourceData = ESourceData.Osm,
+                    Geom = coords,
+                    TimeStamp = DateTime.UtcNow,
+                    Guid = Guid.NewGuid(),
+                    EntityKey = entityKey,
+                    EntityVectorId = osm.Id,
+                    Lat = coords.Y,
+                    Lng = coords.X
+                };
+                
+                // insert new air quality point
+                await Insert(aqPoint);
+            }
+        }
+        
+        // save the data in the database
+        return await SaveContext();
+    }
     
     /// <summary>
     /// Calculate measurement points for air quality.
@@ -120,71 +187,33 @@ public class AirQualityVectorService :
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery());
 
+        var resultSavedItems = 0;
         foreach (var layer in layers)
         {
             // read the list of OSM vectors
             var listOsm = await GetOsmVectorList(layer.EntityKey);
-            if (listOsm is null) continue;
-            
-            // read the list of air quality vectors
-            var listMeasurementPoints = await GetAirQualityVectorList(layer.EntityKey);
-            
-            // create a list of points
-            var measurementPoints = new List<Point>();
-        
-            // read all the points created from the geometry coordinates
-            foreach (var osm in listOsm)
+            if (listOsm is null)
             {
-                // read all the coordinates
-                var coordinates = osm.Geom?.Coordinates;
-                // I create a collection of geographic points from coordinates
-                var coordinatesGeom = coordinates?.Select(coordinate => GisUtility.CreatePoint(3857, coordinate)).ToList();
-
-                if (coordinatesGeom is null)
-                {
-                    Logger.LogWarning("I can't read the coordinates of the geometry");
-                    continue;
-                }
-
-                // I select only the first point
-                foreach (var coords in coordinatesGeom)
-                {
-                    // if the list is empty, I add the first point
-                    if (measurementPoints.Count == 0)
-                        measurementPoints.Add(coords);
-                    else
-                    {
-                        // otherwise only if greater than or equal to the distance configured for the layer (2500 mt)
-                        var nearestPoint = measurementPoints.MinBy(p => p.Distance(coords));
-                        var distance = nearestPoint?.Distance(coords) ?? 0;
-                        if (distance >= matrixDistance)
-                            measurementPoints.Add(coords);
-                        else
-                        {
-                            Logger.LogWarning("The distance between the points is less than the configured value");
-                            continue;
-                        }
-                    }
-                    
-                    // create a new air quality point
-                    var aqPoint = new AirQualityVectorDto
-                    {
-                        SourceData = ESourceData.Osm,
-                        Geom = coords,
-                        TimeStamp = DateTime.UtcNow,
-                        Guid = Guid.NewGuid(),
-                        EntityKey = layer.EntityKey,
-                        EntityVectorId = osm.Id,
-                        Lat = coords.Y,
-                        Lng = coords.X
-                    };
-                    await Insert(aqPoint);
-                }
+                Logger.LogWarning("I can't read the geometries from OpenStreetMap - {0}", layer.EntityKey);
+                continue;
             }
+            
+            // select only the points
+            var listOsmPoints = listOsm.Where(x => x.Geom != null && GisGeometries.IsPoint(x.Geom)).ToList();
+            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, matrixDistance, listOsmPoints);
+            
+            // select only the polygons
+            var listOsmPolygons = listOsm.Where(x => x.Geom != null && GisGeometries.IsPolygon(x.Geom)).ToList();
+            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, matrixDistance, listOsmPolygons);
+            
+            // select only the lines
+            var listOsmLines = listOsm.Where(x => x.Geom != null && GisGeometries.IsLineString(x.Geom)).ToList();
+            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, matrixDistance, listOsmLines);
+            
         }
         
         // save the data in the database
-        return await SaveContext();
+        return resultSavedItems;
     }
 
     /// <summary>
