@@ -117,6 +117,9 @@ public class AirQualityVectorService :
         
         // create a list of points
         var measurementPoints = new List<Point>();
+        
+        // read the list of air quality vectors
+        var airQualityList = await GetAirQualityVectorList(entityKey);
     
         // read all the points created from the geometry coordinates
         foreach (var osm in listOsm)
@@ -138,6 +141,13 @@ public class AirQualityVectorService :
             {
                 // I skip the first point
                 index++;
+                
+                // controllo se esiste già un punto con le stesse coordinate
+                if (airQualityList is not null && airQualityList.Any(p => p.Geom != null && p.Geom.EqualsExact(coords)))
+                {
+                    Logger.LogWarning("The point already exists - {0} - {1}", osm.Id, entityKey);
+                    continue;
+                }
                 
                 // if the list is empty or first coordinate, I add the first point to the list
                 // this way each feature will have at least one point
