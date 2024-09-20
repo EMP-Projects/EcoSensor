@@ -195,6 +195,7 @@ public class AirQualityVectorService :
     {
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery());
+        var resultSavedItems = 0;
 
         foreach (var layer in layers)
         {
@@ -206,11 +207,12 @@ public class AirQualityVectorService :
                 Logger.LogWarning("I was unable to read the features of the measurement points by {0}", layer.EntityKey);
                 continue;
             }
-
-            var listAllNewAirQualityDto = new List<AirQualityPropertiesDto>();
-
+            
             foreach (var airQuality in listAirQuality)
             {
+                // create a list of air quality properties
+                var listAllNewAirQualityDto = new List<AirQualityPropertiesDto>();
+                
                 // convert the coordinates to WGS84
                 var pointWgs84 = CoordinateConverter.ConvertWebMercatorToWgs84(airQuality.Lng, airQuality.Lat);
                 
@@ -315,15 +317,18 @@ public class AirQualityVectorService :
                     resultAq.Hourly?.NitrogenDioxide,
                     resultAq.Hourly?.EuropeanAqiNitrogenDioxide
                 ));
+                
+                // add and save data in the database
+                foreach (var dto in listAllNewAirQualityDto)
+                    await _airQualityPropertiesService.Insert(dto);
+                
+                if (listAllNewAirQualityDto.Count > 0)
+                    resultSavedItems += await _airQualityPropertiesService.SaveContext();
             }
-            
-            // add and save data in the database
-            foreach (var dto in listAllNewAirQualityDto)
-                await _airQualityPropertiesService.Insert(dto);
         }
         
         // save the data in the database
-        return await _airQualityPropertiesService.SaveContext();
+        return resultSavedItems;
     }
 
     /// <summary>
@@ -355,14 +360,19 @@ public class AirQualityVectorService :
         {
             // check if the geometry is null
             if (aq.EntityVector?.Geom is null) continue;
-            // create a new feature
-            var newFeature = GisUtility.CreateEmptyFeature(3857, aq.EntityVector?.Geom!);
-            // check if the feature already exists
-            var feature = features.FirstOrDefault(x => x.Geometry.EqualsExact(newFeature.Geometry));
+            
             // get the properties
             var props = aq.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList();
-
+            
+            // check if the properties are null or empty
+            if (props is null || props.Count == 0) continue;
+            
+            // check if the feature already exists
+            var feature = features.FirstOrDefault(x => x.Geometry.EqualsExact(aq.EntityVector?.Geom));
+            
             if (feature is null) {
+                // create a new feature from the linked OpenStreetMap geometry (EntityVector)
+                var newFeature = GisUtility.CreateEmptyFeature(3857, aq.EntityVector?.Geom!);
                 // if the feature does not exist, I create a new one
                 newFeature.Attributes.Add("Data", props);
                 newFeature.Attributes.Add("OSM", aq.EntityVector?.Properties);
@@ -372,13 +382,11 @@ public class AirQualityVectorService :
             
             // if the feature exists, I add the properties to the existing feature
             var listProps = feature.Attributes["Data"] as List<AirQualityPropertiesDto>;
-            listProps?.AddRange(props!);
+            listProps?.AddRange(props);
         }
         
         // create a feature collection
-        var featureCollection = new FeatureCollection(features.ToArray());
-        
-        return featureCollection;
+        return new FeatureCollection(features.ToArray());
     }
     
     /// <summary>
