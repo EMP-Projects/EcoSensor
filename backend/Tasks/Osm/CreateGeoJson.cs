@@ -14,7 +14,7 @@ public class CreateGeoJson : OsmTasks<MeasurementPointsService>
     public override string Name => $"{nameof(CreateGeoJson)} Task";
     
     /// <inheritdoc />
-    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(20);
+    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(5);
 
     /// <summary>
     /// Gets or sets the due time for the task.
