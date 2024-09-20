@@ -103,6 +103,20 @@ public class MeasurementPointsService : IMeasurementPointsService
             var objS3 = await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor", "data", key, featureCollection);
             _logger.LogInformation("The feature collection was successfully uploaded to S3 with the result: {0}", objS3?.FileName);
         }
+        
+        // save the next timestamp in S3
+        const string keyNextTs = "next_ts.txt";
+        var nextTs = await _airQualityVectorService.LastDateMeasureAsync();
+        
+        if (nextTs is null)
+        {
+            const string msg = "The next timestamp is null";
+            _logger.LogWarning(msg);
+            return;
+        }
+        
+        var objNextTsS3 = await _ecoSensorAws.SaveNextTimeStampToS3("ecosensor", "data", keyNextTs, nextTs);
+        _logger.LogInformation("The next timestamp was successfully uploaded to S3 with the result: {0}", objNextTsS3?.FileName);
     }
     
     /// <inheritdoc />

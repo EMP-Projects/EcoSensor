@@ -26,7 +26,7 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
     private async Task<AirQualityPropertiesDto?> LastMeasureAsync()
     {
         var lastMeasures = await List(new AirQualityPropertiesQuery());
-        return lastMeasures.OrderByDescending(x => x.Date).FirstOrDefault();
+        return lastMeasures.MaxBy(x => x.Date);
     }
     
     /// <summary>

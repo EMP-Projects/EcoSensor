@@ -57,15 +57,8 @@ public class EcoSensorAws : IEcoSensorAws
         }
     }
 
-    /// <inheritdoc />
-    public async Task<AwsS3ObjectDto?> SaveFeatureCollectionToS3(string bucketName, string prefix, string key, FeatureCollection? featureCollection)
+    private async Task<AwsS3ObjectDto?> WriteStreamToS3(string bucketName, string prefix, string key, MemoryStream memoryStream)
     {
-        // Serialize the FeatureCollection to GeoJSON
-        var geoJson = GisUtility.SerializeFeatureCollection(featureCollection);
-        
-        // Create a memory stream from the GeoJSON string
-        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
-            
         try
         {
             // Upload the FeatureCollection to S3
@@ -84,10 +77,32 @@ public class EcoSensorAws : IEcoSensorAws
         } catch (AwsExceptions awsEx)
         {
             // Log the exception
-            var msg =
-                $"An error occurred while serializing and uploading the FeatureCollection to S3 - {awsEx.Message}";
+            var msg = $"An error occurred while uploading the data to S3 - {awsEx.Message}";
             _logger.LogError(msg);
             return null;
         }
+    }
+
+    /// <inheritdoc />
+    public async Task<AwsS3ObjectDto?> SaveFeatureCollectionToS3(string bucketName, string prefix, string key, FeatureCollection? featureCollection)
+    {
+        // Serialize the FeatureCollection to GeoJSON
+        var geoJson = GisUtility.SerializeFeatureCollection(featureCollection);
+        
+        // Create a memory stream from the GeoJSON string
+        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
+        
+        // Upload the FeatureCollection to S3
+        return await WriteStreamToS3(bucketName, prefix, key, memoryStream);
+    }
+
+    /// <inheritdoc />
+    public async Task<AwsS3ObjectDto?> SaveNextTimeStampToS3(string bucketName, string prefix, string key, string nextTs)
+    {
+        // Create a memory stream from the next timestamp
+        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(nextTs));
+        
+        // Upload the next timestamp to S3
+        return await WriteStreamToS3(bucketName, prefix, key, memoryStream);
     }
 }

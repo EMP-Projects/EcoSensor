@@ -181,9 +181,6 @@ public class AirQualityVectorService :
     /// <exception cref="Exception">Generic exception.</exception>
     public async Task<int> CreateMeasurementPoints()
     {
-        // distance between the points in meters
-        const double matrixDistance = 250;
-        
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery());
 
@@ -200,15 +197,18 @@ public class AirQualityVectorService :
             
             // select only the points
             var listOsmPoints = listOsm.Where(x => x.Geom != null && GisGeometries.IsPoint(x.Geom)).ToList();
-            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, matrixDistance, listOsmPoints);
+            // create the points with a distance of 0 mt
+            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 0, listOsmPoints);
             
             // select only the polygons
             var listOsmPolygons = listOsm.Where(x => x.Geom != null && GisGeometries.IsPolygon(x.Geom)).ToList();
-            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, matrixDistance, listOsmPolygons);
+            // create the points with a distance of 1250 mt
+            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 1250, listOsmPolygons);
             
             // select only the lines
             var listOsmLines = listOsm.Where(x => x.Geom != null && GisGeometries.IsLineString(x.Geom)).ToList();
-            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, matrixDistance, listOsmLines);
+            // create the points with a distance of 500 mt
+            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 500, listOsmLines);
             
         }
         
@@ -425,4 +425,13 @@ public class AirQualityVectorService :
     /// A task that represents the asynchronous operation. The task result contains the number of records deleted.
     /// </returns>
     public async Task<int> DeleteOldRecords() => await _airQualityPropertiesService.DeleteOldRecordsAsync();
+    
+    /// <summary>
+    /// Retrieves the last date of measurement from the air quality properties service.
+    /// </summary>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result contains the last date of measurement as a string if found; otherwise, null.
+    /// </returns>
+    public async Task<string?> LastDateMeasureAsync() => await _airQualityPropertiesService.LastDateMeasureAsync();
 }
