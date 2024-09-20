@@ -132,11 +132,16 @@ public class AirQualityVectorService :
                 continue;
             }
 
+            var index = 0;
             // I select only the first point
             foreach (var coords in coordinatesGeom)
             {
-                // if the list is empty, I add the first point
-                if (measurementPoints.Count == 0)
+                // I skip the first point
+                index++;
+                
+                // if the list is empty or first coordinate, I add the first point to the list
+                // this way each feature will have at least one point
+                if (measurementPoints.Count == 0 || index == 1)
                     measurementPoints.Add(coords);
                 else
                 {
@@ -167,6 +172,8 @@ public class AirQualityVectorService :
                 
                 // insert new air quality point
                 await Insert(aqPoint);
+
+                
             }
         }
         
