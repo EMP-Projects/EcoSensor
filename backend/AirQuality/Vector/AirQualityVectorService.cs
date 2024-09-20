@@ -182,7 +182,7 @@ public class AirQualityVectorService :
     public async Task<int> CreateMeasurementPoints()
     {
         // distance between the points in meters
-        const double matrixDistance = 2500;
+        const double matrixDistance = 250;
         
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery());
