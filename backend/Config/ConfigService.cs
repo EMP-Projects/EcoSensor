@@ -25,9 +25,9 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
     /// </summary>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<List<BBoxConfig>> BBoxGeometries()
+    public async Task<List<BBoxConfig>> BBoxGeometries(ConfigQuery? query)
     {
-        var layers = await List(new ConfigQuery());
+        var layers = await List(query);
         
         if (layers is null)
         {
@@ -47,7 +47,7 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
                 ProvName = layer.ProvName,
                 ProvIstatCodeNum = layer.ProvCode,
                 ComIstatCodeNum = layer.CityCode,
-                Name = layer.CityName
+                Name = layer.CityName,
             });
             
             if (istat is null)
@@ -57,9 +57,10 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
                 throw new Exception(msg);
             }
 
+            // For each item in the istat list, add a new BBoxConfig object to the resultBboxConfigList
             foreach (var item in istat)
                 if (item.WkbGeometry is not null)
-                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, layer.EntityKey));
+                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, $"{layer.EntityKey}:{layer.TypeMonitoringData}"));
         }
 
         return resultBboxConfigList;

@@ -19,11 +19,15 @@ public static class ConfigManager
             new ConfigModel
             {
                 Id = 1,
-                EntityKey = "Gioia del Colle",
+                EntityKey = Guid.NewGuid().ToString(),
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 16,
+                RegionName = "Puglia",
+                ProvCode = 72,
+                ProvName = "Bari",
                 CityCode = 72021,
                 CityName = "Gioia del Colle",
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
             });
         
         modelBuilder.Entity<ConfigModel>().HasData(
@@ -33,8 +37,12 @@ public static class ConfigManager
                 EntityKey = "Siena",
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 9,
+                RegionName = "Toscana",
+                ProvCode = 52,
+                ProvName = "Siena",
                 CityCode = 52032,
                 CityName = "Siena",
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
             });
 
         return modelBuilder;

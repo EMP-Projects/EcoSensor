@@ -135,7 +135,7 @@ public static class EcoSensorManager
         
         // Register service for creating measurement points grid
         builder.Services.AddScoped<MeasurementPointsService>();
-        builder.Services.AddScoped<IOsmPgService, EcoSensorOsm>();
+        builder.Services.AddScoped<IOsmPgService, EcoSensorAirQuality>();
         
         // Register tasks
         builder.Services.AddSingleton<MeasurementPointsTasks>();

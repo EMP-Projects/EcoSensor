@@ -42,6 +42,9 @@ public class AirQualityPropertiesRepository : RepositoryCore<AirQualityPropertie
         
         if (queryByParams?.Longitude is not null)
             query = query.Where(x => x.Lng.Equals(queryByParams.Longitude));
+        
+        if (queryByParams?.TypeMonitoringData is not null)
+            query = query.Where(x => x.TypeMonitoringData == (ETypeMonitoringData)queryByParams.TypeMonitoringData);
 
         return query;
     }

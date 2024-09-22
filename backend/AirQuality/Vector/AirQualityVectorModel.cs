@@ -35,4 +35,8 @@ public class AirQualityVectorModel : GisCoreManyModel<AirQualityPropertiesModel>
     /// </summary>
     [Column("entity_vector_id")]
     public long EntityVectorId { get; set; }
+
+    /// <inheritdoc />
+    [Column("type_monitoring_data")]
+    public ETypeMonitoringData TypeMonitoringData { get; set; }
 }

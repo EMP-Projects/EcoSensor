@@ -1,5 +1,6 @@
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.Config;
+using EcoSensorApi.MeasurementPoints;
 using Gis.Net.Core.Repositories;
 using Gis.Net.OpenMeteo.AirQuality;
 using Gis.Net.Osm.OsmPg.Vector;
@@ -86,18 +87,19 @@ public class AirQualityVectorService :
     /// <summary>
     /// Retrieves a list of air quality vectors based on the specified key name.
     /// </summary>
-    /// <param name="keyName">The key name used to query the air quality vectors.</param>
+    /// <param name="query"></param>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains a collection of 
     /// <see cref="AirQualityVectorDto"/> objects if found; otherwise, null.
     /// </returns>
-    private async Task<ICollection<AirQualityVectorDto>?> GetAirQualityVectorList(string? keyName)
+    private async Task<ICollection<AirQualityVectorDto>?> GetAirQualityVectorList(MeasurementsQuery query)
     {
         // read the list of air quality vectors
         var listAq = await List(new AirQualityVectorQuery
         {
             SrCode = 3857,
-            EntityKey = keyName
+            EntityKey = query.EntityKey,
+            TypeMonitoringData = query.TypeMonitoringData
         });
 
         if (listAq.Count != 0) return listAq;
@@ -107,7 +109,7 @@ public class AirQualityVectorService :
         return null;
     }
 
-    private async Task<int> CreateMatrixPoints(string entityKey, double matrixDistance, ICollection<OsmVectorDto> listOsm)
+    private async Task<int> CreateMatrixPoints(MeasurementsQuery query, double matrixDistance, ICollection<OsmVectorDto> listOsm)
     {
         if (listOsm.Count == 0)
         {
@@ -119,7 +121,7 @@ public class AirQualityVectorService :
         var measurementPoints = new List<Point>();
         
         // read the list of air quality vectors
-        var airQualityList = await GetAirQualityVectorList(entityKey);
+        var airQualityList = await GetAirQualityVectorList(query);
     
         // read all the points created from the geometry coordinates
         foreach (var osm in listOsm)
@@ -131,7 +133,7 @@ public class AirQualityVectorService :
 
             if (coordinatesGeom is null)
             {
-                Logger.LogWarning("I can't read the coordinates of the geometry - {0} - {1}", osm.Id, entityKey);
+                Logger.LogWarning("I can't read the coordinates of the geometry - {0} - {1}", osm.Id, query.EntityKey);
                 continue;
             }
 
@@ -145,7 +147,7 @@ public class AirQualityVectorService :
                 // controllo se esiste già un punto con le stesse coordinate
                 if (airQualityList is not null && airQualityList.Any(p => p.Geom != null && p.Geom.EqualsExact(coords)))
                 {
-                    Logger.LogWarning("The point already exists - {0} - {1}", osm.Id, entityKey);
+                    Logger.LogWarning("The point already exists - {0} - {1}", osm.Id, query.EntityKey);
                     continue;
                 }
                 
@@ -162,7 +164,7 @@ public class AirQualityVectorService :
                         measurementPoints.Add(coords);
                     else
                     {
-                        Logger.LogWarning("The distance between the points is less than the configured value - {0} - {1}", osm.Id, entityKey);
+                        Logger.LogWarning("The distance between the points is less than the configured value - {0} - {1}", osm.Id, query.EntityKey);
                         continue;
                     }
                 }
@@ -174,8 +176,9 @@ public class AirQualityVectorService :
                     Geom = coords,
                     TimeStamp = DateTime.UtcNow,
                     Guid = Guid.NewGuid(),
-                    EntityKey = entityKey,
+                    EntityKey = query.EntityKey!,
                     EntityVectorId = osm.Id,
+                    TypeMonitoringData = query.TypeMonitoringData,
                     Lat = coords.Y,
                     Lng = coords.X
                 };
@@ -196,9 +199,16 @@ public class AirQualityVectorService :
     /// <exception cref="Exception">Generic exception.</exception>
     public async Task<int> CreateMeasurementPoints()
     {
+        var layers = new List<ConfigDto>();
+        
         // read the list of configuration layers
-        var layers = await _configService.List(new ConfigQuery());
+        layers.AddRange(await _configService.List(new ConfigQuery
+        {
+            TypeMonitoringData = ETypeMonitoringData.AirQuality
+        }));
 
+        // TODO: create configuration lists for other monitoring data types for all values in the TypeMonitoringData enumeration
+        
         var resultSavedItems = 0;
         foreach (var layer in layers)
         {
@@ -213,17 +223,29 @@ public class AirQualityVectorService :
             // select only the points
             var listOsmPoints = listOsm.Where(x => x.Geom != null && GisGeometries.IsPoint(x.Geom)).ToList();
             // create the points with a distance of 0 mt
-            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 0, listOsmPoints);
+            resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
+            {
+                EntityKey = layer.EntityKey, 
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            }, 0, listOsmPoints);
             
             // select only the polygons
             var listOsmPolygons = listOsm.Where(x => x.Geom != null && GisGeometries.IsPolygon(x.Geom)).ToList();
             // create the points with a distance of 1250 mt
-            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 1500, listOsmPolygons);
+            resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
+            {
+                EntityKey = layer.EntityKey, 
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            }, 1500, listOsmPolygons);
             
             // select only the lines
             var listOsmLines = listOsm.Where(x => x.Geom != null && GisGeometries.IsLineString(x.Geom)).ToList();
             // create the points with a distance of 500 mt
-            resultSavedItems += await CreateMatrixPoints(layer.EntityKey, 1000, listOsmLines);
+            resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
+            {
+                EntityKey = layer.EntityKey, 
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            }, 1000, listOsmLines);
             
         }
         
@@ -238,13 +260,20 @@ public class AirQualityVectorService :
     public async Task<int> CreateAirQuality()
     {
         // read the list of configuration layers
-        var layers = await _configService.List(new ConfigQuery());
+        var layers = await _configService.List(new ConfigQuery
+        {
+            TypeMonitoringData = ETypeMonitoringData.AirQuality
+        });
         var resultSavedItems = 0;
 
         foreach (var layer in layers)
         {
             // read the records of the geographical coordinates of the measurement points
-            var listAirQuality = await GetAirQualityVectorList(layer.EntityKey);
+            var listAirQuality = await GetAirQualityVectorList(new MeasurementsQuery
+            {
+                EntityKey = layer.EntityKey,
+                TypeMonitoringData = layer.TypeMonitoringData!.Value
+            });
 
             if (listAirQuality is null)
             {
@@ -291,6 +320,7 @@ public class AirQualityVectorService :
                         pointWebMercator.X,
                         resultAq.Elevation!.Value,
                         propId,
+                        airQuality.EntityKey,
                         resultAq.HourlyUnits?.Pm10,
                         resultAq.Hourly?.Time,
                         resultAq.Hourly?.Pm10,
@@ -304,6 +334,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
+                    airQuality.EntityKey,
                     resultAq.HourlyUnits?.Pm25,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.Pm25,
@@ -317,6 +348,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
+                    airQuality.EntityKey,
                     resultAq.HourlyUnits?.CarbonMonoxide,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.CarbonMonoxide,
@@ -330,6 +362,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
+                    airQuality.EntityKey,
                     resultAq.HourlyUnits?.Ozone,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.Ozone,
@@ -343,6 +376,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
+                    airQuality.EntityKey,
                     resultAq.HourlyUnits?.SulphurDioxide,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.SulphurDioxide,
@@ -356,6 +390,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
+                    airQuality.EntityKey,
                     resultAq.HourlyUnits?.NitrogenDioxide,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.NitrogenDioxide,
@@ -378,15 +413,15 @@ public class AirQualityVectorService :
     /// <summary>
     /// Retrieves a collection of air quality features based on the specified key.
     /// </summary>
-    /// <param name="key">The key used to query the air quality vectors.</param>
+    /// <param name="query"></param>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains a <see cref="FeatureCollection"/> 
     /// if air quality vectors are found; otherwise, null.
     /// </returns>
-    public async Task<FeatureCollection?> GetAirQualityFeatures(string? key)
+    public async Task<FeatureCollection?> GetAirQualityFeatures(MeasurementsQuery query)
     {
         // read the list of air quality vectors
-        var airQualityList = await GetAirQualityVectorList(key);
+        var airQualityList = await GetAirQualityVectorList(query);
         
         if (airQualityList is null || airQualityList.Count == 0)
         {

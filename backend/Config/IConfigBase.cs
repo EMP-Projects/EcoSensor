@@ -40,4 +40,10 @@ public interface IConfigBase
     /// </summary>
     /// <value>The name of the city.</value>
     string? CityName { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the type of monitoring data.
+    /// </summary>
+    /// <value>The type of monitoring data.</value>
+    ETypeMonitoringData? TypeMonitoringData { get; set; }
 }

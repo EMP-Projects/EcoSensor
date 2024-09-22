@@ -49,4 +49,11 @@ public class AirQualityPropertiesQuery : QueryBase, IAirQualityPropertiesQuery
     /// </summary>
     [FromQuery(Name="end")]
     public DateTime? End { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the type of monitoring data.
+    /// </summary>
+    /// <value>The type of monitoring data.</value>
+    [FromQuery(Name="typeMonitoringData")]
+    public ETypeMonitoringData? TypeMonitoringData { get; set; }
 }

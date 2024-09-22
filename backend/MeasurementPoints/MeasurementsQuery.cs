@@ -10,5 +10,12 @@ public class MeasurementsQuery
     /// <summary>
     /// Gets or sets the city to filter the measurements.
     /// </summary>
-    [FromQuery(Name = "place")] public string? Place { get; set; }
+    [FromQuery(Name = "entityKey")] public string? EntityKey { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the type of monitoring data.
+    /// </summary>
+    /// <value>The type of monitoring data.</value>
+    [FromQuery(Name = "typeMonitoringData")]
+    public ETypeMonitoringData TypeMonitoringData { get; set; }
 }

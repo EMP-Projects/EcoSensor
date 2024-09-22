@@ -73,4 +73,8 @@ public class AirQualityPropertiesRequest : RequestBase, IAirQualityPropertiesReq
     /// <inheritdoc />
     [JsonPropertyName("color")]
     public string? Color { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("typeMonitoringData")]
+    public ETypeMonitoringData TypeMonitoringData { get; set; }
 }

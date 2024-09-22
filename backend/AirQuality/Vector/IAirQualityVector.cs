@@ -1,3 +1,5 @@
+using EcoSensorApi.Config;
+
 namespace EcoSensorApi.AirQuality.Vector;
 
 /// <summary>
@@ -24,4 +26,9 @@ public interface IAirQualityVector
     /// Gets or sets the entity vector ID.
     /// </summary>
     long EntityVectorId { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the type of monitoring data.
+    /// </summary>
+    ETypeMonitoringData TypeMonitoringData { get; set; }
 }

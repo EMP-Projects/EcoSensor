@@ -6,10 +6,10 @@ using NetTopologySuite.Geometries;
 namespace EcoSensorApi.Osm;
 
 /// <inheritdoc />
-public class EcoSensorOsm : OsmService<Osm2PgsqlDbContext>
+public class EcoSensorAirQuality : OsmService<Osm2PgsqlDbContext>
 {
     /// <inheritdoc />
-    public EcoSensorOsm(IOsmPg<PlanetOsmLine, Osm2PgsqlDbContext> lines, IOsmPg<PlanetOsmPolygon, Osm2PgsqlDbContext> polygons, IOsmPg<PlanetOsmPoint, Osm2PgsqlDbContext> points, IOsmPg<PlanetOsmRoads, Osm2PgsqlDbContext> roads) : base(lines, polygons, points, roads)
+    public EcoSensorAirQuality(IOsmPg<PlanetOsmLine, Osm2PgsqlDbContext> lines, IOsmPg<PlanetOsmPolygon, Osm2PgsqlDbContext> polygons, IOsmPg<PlanetOsmPoint, Osm2PgsqlDbContext> points, IOsmPg<PlanetOsmRoads, Osm2PgsqlDbContext> roads) : base(lines, polygons, points, roads)
     {
     }
 

@@ -32,4 +32,8 @@ public class ConfigDto : DtoBase, IConfigBase
     /// <inheritdoc />
     [JsonPropertyName("cityName")]
     public string? CityName { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("typeMonitoringData")]
+    public ETypeMonitoringData? TypeMonitoringData { get; set; }
 }

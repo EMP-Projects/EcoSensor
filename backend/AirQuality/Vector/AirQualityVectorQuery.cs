@@ -21,4 +21,11 @@ public class AirQualityVectorQuery : GisVectorQuery
     /// <value>The entity vector ID.</value>
     [FromQuery(Name = "entityVectorId")]
     public long? EntityVectorId { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the type of monitoring data.
+    /// </summary>
+    /// <value>The type of monitoring data.</value>
+    [FromQuery(Name = "typeMonitoringData")]
+    public ETypeMonitoringData TypeMonitoringData { get; set; }
 }

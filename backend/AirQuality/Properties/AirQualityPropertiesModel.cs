@@ -75,6 +75,10 @@ public class AirQualityPropertiesModel : GisManyPropertiesModel<AirQualityVector
     /// Gets or sets the color associated with the air quality data.
     /// </summary>
     /// <value>The color as a string.</value>
-    [Column("color")]
+    [Column("color"), MaxLength(20)]
     public string? Color { get; set; }
+    
+    /// <inheritdoc />
+    [Column("type_monitoring_data")]
+    public ETypeMonitoringData TypeMonitoringData { get; set; }
 }

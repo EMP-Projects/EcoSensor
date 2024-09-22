@@ -49,15 +49,21 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <exception cref="Exception">Thrown if there is an error while seeding the features.</exception>
     public async Task<int> SeedFeatures()
     {
-        var bboxList = await _configService.BBoxGeometries();
+        var bboxList = new List<BBoxConfig>();
+        
+        // get the list of bounding boxes by airquality data types
+        bboxList.AddRange(await _configService.BBoxGeometries(new ConfigQuery
+        {
+            TypeMonitoringData = ETypeMonitoringData.AirQuality
+        }));
+        
+        // TODO: create bboxList for other monitoring data types for all values in the TypeMonitoringData enum
+        
         var result = 0;
         var index = 0;
         for (; index < bboxList.Count; index++)
-        {
-            var bbox = bboxList[index];
-            result += await _osmVectorService.SeedGeometries(bbox.BBox, bbox.KeyName);
-        }
-
+            result += await _osmVectorService.SeedGeometries(bboxList[index].BBox, bboxList[index].KeyName);
+        
         return result;
     }
 
@@ -73,22 +79,25 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// </summary>
     /// <param name="query">The query parameters for filtering the air quality features.</param>
     /// <returns>A <see cref="FeatureCollection"/> containing the air quality features or null if an error occurs.</returns>
-    public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery? query = null) 
-        => await _airQualityVectorService.GetAirQualityFeatures(query?.Place);
-    
-    /// <summary>
-    /// Uploads the feature collection to either S3 or DynamoDB based on the API type specified in the configuration.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous upload operation.</returns>
-    public async Task UploadFeatureCollection()
+    public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery query) 
+        => await _airQualityVectorService.GetAirQualityFeatures(query);
+
+    private async Task UploadFeatureCollectionAirQuality()
     {
         // read the list of configuration layers
-        var layers = await _configService.List(new ConfigQuery());
+        var layers = await _configService.List(new ConfigQuery
+        {
+            TypeMonitoringData = ETypeMonitoringData.AirQuality
+        });
         
         foreach (var layer in layers)
         {
             // get the feature collection
-            var featureCollection = await AirQualityFeatures(new MeasurementsQuery { Place = layer.EntityKey });
+            var featureCollection = await AirQualityFeatures(new MeasurementsQuery
+            {
+                EntityKey = layer.EntityKey, 
+                TypeMonitoringData = layer.TypeMonitoringData!.Value
+            });
             
             if (featureCollection is null)
             {
@@ -99,13 +108,13 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             // save the data in S3
             // get the prefix data (Es. "rome_latest.json")
-            var key = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_latest.json";
+            var key = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_{(int)ETypeMonitoringData.AirQuality}_latest.json";
             var objS3 = await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor", "data", key, featureCollection);
             _logger.LogInformation("The feature collection was successfully uploaded to S3 with the result: {0}", objS3?.FileName);
         }
         
         // save the next timestamp in S3
-        const string keyNextTs = "next_ts.txt";
+        var keyNextTs = $"next_{(int)ETypeMonitoringData.AirQuality}_ts.txt";
         var nextTs = await _airQualityVectorService.LastDateMeasureAsync();
         
         if (nextTs is null)
@@ -117,6 +126,15 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         var objNextTsS3 = await _ecoSensorAws.SaveNextTimeStampToS3("ecosensor", "data", keyNextTs, nextTs);
         _logger.LogInformation("The next timestamp was successfully uploaded to S3 with the result: {0}", objNextTsS3?.FileName);
+    }
+    
+    /// <summary>
+    /// Uploads the feature collection to either S3 or DynamoDB based on the API type specified in the configuration.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous upload operation.</returns>
+    public async Task UploadFeatureCollection()
+    {
+        await UploadFeatureCollectionAirQuality();
     }
     
     /// <inheritdoc />

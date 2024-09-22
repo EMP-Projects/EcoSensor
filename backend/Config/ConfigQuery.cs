@@ -31,4 +31,8 @@ public class ConfigQuery : QueryBase, IConfigBase
     /// <inheritdoc />
     [FromQuery(Name = "cityName")]
     public string? CityName { get; set; }
+    
+    /// <inheritdoc />
+    [FromQuery(Name = "typeMonitoringData")]
+    public ETypeMonitoringData? TypeMonitoringData { get; set; }
 }

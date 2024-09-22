@@ -93,6 +93,7 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         double lng,
         double elevation,
         long gisId,
+        string key,
         string? unit,
         List<string?>? times,
         List<double?>? values,
@@ -143,10 +144,11 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
             // create the air quality properties
             result.Add(new AirQualityPropertiesDto
             {
-                EntityKey = $"{Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo)}:{time.i}",
+                EntityKey = key,
                 TimeStamp = DateTime.UtcNow,
                 Date = DateTime.Parse(time.value).ToUniversalTime(),
                 PollutionText = Pollution.GetPollutionDescription(pollution),
+                TypeMonitoringData = ETypeMonitoringData.AirQuality,
                 Pollution = pollution,
                 Unit = unit,
                 Color = color,

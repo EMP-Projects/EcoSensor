@@ -24,6 +24,7 @@ public class CreateGeoJson : OsmTasks<MeasurementPointsService>
     /// <inheritdoc />
     public override async Task HandleNotificationsAsync()
     {
+        // Upload the feature collection to the server
         await Service().UploadFeatureCollection();
     }
 }

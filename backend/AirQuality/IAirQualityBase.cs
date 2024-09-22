@@ -60,4 +60,10 @@ public interface IAirQualityBase
     /// </summary>
     /// <value>The color as a string.</value>
     string? Color { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the type of monitoring data.
+    /// </summary>
+    /// <value>The type of monitoring data.</value>
+    ETypeMonitoringData TypeMonitoringData { get; set; }
 }

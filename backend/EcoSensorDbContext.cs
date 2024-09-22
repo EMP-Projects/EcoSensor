@@ -71,6 +71,11 @@ public class EcoSensorDbContext : DbContext, IOsmDbContext
         modelBuilder.SetTimeStamp<EuAirQualityLevel>();
         modelBuilder.SetTimeStamp<UsAirQualityLevel>();
         modelBuilder.SetTimeStamp<ConfigModel>();
+
+        modelBuilder.SetFullTextSearch<OsmVectorModel>(x => x.EntityKey);
+        modelBuilder.SetFullTextSearch<OsmPropertiesModel>(x => x.EntityKey);
+        modelBuilder.SetFullTextSearch<AirQualityVectorModel>(x => x.EntityKey);
+        modelBuilder.SetFullTextSearch<AirQualityPropertiesModel>(x => x.EntityKey);
         
         foreach (var entry in AirQualityIndex.EuIndexes.Select((x, i) => new { Value = x, Index = i }) )
         {

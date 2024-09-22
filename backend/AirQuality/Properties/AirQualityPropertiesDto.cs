@@ -101,4 +101,8 @@ public class AirQualityPropertiesDto : DtoBase, IAirQualityPropertiesDto, IGisPr
     /// <value>The color as a string.</value>
     [JsonPropertyName("color")]
     public string? Color { get; set; }
+    
+    /// <inheritdoc />
+    [JsonPropertyName("typeMonitoringData")]
+    public ETypeMonitoringData TypeMonitoringData { get; set; }
 }

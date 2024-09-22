@@ -29,4 +29,8 @@ public class AirQualityVectorRequest : GisVectorRequest, IAirQualityVector
     /// <inheritdoc />
     [JsonPropertyName("entityVectorId")]
     public long EntityVectorId { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("typeMonitoringData")]
+    public ETypeMonitoringData TypeMonitoringData { get; set; }
 }
