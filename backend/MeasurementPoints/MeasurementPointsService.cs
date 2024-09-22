@@ -87,13 +87,15 @@ public class MeasurementPointsService : IMeasurementPointsService
     public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery query) 
         => await _airQualityVectorService.GetAirQualityFeatures(query);
 
-    private async Task UploadFeatureCollectionAirQuality()
+    private async Task<bool> UploadFeatureCollectionAirQuality()
     {
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery
         {
             TypeMonitoringData = ETypeMonitoringData.AirQuality
         });
+        
+        var resultCreated = 0;
         
         foreach (var layer in layers)
         {
@@ -111,7 +113,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             }
             
             // save the data in S3
-            // get the prefix data (Es. "rome_latest.json")
+            // get the prefix data (Es. "rome_0_latest.json")
             var key = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_{(int)ETypeMonitoringData.AirQuality}_latest.json";
             var objS3 = await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor", "data", key, featureCollection);
             
@@ -125,6 +127,14 @@ public class MeasurementPointsService : IMeasurementPointsService
                 TopicArn = _awsSnsService.TopicArnDefault,
                 Message = msg
             }, default);
+            
+            resultCreated++;
+        }
+        
+        if (resultCreated == 0)
+        {
+            _logger.LogWarning("No feature collection was uploaded to S3");
+            return false;
         }
         
         // save the next timestamp in S3
@@ -135,11 +145,14 @@ public class MeasurementPointsService : IMeasurementPointsService
         {
             const string msg = "The next timestamp is null";
             _logger.LogWarning(msg);
-            return;
+            return false;
         }
         
+        // save the next timestamp in S3
         var objNextTsS3 = await _ecoSensorAws.SaveNextTimeStampToS3("ecosensor", "data", keyNextTs, nextTs);
         _logger.LogInformation("The next timestamp was successfully uploaded to S3 with the result: {0}", objNextTsS3?.FileName);
+        
+        return resultCreated > 0;
     }
     
     /// <summary>
@@ -148,14 +161,18 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns>A task that represents the asynchronous upload operation.</returns>
     public async Task UploadFeatureCollection()
     {
-        await UploadFeatureCollectionAirQuality();
+        var resultAirQuality = await UploadFeatureCollectionAirQuality();
         
         // TODO: upload feature collection for other monitoring data types
-        await _awsSnsService.Publish(new AwsPublishDto
-        {
-            TopicArn = _awsSnsService.TopicArnDefault,
-            Message = "Updated feature collection"
-        }, default);
+        
+        if (resultAirQuality) {
+            // publish the message to the SNS topic
+            await _awsSnsService.Publish(new AwsPublishDto
+            {
+                TopicArn = _awsSnsService.TopicArnDefault,
+                Message = "Updated feature collection"
+            }, default);
+        }
     }
     
     /// <inheritdoc />
