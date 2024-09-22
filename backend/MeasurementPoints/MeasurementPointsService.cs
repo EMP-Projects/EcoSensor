@@ -102,7 +102,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             // get the feature collection
             var featureCollection = await AirQualityFeatures(new MeasurementsQuery
             {
-                EntityKey = layer.EntityKey, 
+                EntityKey = $"{layer.EntityKey}:{layer.TypeMonitoringData}", 
                 TypeMonitoringData = layer.TypeMonitoringData!.Value
             });
             
@@ -139,7 +139,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         // save the next timestamp in S3
         var keyNextTs = $"next_{(int)ETypeMonitoringData.AirQuality}_ts.txt";
-        var nextTs = await _airQualityVectorService.LastDateMeasureAsync();
+        var nextTs = await _airQualityVectorService.LastDateMeasureAsync(ETypeMonitoringData.AirQuality);
         
         if (nextTs is null)
         {

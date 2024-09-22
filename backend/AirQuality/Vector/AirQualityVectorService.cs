@@ -144,7 +144,7 @@ public class AirQualityVectorService :
                 // I skip the first point
                 index++;
                 
-                // controllo se esiste già un punto con le stesse coordinate
+                // I check if a point with the same coordinates already exists
                 if (airQualityList is not null && airQualityList.Any(p => p.Geom != null && p.Geom.EqualsExact(coords)))
                 {
                     Logger.LogWarning("The point already exists - {0} - {1}", osm.Id, query.EntityKey);
@@ -212,11 +212,12 @@ public class AirQualityVectorService :
         var resultSavedItems = 0;
         foreach (var layer in layers)
         {
+            var key = $"{layer.EntityKey}:{layer.TypeMonitoringData}";
             // read the list of OSM vectors
-            var listOsm = await GetOsmVectorList(layer.EntityKey);
+            var listOsm = await GetOsmVectorList(key);
             if (listOsm is null)
             {
-                Logger.LogWarning("I can't read the geometries from OpenStreetMap - {0}", layer.EntityKey);
+                Logger.LogWarning("I can't read the geometries from OpenStreetMap - {0}", key);
                 continue;
             }
             
@@ -225,7 +226,7 @@ public class AirQualityVectorService :
             // create the points with a distance of 0 mt
             resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
             {
-                EntityKey = layer.EntityKey, 
+                EntityKey = key, 
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
             }, 0, listOsmPoints);
             
@@ -234,7 +235,7 @@ public class AirQualityVectorService :
             // create the points with a distance of 1250 mt
             resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
             {
-                EntityKey = layer.EntityKey, 
+                EntityKey = key, 
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
             }, 1500, listOsmPolygons);
             
@@ -243,7 +244,7 @@ public class AirQualityVectorService :
             // create the points with a distance of 500 mt
             resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
             {
-                EntityKey = layer.EntityKey, 
+                EntityKey = key, 
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
             }, 1000, listOsmLines);
             
@@ -483,5 +484,5 @@ public class AirQualityVectorService :
     /// A task that represents the asynchronous operation.
     /// The task result contains the last date of measurement as a string if found; otherwise, null.
     /// </returns>
-    public async Task<string?> LastDateMeasureAsync() => await _airQualityPropertiesService.LastDateMeasureAsync();
+    public async Task<string?> LastDateMeasureAsync(ETypeMonitoringData typeData) => await _airQualityPropertiesService.LastDateMeasureAsync(typeData);
 }

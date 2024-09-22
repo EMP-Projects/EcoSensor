@@ -45,12 +45,12 @@ public abstract class OsmTasks<TService> : INotificationHandler where TService :
     /// <summary>
     /// Gets or sets the period for the task.
     /// </summary>
-    public virtual TimeSpan? Period { get; set; } = TimeSpan.FromDays(1);
+    public virtual TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(10);
 
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public virtual TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(5);
+    public virtual TimeSpan? DueTime { get; set; } = TimeSpan.FromDays(1);
 
     /// <summary>
     /// Gets or sets the delay on error for the task.

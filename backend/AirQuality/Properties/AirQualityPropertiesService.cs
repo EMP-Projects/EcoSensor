@@ -23,9 +23,9 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         _euAirQualityLevelService = euAirQualityLevelService;
     }
     
-    private async Task<AirQualityPropertiesDto?> LastMeasureAsync()
+    private async Task<AirQualityPropertiesDto?> LastMeasureAsync(ETypeMonitoringData typeData)
     {
-        var lastMeasures = await List(new AirQualityPropertiesQuery());
+        var lastMeasures = await List(new AirQualityPropertiesQuery { TypeMonitoringData = typeData});
         return lastMeasures.MaxBy(x => x.Date);
     }
     
@@ -35,23 +35,11 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains the date of the last measurement as a string in the format "yyyy-MM-dd HH:mm:ss".
     /// </returns>
-    public async Task<string?> LastDateMeasureAsync()
+    public async Task<string?> LastDateMeasureAsync(ETypeMonitoringData typeData)
     {
-        var lastMeasure = await LastMeasureAsync();
+        var lastMeasure = await LastMeasureAsync(typeData);
         // Return the date of the last measurement ISO Formatted
         return lastMeasure?.Date.ToString("O");
-    }
-
-    /// <summary>
-    /// Checks if the last air quality measurement is older than one hour.
-    /// </summary>
-    /// <returns>
-    /// A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the last measurement is older than one hour.
-    /// </returns>
-    public async Task<bool> CheckIfLastMeasureIsOlderThanHourAsync(int hours = 1)
-    {
-        var lastMeasure = await LastMeasureAsync();
-        return lastMeasure?.Date < DateTime.UtcNow.AddHours(hours * -1);
     }
     
     /// <summary>
