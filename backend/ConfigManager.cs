@@ -34,7 +34,7 @@ public static class ConfigManager
             new ConfigModel
             {
                 Id = 2,
-                EntityKey = "Siena",
+                EntityKey = Guid.NewGuid().ToString(),
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 9,
                 RegionName = "Toscana",
