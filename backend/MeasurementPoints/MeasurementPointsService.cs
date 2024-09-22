@@ -1,6 +1,8 @@
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Aws;
 using EcoSensorApi.Config;
+using Gis.Net.Aws.AWSCore.SNS.Dto;
+using Gis.Net.Aws.AWSCore.SNS.Services;
 using Gis.Net.Osm.OsmPg.Vector;
 using NetTopologySuite.Features;
 
@@ -16,6 +18,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly ILogger<MeasurementPointsService> _logger;
     private readonly ConfigService _configService;
     private readonly IEcoSensorAws _ecoSensorAws;
+    private readonly IAwsSnsService _awsSnsService;
 
     /// <summary>
     /// Service to calculate measurement points for air quality
@@ -25,13 +28,15 @@ public class MeasurementPointsService : IMeasurementPointsService
         AirQualityVectorService airQualityVectorService, 
         ILogger<MeasurementPointsService> logger, 
         ConfigService configService, 
-        IEcoSensorAws ecoSensorAws)
+        IEcoSensorAws ecoSensorAws, 
+        IAwsSnsService awsSnsService)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
         _logger = logger;
         _configService = configService;
         _ecoSensorAws = ecoSensorAws;
+        _awsSnsService = awsSnsService;
     }
 
     /// <summary>
@@ -101,8 +106,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             if (featureCollection is null)
             {
-                const string msg = "The feature collection is null";
-                _logger.LogWarning(msg);
+                _logger.LogWarning("The feature collection is null");
                 continue;
             }
             
@@ -110,7 +114,17 @@ public class MeasurementPointsService : IMeasurementPointsService
             // get the prefix data (Es. "rome_latest.json")
             var key = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_{(int)ETypeMonitoringData.AirQuality}_latest.json";
             var objS3 = await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor", "data", key, featureCollection);
-            _logger.LogInformation("The feature collection was successfully uploaded to S3 with the result: {0}", objS3?.FileName);
+            
+            // log the result
+            var msg = $"The feature collection was successfully uploaded to S3 with the result: {objS3?.FileName ?? key}";
+            _logger.LogInformation(msg);
+            
+            // publish the message to the SNS topic
+            await _awsSnsService.Publish(new AwsPublishDto
+            {
+                TopicArn = _awsSnsService.TopicArnDefault,
+                Message = msg
+            }, default);
         }
         
         // save the next timestamp in S3
@@ -135,6 +149,13 @@ public class MeasurementPointsService : IMeasurementPointsService
     public async Task UploadFeatureCollection()
     {
         await UploadFeatureCollectionAirQuality();
+        
+        // TODO: upload feature collection for other monitoring data types
+        await _awsSnsService.Publish(new AwsPublishDto
+        {
+            TopicArn = _awsSnsService.TopicArnDefault,
+            Message = "Updated feature collection"
+        }, default);
     }
     
     /// <inheritdoc />

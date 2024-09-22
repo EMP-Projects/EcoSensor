@@ -10,6 +10,7 @@ using EcoSensorApi.Osm;
 using EcoSensorApi.Tasks.Osm;
 using Gis.Net.Aws.AWSCore.DynamoDb;
 using Gis.Net.Aws.AWSCore.S3;
+using Gis.Net.Aws.AWSCore.SNS;
 using Gis.Net.Core;
 using Gis.Net.Core.Entities;
 using Gis.Net.Core.Tasks;
@@ -43,7 +44,7 @@ public static class EcoSensorManager
 
         // Add AWS S3 bucket services
         builder.AddAwsBucketS3();
-        builder.AddAwsDynamoDb();
+        builder.AddAwsSns();
 
         // Add controllers
         builder.Services.AddControllers();
