@@ -36,7 +36,7 @@ public class EcoSensorAws : IEcoSensorAws
             _dynamoDbEcoSensorService.AddConverter<AwsS3ObjectDto>();
             
             // Get the last date measure
-            var nextTs = await _airQualityPropertiesService.LastDateMeasureAsync() ?? DateTime.UtcNow.ToString("O");
+            var nextTs = await _airQualityPropertiesService.LastDateMeasureAsync(ETypeMonitoringData.AirQuality) ?? DateTime.UtcNow.ToString("O");
             
             // Create a new DynamoDbEcoSensorModel item
             var item = new DynamoDbEcoSensorModel
