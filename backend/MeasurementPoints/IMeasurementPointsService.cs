@@ -36,4 +36,11 @@ public interface IMeasurementPointsService
     /// </summary>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task UploadFeatureCollection();
+    
+    /// <summary>
+    /// Gets the next timestamp based on the provided measurements query.
+    /// </summary>
+    /// <param name="query">The measurements query used to determine the next timestamp.</param>
+    /// <returns>A task that represents the asynchronous operation, with a string result indicating the next timestamp.</returns>
+    Task<string> GetNextTimeStamp(MeasurementsQuery query);
 }

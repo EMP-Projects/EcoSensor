@@ -87,6 +87,10 @@ public class MeasurementPointsService : IMeasurementPointsService
     public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery query) 
         => await _airQualityVectorService.GetAirQualityFeatures(query);
 
+    /// <inheritdoc />
+    public async Task<string> GetNextTimeStamp(MeasurementsQuery query) 
+        => await _airQualityVectorService.LastDateMeasureAsync(query) ?? DateTime.UtcNow.ToString("O");
+
     private async Task<bool> UploadFeatureCollectionAirQuality()
     {
         // read the list of configuration layers
@@ -124,7 +128,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             _logger.LogInformation(msg);
             
             // save the next timestamp in S3
-            var nextTs = await _airQualityVectorService.LastDateMeasureAsync(query) ?? DateTime.UtcNow.ToString("O");
+            var nextTs = await GetNextTimeStamp(query);
         
             // save the next timestamp in S3
             await _ecoSensorAws.SaveNextTimeStampToS3("ecosensor", "data", $"next_ts_{keyFile}.txt", nextTs);

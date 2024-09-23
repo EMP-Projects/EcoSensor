@@ -34,8 +34,31 @@ public class MeasurementController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while getting measurement points");
-            return StatusCode(500, "Error while getting measurement points");
+            const string msg = "Error while getting measurement points";
+            _logger.LogError(e, msg);
+            return StatusCode(500, msg);
+        }
+    }
+    
+    
+    /// <summary>
+    /// Retrieves the next timestamp based on the provided measurements query.
+    /// </summary>
+    /// <param name="query">The query parameters used to determine the next timestamp.</param>
+    /// <returns>An <see cref="IActionResult"/> containing the next timestamp or an error message.</returns>
+    [HttpGet("next-ts")]
+    public async Task<IActionResult> GetNextTs([FromQuery] MeasurementsQuery query)
+    {
+        try
+        {
+            var result = await _measurementPointsService.GetNextTimeStamp(query);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            const string msg = "Error while getting the next timestamp";
+            _logger.LogError(e, msg);
+            return StatusCode(500, msg);
         }
     }
 }
