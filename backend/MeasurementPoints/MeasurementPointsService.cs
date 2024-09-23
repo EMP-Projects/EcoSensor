@@ -103,8 +103,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             var keyData = $"{layer.EntityKey}:{layer.TypeMonitoringData}";
             var query = new MeasurementsQuery
             {
-                EntityKey = keyData,
-                TypeMonitoringData = ETypeMonitoringData.AirQuality
+                EntityKey = keyData
             };
             
             // get the feature collection
