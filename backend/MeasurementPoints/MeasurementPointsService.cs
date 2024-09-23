@@ -138,7 +138,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         }
         
         // save the next timestamp in S3
-        var keyNextTs = $"next_{(int)ETypeMonitoringData.AirQuality}_ts.txt";
+        var keyNextTs = $"next_{ETypeMonitoringData.AirQuality}_ts.txt";
         var nextTs = await _airQualityVectorService.LastDateMeasureAsync(ETypeMonitoringData.AirQuality);
         
         if (nextTs is null)
