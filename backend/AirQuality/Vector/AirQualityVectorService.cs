@@ -277,7 +277,7 @@ public class AirQualityVectorService :
 
             if (listAirQuality is null)
             {
-                Logger.LogWarning("I was unable to read the features of the measurement points by {0}", layer.EntityKey);
+                Logger.LogWarning("I was unable to read the features of the measurement points by {0}", key);
                 continue;
             }
             
