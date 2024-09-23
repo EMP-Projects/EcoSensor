@@ -95,7 +95,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     public async Task<string> GetNextTimeStamp(MeasurementsQuery query) 
         => await _airQualityVectorService.LastDateMeasureAsync(query) ?? DateTime.UtcNow.ToString("O");
 
-    private async Task<bool> UploadFeatureCollectionAirQuality(string topicArn)
+    private async Task<bool> UploadFeatureCollectionAirQuality()
     {
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery
@@ -158,13 +158,6 @@ public class MeasurementPointsService : IMeasurementPointsService
             await _ecoSensorAws.SaveNextTimeStampToS3(bucketName, prefix, nextTsFileName, nextTs);
             _logger.LogInformation($"The next timestamp was successfully uploaded to S3 with the result {nextTsFileName}");
             
-            // publish the message to the SNS topic
-            await _awsSnsService.Publish(new AwsPublishDto
-            {
-                TopicArn = topicArn,
-                Message = msg
-            }, default);
-            
             resultCreated++;
         }
 
@@ -184,18 +177,24 @@ public class MeasurementPointsService : IMeasurementPointsService
             return;
         }
         
-        var resultAirQuality = await UploadFeatureCollectionAirQuality(topicArn);
-        
-        // TODO: upload feature collection for other monitoring data types
-        
-        if (resultAirQuality) {
-            // publish the message to the SNS topic
+        var resultAirQuality = await UploadFeatureCollectionAirQuality();
+        if (resultAirQuality)
+        {
             await _awsSnsService.Publish(new AwsPublishDto
             {
                 TopicArn = topicArn,
-                Message = "Updated feature collection"
+                Message = "Updated Air Quality feature collection"
             }, default);
         }
+        
+        // TODO: upload feature collection for other monitoring data types
+        
+        // publish the message to the SNS topic
+        await _awsSnsService.Publish(new AwsPublishDto
+        {
+            TopicArn = topicArn,
+            Message = "Data update finished"
+        }, default);
     }
     
     /// <inheritdoc />
