@@ -484,5 +484,5 @@ public class AirQualityVectorService :
     /// A task that represents the asynchronous operation.
     /// The task result contains the last date of measurement as a string if found; otherwise, null.
     /// </returns>
-    public async Task<string?> LastDateMeasureAsync(ETypeMonitoringData typeData) => await _airQualityPropertiesService.LastDateMeasureAsync(typeData);
+    public async Task<string?> LastDateMeasureAsync(MeasurementsQuery query) => await _airQualityPropertiesService.LastDateMeasureAsync(query);
 }

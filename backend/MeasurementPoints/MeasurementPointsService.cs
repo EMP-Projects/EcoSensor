@@ -99,12 +99,16 @@ public class MeasurementPointsService : IMeasurementPointsService
         
         foreach (var layer in layers)
         {
-            // get the feature collection
-            var featureCollection = await AirQualityFeatures(new MeasurementsQuery
+            var keyFile = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_{(int)ETypeMonitoringData.AirQuality}";
+            var keyData = $"{layer.EntityKey}:{layer.TypeMonitoringData}";
+            var query = new MeasurementsQuery
             {
-                EntityKey = $"{layer.EntityKey}:{layer.TypeMonitoringData}", 
-                TypeMonitoringData = layer.TypeMonitoringData!.Value
-            });
+                EntityKey = keyData,
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            };
+            
+            // get the feature collection
+            var featureCollection = await AirQualityFeatures(query);
             
             if (featureCollection is null)
             {
@@ -114,12 +118,18 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             // save the data in S3
             // get the prefix data (Es. "rome_0_latest.json")
-            var key = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_{(int)ETypeMonitoringData.AirQuality}_latest.json";
-            var objS3 = await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor", "data", key, featureCollection);
+            await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor", "data", $"{keyFile}_latest.json", featureCollection);
             
             // log the result
-            var msg = $"The feature collection was successfully uploaded to S3 with the result: {objS3?.FileName ?? key}";
+            var msg = $"The feature collection was successfully uploaded to S3 with the result {keyFile}_latest.json";
             _logger.LogInformation(msg);
+            
+            // save the next timestamp in S3
+            var nextTs = await _airQualityVectorService.LastDateMeasureAsync(query) ?? DateTime.UtcNow.ToString("O");
+        
+            // save the next timestamp in S3
+            await _ecoSensorAws.SaveNextTimeStampToS3("ecosensor", "data", $"next_ts_{keyFile}.txt", nextTs);
+            _logger.LogInformation($"The next timestamp was successfully uploaded to S3 with the result next_ts_{keyFile}.txt");
             
             // publish the message to the SNS topic
             await _awsSnsService.Publish(new AwsPublishDto
@@ -130,28 +140,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             resultCreated++;
         }
-        
-        if (resultCreated == 0)
-        {
-            _logger.LogWarning("No feature collection was uploaded to S3");
-            return false;
-        }
-        
-        // save the next timestamp in S3
-        var keyNextTs = $"next_{ETypeMonitoringData.AirQuality}_ts.txt";
-        var nextTs = await _airQualityVectorService.LastDateMeasureAsync(ETypeMonitoringData.AirQuality);
-        
-        if (nextTs is null)
-        {
-            const string msg = "The next timestamp is null";
-            _logger.LogWarning(msg);
-            return false;
-        }
-        
-        // save the next timestamp in S3
-        var objNextTsS3 = await _ecoSensorAws.SaveNextTimeStampToS3("ecosensor", "data", keyNextTs, nextTs);
-        _logger.LogInformation("The next timestamp was successfully uploaded to S3 with the result: {0}", objNextTsS3?.FileName);
-        
+
         return resultCreated > 0;
     }
     

@@ -14,7 +14,7 @@ public interface IEcoSensorAws
     /// <param name="key">The key under which the FeatureCollection will be saved.</param>
     /// <param name="objS3">The S3 object containing the FeatureCollection data.</param>
     /// <returns>A task that represents the asynchronous save operation.</returns>
-    Task SaveFeatureCollectionToDynamoDb(string key, AwsS3ObjectDto objS3);
+    Task SaveAitQualityToDynamoDb(string key, AwsS3ObjectDto objS3);
 
     /// <summary>
     /// Saves a FeatureCollection to S3.

@@ -1,5 +1,6 @@
 using System.Text;
 using EcoSensorApi.AirQuality.Properties;
+using EcoSensorApi.MeasurementPoints;
 using Gis.Net.Aws.AWSCore.Exceptions;
 using Gis.Net.Aws.AWSCore.S3.Dto;
 using Gis.Net.Aws.AWSCore.S3.Services;
@@ -28,7 +29,7 @@ public class EcoSensorAws : IEcoSensorAws
     }
 
     /// <inheritdoc />
-    public async Task SaveFeatureCollectionToDynamoDb(string key, AwsS3ObjectDto objS3)
+    public async Task SaveAitQualityToDynamoDb(string key, AwsS3ObjectDto objS3)
     {
         try
         {
@@ -36,7 +37,11 @@ public class EcoSensorAws : IEcoSensorAws
             _dynamoDbEcoSensorService.AddConverter<AwsS3ObjectDto>();
             
             // Get the last date measure
-            var nextTs = await _airQualityPropertiesService.LastDateMeasureAsync(ETypeMonitoringData.AirQuality) ?? DateTime.UtcNow.ToString("O");
+            var nextTs = await _airQualityPropertiesService.LastDateMeasureAsync(new MeasurementsQuery
+            {
+                EntityKey = key,
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            }) ?? DateTime.UtcNow.ToString("O");
             
             // Create a new DynamoDbEcoSensorModel item
             var item = new DynamoDbEcoSensorModel

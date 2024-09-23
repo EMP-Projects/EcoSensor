@@ -1,4 +1,5 @@
 using EcoSensorApi.AirQuality.Indexes.Eu;
+using EcoSensorApi.MeasurementPoints;
 using Gis.Net.Core.Services;
 
 namespace EcoSensorApi.AirQuality.Properties;
@@ -23,21 +24,18 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         _euAirQualityLevelService = euAirQualityLevelService;
     }
     
-    private async Task<AirQualityPropertiesDto?> LastMeasureAsync(ETypeMonitoringData typeData)
-    {
-        var lastMeasures = await List(new AirQualityPropertiesQuery { TypeMonitoringData = typeData});
-        return lastMeasures.MaxBy(x => x.Date);
-    }
-    
     /// <summary>
     /// Retrieves the date of the last air quality measurement.
     /// </summary>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains the date of the last measurement as a string in the format "yyyy-MM-dd HH:mm:ss".
     /// </returns>
-    public async Task<string?> LastDateMeasureAsync(ETypeMonitoringData typeData)
+    public async Task<string?> LastDateMeasureAsync(MeasurementsQuery query)
     {
-        var lastMeasure = await LastMeasureAsync(typeData);
+        // Get the last measures
+        var lastMeasures = await List(new AirQualityPropertiesQuery { EntityKey = query.EntityKey, TypeMonitoringData = query.TypeMonitoringData});
+        // Get the last date measure
+        var lastMeasure = lastMeasures.MaxBy(x => x.Date);
         // Return the date of the last measurement ISO Formatted
         return lastMeasure?.Date.ToString("O");
     }
