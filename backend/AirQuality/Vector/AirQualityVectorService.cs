@@ -210,9 +210,8 @@ public class AirQualityVectorService :
         // TODO: create configuration lists for other monitoring data types for all values in the TypeMonitoringData enumeration
         
         var resultSavedItems = 0;
-        foreach (var layer in layers)
+        foreach (var key in layers.Select(layer => $"{layer.EntityKey}:{layer.TypeMonitoringData}"))
         {
-            var key = $"{layer.EntityKey}:{layer.TypeMonitoringData}";
             // read the list of OSM vectors
             var listOsm = await GetOsmVectorList(key);
             if (listOsm is null)
@@ -247,7 +246,6 @@ public class AirQualityVectorService :
                 EntityKey = key, 
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
             }, 1000, listOsmLines);
-            
         }
         
         // save the data in the database
@@ -269,11 +267,12 @@ public class AirQualityVectorService :
 
         foreach (var layer in layers)
         {
+            var key = $"{layer.EntityKey}:{ETypeMonitoringData.AirQuality}";
             // read the records of the geographical coordinates of the measurement points
             var listAirQuality = await GetAirQualityVectorList(new MeasurementsQuery
             {
-                EntityKey = layer.EntityKey,
-                TypeMonitoringData = layer.TypeMonitoringData!.Value
+                EntityKey = key,
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
             });
 
             if (listAirQuality is null)
@@ -321,7 +320,7 @@ public class AirQualityVectorService :
                         pointWebMercator.X,
                         resultAq.Elevation!.Value,
                         propId,
-                        airQuality.EntityKey,
+                        key,
                         resultAq.HourlyUnits?.Pm10,
                         resultAq.Hourly?.Time,
                         resultAq.Hourly?.Pm10,
@@ -335,7 +334,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
-                    airQuality.EntityKey,
+                    key,
                     resultAq.HourlyUnits?.Pm25,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.Pm25,
@@ -349,7 +348,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
-                    airQuality.EntityKey,
+                    key,
                     resultAq.HourlyUnits?.CarbonMonoxide,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.CarbonMonoxide,
@@ -363,7 +362,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
-                    airQuality.EntityKey,
+                    key,
                     resultAq.HourlyUnits?.Ozone,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.Ozone,
@@ -377,7 +376,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
-                    airQuality.EntityKey,
+                    key,
                     resultAq.HourlyUnits?.SulphurDioxide,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.SulphurDioxide,
@@ -391,7 +390,7 @@ public class AirQualityVectorService :
                     pointWebMercator.X,
                     resultAq.Elevation!.Value,
                     propId,
-                    airQuality.EntityKey,
+                    key,
                     resultAq.HourlyUnits?.NitrogenDioxide,
                     resultAq.Hourly?.Time,
                     resultAq.Hourly?.NitrogenDioxide,
