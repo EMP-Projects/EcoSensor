@@ -1,3 +1,4 @@
+using System.Globalization;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Aws;
 using EcoSensorApi.Config;
@@ -105,10 +106,22 @@ public class MeasurementPointsService : IMeasurementPointsService
         {
             var keyFile = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_{(int)ETypeMonitoringData.AirQuality}";
             var keyData = $"{layer.EntityKey}:{layer.TypeMonitoringData}";
+            
             var query = new MeasurementsQuery
             {
                 EntityKey = keyData
             };
+            
+            // get the next timestamp
+            var lastTs = await GetNextTimeStamp(query);
+            // check if the next timestamp is less than the current timestamp
+            var isNextTs = DateTime.ParseExact(lastTs, "O", CultureInfo.InvariantCulture) <= DateTime.UtcNow;
+            
+            if (!isNextTs)
+            {
+                _logger.LogWarning("The next timestamp is less than the current timestamp");
+                continue;
+            }
             
             // get the feature collection
             var featureCollection = await AirQualityFeatures(query);
