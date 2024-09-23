@@ -110,9 +110,9 @@ public class MeasurementPointsService : IMeasurementPointsService
             // get the feature collection
             var featureCollection = await AirQualityFeatures(query);
             
-            if (featureCollection is null)
+            if (featureCollection is null || featureCollection.Count == 0)
             {
-                _logger.LogWarning("The feature collection is null");
+                _logger.LogWarning("The feature collection is null or empty");
                 continue;
             }
             
