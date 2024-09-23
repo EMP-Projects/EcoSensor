@@ -40,7 +40,6 @@ public class MeasurementController : ControllerBase
         }
     }
     
-    
     /// <summary>
     /// Retrieves the next timestamp based on the provided measurements query.
     /// </summary>
