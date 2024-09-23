@@ -35,4 +35,16 @@ public interface IEcoSensorAws
     /// <param name="nextTs">The next timestamp to save.</param>
     /// <returns>A task that represents the asynchronous save operation. The task result contains the saved S3 object.</returns>
     Task<AwsS3ObjectDto?> SaveNextTimeStampToS3(string bucketName, string prefix, string key, string nextTs);
+    
+    /// <summary>
+    /// Checks if a file exists in the specified S3 bucket and prefix.
+    /// </summary>
+    /// <param name="bucketName">The name of the S3 bucket.</param>
+    /// <param name="prefix">The prefix for the S3 object key.</param>
+    /// <param name="fileName">The name of the file to check for existence.</param>
+    /// <returns>A task that represents the asynchronous operation.
+    /// The task result contains a boolean indicating whether the file exists.
+    /// </returns>
+    Task<bool> IsExistFile(string bucketName, string prefix, string fileName);
+    
 }

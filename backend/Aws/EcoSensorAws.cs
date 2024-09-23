@@ -17,6 +17,13 @@ public class EcoSensorAws : IEcoSensorAws
     private readonly DynamoDbEcoSensorService _dynamoDbEcoSensorService;
     private readonly ILogger<EcoSensorAws> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EcoSensorAws"/> class.
+    /// </summary>
+    /// <param name="airQualityPropertiesService">The service for air quality properties.</param>
+    /// <param name="awsBucketService">The service for AWS S3 bucket operations.</param>
+    /// <param name="dynamoDbEcoSensorService">The service for DynamoDB operations related to EcoSensor.</param>
+    /// <param name="logger">The logger instance for logging operations.</param>
     public EcoSensorAws(AirQualityPropertiesService airQualityPropertiesService,
         IAwsBucketService awsBucketService, 
         DynamoDbEcoSensorService dynamoDbEcoSensorService, 
@@ -26,6 +33,11 @@ public class EcoSensorAws : IEcoSensorAws
         _awsBucketService = awsBucketService;
         _dynamoDbEcoSensorService = dynamoDbEcoSensorService;
         _logger = logger;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> IsExistFile(string bucketName, string prefix, string fileName) {
+       return await _awsBucketService.IsExistFile(bucketName, $"{prefix}/{fileName}", default);
     }
 
     /// <inheritdoc />

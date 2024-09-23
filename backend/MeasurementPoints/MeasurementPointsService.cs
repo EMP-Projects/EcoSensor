@@ -20,6 +20,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly ConfigService _configService;
     private readonly IEcoSensorAws _ecoSensorAws;
     private readonly IAwsSnsService _awsSnsService;
+    private readonly IConfiguration _configuration;
 
     /// <summary>
     /// Service to calculate measurement points for air quality
@@ -30,7 +31,8 @@ public class MeasurementPointsService : IMeasurementPointsService
         ILogger<MeasurementPointsService> logger, 
         ConfigService configService, 
         IEcoSensorAws ecoSensorAws, 
-        IAwsSnsService awsSnsService)
+        IAwsSnsService awsSnsService, 
+        IConfiguration configuration)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
@@ -38,6 +40,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         _configService = configService;
         _ecoSensorAws = ecoSensorAws;
         _awsSnsService = awsSnsService;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -57,7 +60,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     {
         var bboxList = new List<BBoxConfig>();
         
-        // get the list of bounding boxes by airquality data types
+        // get the list of bounding boxes by air quality data types
         bboxList.AddRange(await _configService.BBoxGeometries(new ConfigQuery
         {
             TypeMonitoringData = ETypeMonitoringData.AirQuality
@@ -92,7 +95,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     public async Task<string> GetNextTimeStamp(MeasurementsQuery query) 
         => await _airQualityVectorService.LastDateMeasureAsync(query) ?? DateTime.UtcNow.ToString("O");
 
-    private async Task<bool> UploadFeatureCollectionAirQuality()
+    private async Task<bool> UploadFeatureCollectionAirQuality(string topicArn)
     {
         // read the list of configuration layers
         var layers = await _configService.List(new ConfigQuery
@@ -101,23 +104,31 @@ public class MeasurementPointsService : IMeasurementPointsService
         });
         
         var resultCreated = 0;
+        const string bucketName = "ecosensor";
+        const string prefix = "data";
         
         foreach (var layer in layers)
         {
             var keyFile = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_{(int)ETypeMonitoringData.AirQuality}";
             var keyData = $"{layer.EntityKey}:{layer.TypeMonitoringData}";
+            var dataFileName = $"{keyFile}_latest.json";
+            var nextTsFileName = $"next_ts_{keyFile}.txt";
             
             var query = new MeasurementsQuery
             {
                 EntityKey = keyData
             };
+
+            // check if the data file and the next timestamp file exist
+            var isExistDataFile = await _ecoSensorAws.IsExistFile(bucketName, prefix, dataFileName);
+            var isExistNextTsFile = await _ecoSensorAws.IsExistFile(bucketName, prefix, nextTsFileName);
             
             // get the next timestamp
             var lastTs = await GetNextTimeStamp(query);
             // check if the next timestamp is less than the current timestamp
             var isNextTs = DateTime.ParseExact(lastTs, "O", CultureInfo.InvariantCulture) <= DateTime.UtcNow;
             
-            if (!isNextTs)
+            if (!isNextTs && isExistDataFile && isExistNextTsFile)
             {
                 _logger.LogWarning("The next timestamp is less than the current timestamp");
                 continue;
@@ -134,23 +145,23 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             // save the data in S3
             // get the prefix data (Es. "rome_0_latest.json")
-            await _ecoSensorAws.SaveFeatureCollectionToS3("ecosensor", "data", $"{keyFile}_latest.json", featureCollection);
+            await _ecoSensorAws.SaveFeatureCollectionToS3(bucketName, prefix, dataFileName, featureCollection);
             
             // log the result
-            var msg = $"The feature collection was successfully uploaded to S3 with the result {keyFile}_latest.json";
+            var msg = $"The feature collection was successfully uploaded to S3 with the result {dataFileName}";
             _logger.LogInformation(msg);
             
             // save the next timestamp in S3
             var nextTs = await GetNextTimeStamp(query);
         
             // save the next timestamp in S3
-            await _ecoSensorAws.SaveNextTimeStampToS3("ecosensor", "data", $"next_ts_{keyFile}.txt", nextTs);
-            _logger.LogInformation($"The next timestamp was successfully uploaded to S3 with the result next_ts_{keyFile}.txt");
+            await _ecoSensorAws.SaveNextTimeStampToS3(bucketName, prefix, nextTsFileName, nextTs);
+            _logger.LogInformation($"The next timestamp was successfully uploaded to S3 with the result {nextTsFileName}");
             
             // publish the message to the SNS topic
             await _awsSnsService.Publish(new AwsPublishDto
             {
-                TopicArn = _awsSnsService.TopicArnDefault,
+                TopicArn = topicArn,
                 Message = msg
             }, default);
             
@@ -166,7 +177,14 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns>A task that represents the asynchronous upload operation.</returns>
     public async Task UploadFeatureCollection()
     {
-        var resultAirQuality = await UploadFeatureCollectionAirQuality();
+        var topicArn = _configuration["AWS_TOPIC_ARN"];
+        if (string.IsNullOrEmpty(topicArn))
+        {
+            _logger.LogError("The AWS_TOPIC_ARN environment variable is not set");
+            return;
+        }
+        
+        var resultAirQuality = await UploadFeatureCollectionAirQuality(topicArn);
         
         // TODO: upload feature collection for other monitoring data types
         
@@ -174,7 +192,7 @@ public class MeasurementPointsService : IMeasurementPointsService
             // publish the message to the SNS topic
             await _awsSnsService.Publish(new AwsPublishDto
             {
-                TopicArn = _awsSnsService.TopicArnDefault,
+                TopicArn = topicArn,
                 Message = "Updated feature collection"
             }, default);
         }
