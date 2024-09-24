@@ -104,8 +104,8 @@ public class MeasurementPointsService : IMeasurementPointsService
         });
         
         var resultCreated = 0;
-        const string bucketName = "ecosensor";
-        const string prefix = "data";
+        var bucketName = _configuration["AWS_S3_BUCKET_NAME"] ?? "ecosensor-data";
+        const string prefix = "/";
         
         foreach (var layer in layers)
         {
