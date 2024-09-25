@@ -168,16 +168,32 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// Uploads the feature collection to either S3 or DynamoDB based on the API type specified in the configuration.
     /// </summary>
     /// <returns>A task that represents the asynchronous upload operation.</returns>
-    public async Task UploadFeatureCollection()
+    public async Task<bool> UploadFeatureCollection()
     {
         var topicArn = _configuration["AWS_TOPIC_ARN"];
         if (string.IsNullOrEmpty(topicArn))
         {
             _logger.LogError("The AWS_TOPIC_ARN environment variable is not set");
-            return;
+            return false;
+        }
+
+        var resultFeatureCollection = 0;
+        
+        // seed the features
+        resultFeatureCollection += await SeedFeatures();
+        // calculate the measurement points
+        resultFeatureCollection += await MeasurementPoints();
+        // read the air quality data
+        resultFeatureCollection += await AirQuality();
+        
+        if (resultFeatureCollection == 0)
+        {
+            _logger.LogWarning("No new features were found");
+            return false;
         }
         
         var resultAirQuality = await UploadFeatureCollectionAirQuality();
+        
         if (resultAirQuality)
         {
             await _awsSnsService.Publish(new AwsPublishDto
@@ -195,6 +211,8 @@ public class MeasurementPointsService : IMeasurementPointsService
             TopicArn = topicArn,
             Message = "Data update finished"
         }, default);
+
+        return resultAirQuality;
     }
     
     /// <inheritdoc />

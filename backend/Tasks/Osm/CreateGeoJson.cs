@@ -14,17 +14,18 @@ public class CreateGeoJson : OsmTasks<MeasurementPointsService>
     public override string Name => $"{nameof(CreateGeoJson)} Task";
     
     /// <inheritdoc />
-    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(5);
+    public override TimeSpan? Period { get; set; } = TimeSpan.FromHours(1);
 
     /// <summary>
     /// Gets or sets the due time for the task.
     /// </summary>
-    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromSeconds(4);
+    public override TimeSpan? DueTime { get; set; } = TimeSpan.FromMinutes(1);
 
     /// <inheritdoc />
     public override async Task HandleNotificationsAsync()
     {
         // Upload the feature collection to the server
-        await Service().UploadFeatureCollection();
+        var result = await Service().UploadFeatureCollection();
+        Logger.LogInformation($"Feature collection uploaded: {result}");
     }
 }

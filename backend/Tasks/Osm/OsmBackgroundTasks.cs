@@ -13,21 +13,6 @@ public class OsmBackgroundTasks : BackgroundService
     private readonly NotificationService _notificationService;
 
     /// <summary>
-    /// The tasks related to measurement points.
-    /// </summary>
-    private readonly MeasurementPointsTasks _measurementPointsTasks;
-
-    /// <summary>
-    /// The tasks related to seeding features.
-    /// </summary>
-    private readonly SeedFeaturesTasks _seedFeaturesTasks;
-
-    /// <summary>
-    /// The tasks related to air quality.
-    /// </summary>
-    private readonly AirQualityTasks _airQualityTasks;
-    
-    /// <summary>
     /// The tasks related to deleting old data.
     /// </summary>
     private readonly DeleteOldDataTasks _deleteOldDataTasks;
@@ -47,17 +32,11 @@ public class OsmBackgroundTasks : BackgroundService
     /// <param name="deleteOldDataTasks">The tasks related to deleting old data.</param>
     /// <param name="createGeoJson">The tasks related to handling GeoJSON data and uploading it to S3.</param>
     public OsmBackgroundTasks(
-        MeasurementPointsTasks measurementPointsTasks, 
         NotificationService notificationService, 
-        SeedFeaturesTasks seedFeaturesTasks, 
-        AirQualityTasks airQualityTasks, 
         DeleteOldDataTasks deleteOldDataTasks, 
         CreateGeoJson createGeoJson)
     {
-        _measurementPointsTasks = measurementPointsTasks;
         _notificationService = notificationService;
-        _seedFeaturesTasks = seedFeaturesTasks;
-        _airQualityTasks = airQualityTasks;
         _deleteOldDataTasks = deleteOldDataTasks;
         _createGeoJson = createGeoJson;
     }
@@ -69,9 +48,6 @@ public class OsmBackgroundTasks : BackgroundService
     /// <returns>A task that represents the asynchronous operation.</returns>
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _notificationService.AddNotificationHandler(_measurementPointsTasks);
-        _notificationService.AddNotificationHandler(_seedFeaturesTasks);
-        _notificationService.AddNotificationHandler(_airQualityTasks);
         _notificationService.AddNotificationHandler(_deleteOldDataTasks);
         _notificationService.AddNotificationHandler(_createGeoJson);
         return Task.CompletedTask;

@@ -14,7 +14,7 @@ public class DeleteOldDataTasks : OsmTasks<MeasurementPointsService>
     public override string Name => $"{nameof(DeleteOldDataTasks)} Task";
 
     /// <inheritdoc />
-    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(25);
+    public override TimeSpan? Period { get; set; } = TimeSpan.FromMinutes(30);
 
     /// <summary>
     /// Gets or sets the due time for the task.
