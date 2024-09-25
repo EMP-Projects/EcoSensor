@@ -139,9 +139,6 @@ public static class EcoSensorManager
         builder.Services.AddScoped<IOsmPgService, EcoSensorAirQuality>();
         
         // Register tasks
-        builder.Services.AddSingleton<MeasurementPointsTasks>();
-        builder.Services.AddSingleton<SeedFeaturesTasks>();
-        builder.Services.AddSingleton<AirQualityTasks>();
         builder.Services.AddSingleton<DeleteOldDataTasks>();
         builder.Services.AddSingleton<CreateGeoJson>();
         builder.Services.AddHostedService<OsmBackgroundTasks>();
