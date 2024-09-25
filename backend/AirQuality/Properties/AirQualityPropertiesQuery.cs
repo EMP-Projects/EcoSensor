@@ -1,5 +1,6 @@
 using Gis.Net.Core.DTO;
 using Microsoft.AspNetCore.Mvc;
+using NetTopologySuite.Geometries;
 
 namespace EcoSensorApi.AirQuality.Properties;
 

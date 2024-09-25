@@ -183,6 +183,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         resultFeatureCollection += await SeedFeatures();
         // calculate the measurement points
         resultFeatureCollection += await MeasurementPoints();
+        
         // read the air quality data
         resultFeatureCollection += await AirQuality();
         

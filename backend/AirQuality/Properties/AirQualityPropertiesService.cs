@@ -1,6 +1,10 @@
+using System.Globalization;
 using EcoSensorApi.AirQuality.Indexes.Eu;
 using EcoSensorApi.MeasurementPoints;
 using Gis.Net.Core.Services;
+using Gis.Net.Vector;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Precision;
 
 namespace EcoSensorApi.AirQuality.Properties;
 
@@ -38,6 +42,34 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         var lastMeasure = lastMeasures.MaxBy(x => x.Date);
         // Return the date of the last measurement ISO Formatted
         return lastMeasure?.Date.ToString("O");
+    }
+    
+    /// <summary>
+    /// Retrieves air quality properties from the current time onwards for the specified type of monitoring data.
+    /// </summary>
+    /// <param name="typeData">The type of monitoring data.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains an enumerable of <see cref="AirQualityPropertiesDto"/> objects.
+    /// </returns>
+    public async Task<IEnumerable<AirQualityPropertiesDto>> GetAirQualityPropertiesFromNowAsync(ETypeMonitoringData typeData)
+    {
+        return (await List(new AirQualityPropertiesQuery
+        {
+            TypeMonitoringData = typeData
+        })).Where(x => x.Date > DateTime.UtcNow);
+    }
+    
+    /// <summary>
+    /// Retrieves air quality points in WGS84 coordinates from the current time onwards for the specified type of monitoring data.
+    /// </summary>
+    /// <param name="typeData">The type of monitoring data.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains an enumerable of geographical points in WGS84 coordinates.
+    /// </returns>
+    public async Task<IEnumerable<Point>> GetAirQualityPointsFromNowAsync(ETypeMonitoringData typeData)
+    {
+        return (await GetAirQualityPropertiesFromNowAsync(typeData))
+            .Select(x => GisUtility.CreatePoint(3857, new Coordinate(x.Lng, x.Lat)));
     }
     
     /// <summary>

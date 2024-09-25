@@ -94,12 +94,17 @@ public class AirQualityVectorService :
     /// </returns>
     private async Task<ICollection<AirQualityVectorDto>?> GetAirQualityVectorList(MeasurementsQuery query)
     {
-        // read the list of air quality vectors
-        var listAq = await List(new AirQualityVectorQuery
+        var queryAq = new AirQualityVectorQuery
         {
             SrCode = 3857,
             EntityKey = query.EntityKey,
             TypeMonitoringData = query.TypeMonitoringData
+        };
+        
+        // read the list of air quality vectors
+        var listAq = await List(new ListOptions<AirQualityVectorModel, AirQualityVectorDto, AirQualityVectorQuery>(queryAq)
+        {
+            WithApplyInclude = false
         });
 
         if (listAq.Count != 0) return listAq;
@@ -108,88 +113,93 @@ public class AirQualityVectorService :
         Logger.LogError(msg);
         return null;
     }
-
-    private async Task<int> CreateMatrixPoints(MeasurementsQuery query, double matrixDistance, ICollection<OsmVectorDto> listOsm)
-    {
-        if (listOsm.Count == 0)
-        {
-            Logger.LogWarning("The list of OSM vectors is empty");
-            return 0;
-        }
-        
-        // create a list of points
-        var measurementPoints = new List<Point>();
-        
-        // read the list of air quality vectors
-        var airQualityList = await GetAirQualityVectorList(query);
     
+    private async Task<List<Point?>?> GetAirQualityPointsAsync(MeasurementsQuery query)
+    {
+        // read the list of air quality vectors
+        var list = await GetAirQualityVectorList(query);
+        if (list?.Count != 0) 
+            return list?.Select(x => x.Geom as Point).Where(x => x is not null).ToList();
+        
+        Logger.LogWarning("The list of air quality vectors is empty");
+        return [];
+    }
+    
+    /// <summary>
+    /// Retrieves a list of air quality vectors that do not have corresponding points in WGS84 coordinates from the current time onwards.
+    /// </summary>
+    /// <param name="query">The query parameters for retrieving air quality vectors.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains a list of <see cref="AirQualityVectorDto"/> objects
+    /// that do not have corresponding points in WGS84 coordinates from the current time onwards.
+    /// </returns>
+    private async Task<List<AirQualityVectorDto>?> GetAirQualityByNewPointsAsync(MeasurementsQuery query)
+    {
+        // read the list of air quality vectors
+        var list = await GetAirQualityVectorList(query);
+        // read the list of air quality points in WGS84 coordinates
+        var points = (await _airQualityPropertiesService.GetAirQualityPointsFromNowAsync(query.TypeMonitoringData)).ToList();
+        if (points.Count != 0) return list?.Where(x => !points.Any(y => y.EqualsExact(x.Geom))).ToList();
+        Logger.LogWarning("The list of air quality points properties is empty");
+        return list?.ToList();
+    }
+
+    private async Task<AirQualityVectorModel?> AddNewPoint(Point coords, OsmVectorDto osm, MeasurementsQuery query)
+    {
+        var aqPoint = new AirQualityVectorDto
+        {
+            SourceData = ESourceData.Osm,
+            Geom = coords,
+            TimeStamp = DateTime.UtcNow,
+            Guid = Guid.NewGuid(),
+            EntityKey = query.EntityKey!,
+            EntityVectorId = osm.Id,
+            TypeMonitoringData = query.TypeMonitoringData,
+            Lat = coords.Y,
+            Lng = coords.X
+        };
+        
+        Logger.LogInformation("Insert new air quality point - {0} | {1} | [{2},{3}]", osm.Id, query.EntityKey, coords.Y, coords.X);
+                
+        // insert new air quality point
+        return await Insert(aqPoint);
+    }
+
+    private async Task<MatrixPoints> CreateMatrixPoints(MeasurementsQuery query, double matrixDistance, ICollection<OsmVectorDto> listOsm, MatrixPoints previuos)
+    {
+        // create a list of points
+        var measurementPoints = previuos.Points;
+        
         // read all the points created from the geometry coordinates
         foreach (var osm in listOsm)
         {
-            // read all the coordinates
-            var coordinates = osm.Geom?.Coordinates;
-            // I create a collection of geographic points from coordinates
-            var coordinatesGeom = coordinates?.Select(coordinate => GisUtility.CreatePoint(3857, coordinate)).ToList();
-
-            if (coordinatesGeom is null)
+            // read the centroid of the geometry
+            var center = osm.Geom?.Centroid;
+            
+            if (center is null)
             {
-                Logger.LogWarning("I can't read the coordinates of the geometry - {0} - {1}", osm.Id, query.EntityKey);
+                Logger.LogWarning("The center point is null - {0} | {1}", osm.Id, query.EntityKey);
                 continue;
             }
 
-            var index = 0;
-            // I select only the first point
-            foreach (var coords in coordinatesGeom)
+            if (measurementPoints.Any(p => p != null && p.EqualsExact(center)))
             {
-                // I skip the first point
-                index++;
-                
-                // I check if a point with the same coordinates already exists
-                if (airQualityList is not null && airQualityList.Any(p => p.Geom != null && p.Geom.EqualsExact(coords)))
-                {
-                    Logger.LogWarning("The point already exists - {0} - {1}", osm.Id, query.EntityKey);
-                    continue;
-                }
-                
-                // if the list is empty or first coordinate, I add the first point to the list
-                // this way each feature will have at least one point
-                if (measurementPoints.Count == 0 || index == 1)
-                    measurementPoints.Add(coords);
-                else
-                {
-                    // otherwise only if greater than or equal to the distance configured for the layer (2500 mt)
-                    var nearestPoint = measurementPoints.MinBy(p => p.Distance(coords));
-                    var distance = nearestPoint?.Distance(coords) ?? 0;
-                    if (distance >= matrixDistance)
-                        measurementPoints.Add(coords);
-                    else
-                    {
-                        Logger.LogWarning("The distance between the points is less than the configured value - {0} - {1}", osm.Id, query.EntityKey);
-                        continue;
-                    }
-                }
-                
-                // create a new air quality point
-                var aqPoint = new AirQualityVectorDto
-                {
-                    SourceData = ESourceData.Osm,
-                    Geom = coords,
-                    TimeStamp = DateTime.UtcNow,
-                    Guid = Guid.NewGuid(),
-                    EntityKey = query.EntityKey!,
-                    EntityVectorId = osm.Id,
-                    TypeMonitoringData = query.TypeMonitoringData,
-                    Lat = coords.Y,
-                    Lng = coords.X
-                };
-                
-                // insert new air quality point
-                await Insert(aqPoint);
+                Logger.LogWarning("The center point already exists - {0} | {1} | [{2},{3}]", osm.Id, query.EntityKey, center.Coordinate.X, center.Coordinate.Y);
+                continue;
             }
+            
+            measurementPoints.Add(center);
+            await AddNewPoint(center, osm, query);
         }
         
         // save the data in the database
-        return await SaveContext();
+        var resultSaved = await SaveContext() + previuos.Count;
+        
+        return new MatrixPoints
+        {
+            Count = resultSaved,
+            Points = measurementPoints
+        };
     }
     
     /// <summary>
@@ -209,7 +219,7 @@ public class AirQualityVectorService :
 
         // TODO: create configuration lists for other monitoring data types for all values in the TypeMonitoringData enumeration
         
-        var resultSavedItems = 0;
+        var resultMatrixPoints = new MatrixPoints();
         foreach (var key in layers.Select(layer => $"{layer.EntityKey}:{layer.TypeMonitoringData}"))
         {
             // read the list of OSM vectors
@@ -220,36 +230,19 @@ public class AirQualityVectorService :
                 continue;
             }
             
-            // select only the points
-            var listOsmPoints = listOsm.Where(x => x.Geom != null && GisGeometries.IsPoint(x.Geom)).ToList();
-            // create the points with a distance of 0 mt
-            resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
+            var measurementQuery = new MeasurementsQuery
             {
-                EntityKey = key, 
+                EntityKey = key,
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
-            }, 0, listOsmPoints);
+            };
             
-            // select only the polygons
-            var listOsmPolygons = listOsm.Where(x => x.Geom != null && GisGeometries.IsPolygon(x.Geom)).ToList();
-            // create the points with a distance of 1250 mt
-            resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
-            {
-                EntityKey = key, 
-                TypeMonitoringData = ETypeMonitoringData.AirQuality
-            }, 1500, listOsmPolygons);
-            
-            // select only the lines
-            var listOsmLines = listOsm.Where(x => x.Geom != null && GisGeometries.IsLineString(x.Geom)).ToList();
-            // create the points with a distance of 500 mt
-            resultSavedItems += await CreateMatrixPoints(new MeasurementsQuery
-            {
-                EntityKey = key, 
-                TypeMonitoringData = ETypeMonitoringData.AirQuality
-            }, 1000, listOsmLines);
+            // read the list of air quality vectors
+            resultMatrixPoints.Points = await GetAirQualityPointsAsync(measurementQuery) ?? [];
+            resultMatrixPoints = await CreateMatrixPoints(measurementQuery, 0, listOsm, resultMatrixPoints);
         }
         
         // save the data in the database
-        return resultSavedItems;
+        return resultMatrixPoints.Count;
     }
 
     /// <summary>
@@ -263,13 +256,15 @@ public class AirQualityVectorService :
         {
             TypeMonitoringData = ETypeMonitoringData.AirQuality
         });
+        
+        // create a variable to store the number of saved items
         var resultSavedItems = 0;
-
+        
         foreach (var layer in layers)
         {
             var key = $"{layer.EntityKey}:{ETypeMonitoringData.AirQuality}";
             // read the records of the geographical coordinates of the measurement points
-            var listAirQuality = await GetAirQualityVectorList(new MeasurementsQuery
+            var listAirQuality = await GetAirQualityByNewPointsAsync(new MeasurementsQuery
             {
                 EntityKey = key,
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
@@ -289,23 +284,19 @@ public class AirQualityVectorService :
                 // convert the coordinates to WGS84
                 var pointWgs84 = CoordinateConverter.ConvertWebMercatorToWgs84(airQuality.Lng, airQuality.Lat);
                 
-                // create the object with the coordinates in WGS84
                 // and create the options for the OpenMeteo API
                 var openMeteoOptions = new AirQualityOptions(new AirQualityLatLng(pointWgs84.Y, pointWgs84.X));
                 
                 // read the data from the OpenMeteo API
                 var resultAq = await _airQualityService.AirQuality(openMeteoOptions);
                 
-                // check if the result is null
-                if (resultAq is null)
+                // check if the result and coordinate is null
+                if (resultAq is null || (resultAq.Longitude is null && resultAq.Latitude is null))
                 {
                     const string msg = "I was unable to read from the OpenMeteo API";
                     Logger.LogError(msg);
-                    return 0;
+                    continue;
                 }
-                
-                // check if the coordinates are null
-                if (resultAq.Longitude is null && resultAq.Latitude is null) continue;
                 
                 // convert the coordinates to WebMercator
                 var pointWebMercator = CoordinateConverter.ConvertWgs84ToWebMercator(resultAq.Longitude!.Value, resultAq.Latitude!.Value);
@@ -397,12 +388,16 @@ public class AirQualityVectorService :
                     resultAq.Hourly?.EuropeanAqiNitrogenDioxide
                 ));
                 
+                Logger.LogInformation("Insert {0} new air quality properties", listAllNewAirQualityDto.Count);
+                
                 // add and save data in the database
                 foreach (var dto in listAllNewAirQualityDto)
                     await _airQualityPropertiesService.Insert(dto);
                 
                 if (listAllNewAirQualityDto.Count > 0)
                     resultSavedItems += await _airQualityPropertiesService.SaveContext();
+                
+                Logger.LogInformation("Saved {0} new air quality properties", listAllNewAirQualityDto.Count);
             }
         }
         
@@ -474,7 +469,7 @@ public class AirQualityVectorService :
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains the number of records deleted.
     /// </returns>
-    public async Task<int> DeleteOldRecords() => await _airQualityPropertiesService.DeleteOldRecordsAsync();
+    public async Task<int> DeleteOldRecords() => await _airQualityPropertiesService.DeleteOldRecordsAsync(1);
     
     /// <summary>
     /// Retrieves the last date of measurement from the air quality properties service.
