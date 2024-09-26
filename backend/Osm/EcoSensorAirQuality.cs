@@ -17,7 +17,7 @@ public class EcoSensorAirQuality : OsmService<Osm2PgsqlDbContext>
     protected override OsmOptions<PlanetOsmPolygon> OsmOptionsPolygon(Geometry geom)
     {
         var options = base.OsmOptionsPolygon(geom);
-        options.OnBeforeQuery = query => query.Where(x => x.Landuse != null && x.Military != null && x.Amenity != null);
+        options.OnBeforeQuery = query => query.Where(x => x.Landuse != null || x.Military != null || x.Amenity != null);
         options.Tags = ["residential", "industrial", "airfield", "airport"];
         options.OnAfterQuery = (query, tags) => query.Where(x => tags.Contains(x.Landuse)).ToList();
         return options;
