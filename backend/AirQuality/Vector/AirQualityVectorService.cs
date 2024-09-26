@@ -165,7 +165,7 @@ public class AirQualityVectorService :
         return await Insert(aqPoint);
     }
 
-    private async Task<MatrixPoints> CreateMatrixPoints(MeasurementsQuery query, double matrixDistance, ICollection<OsmVectorDto> listOsm, MatrixPoints previuos)
+    private async Task<MatrixPoints> CreateMatrixPoints(MeasurementsQuery query, ICollection<OsmVectorDto> listOsm, MatrixPoints previuos)
     {
         // create a list of points
         var measurementPoints = previuos.Points;
@@ -173,23 +173,45 @@ public class AirQualityVectorService :
         // read all the points created from the geometry coordinates
         foreach (var osm in listOsm)
         {
-            // read the centroid of the geometry
-            var center = osm.Geom?.Centroid;
             
-            if (center is null)
+            // read all the coordinates
+            var coordinates = osm.Geom?.Coordinates;
+            // I create a collection of geographic points from coordinates
+            var coordinatesGeom = coordinates?.Select(coordinate => GisUtility.CreatePoint(3857, coordinate)).ToList();
+            
+            if (coordinatesGeom is null)
             {
-                Logger.LogWarning("The center point is null - {0} | {1}", osm.Id, query.EntityKey);
+                Logger.LogWarning("I can't read the coordinates of the geometry - {0} - {1}", osm.Id, query.EntityKey);
                 continue;
             }
 
-            if (measurementPoints.Any(p => p != null && p.EqualsExact(center)))
+            foreach (var coords in coordinatesGeom)
             {
-                Logger.LogWarning("The center point already exists - {0} | {1} | [{2},{3}]", osm.Id, query.EntityKey, center.Coordinate.X, center.Coordinate.Y);
-                continue;
+                if (measurementPoints.Count > 0 && measurementPoints.Any(p => p != null && p.EqualsExact(coords)))
+                {
+                    Logger.LogWarning("The center point already exists - {0} | {1} | [{2},{3}]", osm.Id, query.EntityKey, coords.Coordinate.X, coords.Coordinate.Y);
+                    continue;
+                }
+                
+                if (measurementPoints.Count == 0) 
+                    measurementPoints.Add(coords);
+                else
+                {
+                    // otherwise only if greater than or equal to the distance configured for the layer (2500 mt)
+                    var nearestPoint = measurementPoints.MinBy(p => p?.Distance(coords));
+                    var distance = nearestPoint?.Distance(coords) ?? 0;
+                    var matrixDistance = osm.Geom is not null && (GisGeometries.IsPolygon(osm.Geom) || GisGeometries.IsLineString(osm.Geom)) ? 2500 : 0;
+                    if (distance >= matrixDistance)
+                        measurementPoints.Add(coords);
+                    else
+                    {
+                        Logger.LogWarning("The distance between the points is less than the configured value - {0} - {1}", osm.Id, query.EntityKey);
+                        continue;
+                    }
+                }
+                
+                await AddNewPoint(coords, osm, query);
             }
-            
-            measurementPoints.Add(center);
-            await AddNewPoint(center, osm, query);
         }
         
         // save the data in the database
@@ -238,7 +260,7 @@ public class AirQualityVectorService :
             
             // read the list of air quality vectors
             resultMatrixPoints.Points = await GetAirQualityPointsAsync(measurementQuery) ?? [];
-            resultMatrixPoints = await CreateMatrixPoints(measurementQuery, 0, listOsm, resultMatrixPoints);
+            resultMatrixPoints = await CreateMatrixPoints(measurementQuery, listOsm, resultMatrixPoints);
         }
         
         // save the data in the database
@@ -415,13 +437,20 @@ public class AirQualityVectorService :
     /// </returns>
     public async Task<FeatureCollection?> GetAirQualityFeatures(MeasurementsQuery query)
     {
-        // read the list of air quality vectors
-        var airQualityList = await GetAirQualityVectorList(query);
         
-        if (airQualityList is null || airQualityList.Count == 0)
+        if (string.IsNullOrEmpty(query.EntityKey))
+        {
+            const string msg = "The key name is null or empty";
+            Logger.LogError(msg);
+            return null;
+        }
+        
+        var listOsm = await GetOsmVectorList(query.EntityKey);
+        
+        if (listOsm is null || listOsm.Count == 0)
         {
             // if the list is empty, I return null
-            const string msg = "I can't read the features of the air quality vector";
+            const string msg = "I can't read the features of the OpenStreetMap";
             Logger.LogError(msg);
             return null;
         }
@@ -429,27 +458,61 @@ public class AirQualityVectorService :
         // create a list of features
         var features = new List<IFeature>();
         
+        // read the air quality properties
+        var listAirQuality = (await List(new AirQualityVectorQuery
+        {
+            EntityKey = query.EntityKey,
+            TypeMonitoringData = query.TypeMonitoringData
+        })).ToList();
+        
+        if (listAirQuality.Count == 0)
+        {
+            // if the list is empty, I return null
+            const string msg = "I can't read the features of the AirQuality";
+            Logger.LogError(msg);
+            return null;
+        }
+        
         // for each air quality vector
-        foreach (var aq in airQualityList)
+        foreach (var osm in listOsm)
         {
             // check if the geometry is null
-            if (aq.EntityVector?.Geom is null) continue;
+            if (osm.Geom is null) continue;
             
             // get the properties
-            var props = aq.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList();
+            var aq = listAirQuality.MinBy(x => osm.Geom.Distance(x.Geom));
             
             // check if the properties are null or empty
-            if (props is null || props.Count == 0) continue;
+            if (aq is null)
+            {
+                Logger.LogWarning("The air quality data are null or empty");
+                continue;
+            };
+
+            if (aq.PropertiesCollection is null || aq.PropertiesCollection?.Count == 0)
+            {
+                Logger.LogWarning("The air quality properties are null");
+                continue;
+            }
+            
+            // get the properties from now
+            var props = aq.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList();
+            if (props is null || props.Count == 0)
+            {
+                Logger.LogWarning("The air quality properties from now are null or empty");
+                continue;
+            }
             
             // check if the feature already exists
-            var feature = features.FirstOrDefault(x => x.Geometry.EqualsExact(aq.EntityVector?.Geom));
-            
-            if (feature is null) {
+            var feature = features.FirstOrDefault(x => x.Geometry.EqualsExact(osm.Geom));
+
+            if (feature is null)
+            {
                 // create a new feature from the linked OpenStreetMap geometry (EntityVector)
-                var newFeature = GisUtility.CreateEmptyFeature(3857, aq.EntityVector?.Geom!);
+                var newFeature = GisUtility.CreateEmptyFeature(3857, osm.Geom!);
                 // if the feature does not exist, I create a new one
                 newFeature.Attributes.Add("Data", props);
-                newFeature.Attributes.Add("OSM", aq.EntityVector?.Properties);
+                newFeature.Attributes.Add("OSM", osm.Properties);
                 features.Add(newFeature);
                 continue;
             }

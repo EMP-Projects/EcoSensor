@@ -25,10 +25,7 @@ public class OsmBackgroundTasks : BackgroundService
     /// <summary>
     /// Initializes a new instance of the <see cref="OsmBackgroundTasks"/> class.
     /// </summary>
-    /// <param name="measurementPointsTasks">The measurement points tasks.</param>
     /// <param name="notificationService">The notification service.</param>
-    /// <param name="seedFeaturesTasks">The seed features tasks.</param>
-    /// <param name="airQualityTasks">The air quality tasks.</param>
     /// <param name="deleteOldDataTasks">The tasks related to deleting old data.</param>
     /// <param name="createGeoJson">The tasks related to handling GeoJSON data and uploading it to S3.</param>
     public OsmBackgroundTasks(

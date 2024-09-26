@@ -91,7 +91,7 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         // Save changes
         return await SaveContext();
     }
-    
+
     /// <summary>
     /// Creates a list of air quality values based on the provided parameters.
     /// </summary>
@@ -100,6 +100,7 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
     /// <param name="lng">The longitude of the location.</param>
     /// <param name="elevation">The elevation of the location.</param>
     /// <param name="gisId">The GIS identifier.</param>
+    /// <param name="key"></param>
     /// <param name="unit">The unit of measurement.</param>
     /// <param name="times">The list of times for the measurements.</param>
     /// <param name="values">The list of values for the measurements.</param>

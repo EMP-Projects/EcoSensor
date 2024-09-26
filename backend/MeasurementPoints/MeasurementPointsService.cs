@@ -116,7 +116,8 @@ public class MeasurementPointsService : IMeasurementPointsService
             
             var query = new MeasurementsQuery
             {
-                EntityKey = keyData
+                EntityKey = keyData,
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
             };
 
             // check if the data file and the next timestamp file exist
@@ -177,21 +178,12 @@ public class MeasurementPointsService : IMeasurementPointsService
             return false;
         }
 
-        var resultFeatureCollection = 0;
-        
         // seed the features
-        resultFeatureCollection += await SeedFeatures();
+        await SeedFeatures();
         // calculate the measurement points
-        resultFeatureCollection += await MeasurementPoints();
-        
+        await MeasurementPoints();
         // read the air quality data
-        resultFeatureCollection += await AirQuality();
-        
-        if (resultFeatureCollection == 0)
-        {
-            _logger.LogWarning("No new features were found");
-            return false;
-        }
+        await AirQuality();
         
         var resultAirQuality = await UploadFeatureCollectionAirQuality();
         
