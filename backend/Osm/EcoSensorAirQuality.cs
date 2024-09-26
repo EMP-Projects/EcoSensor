@@ -17,9 +17,9 @@ public class EcoSensorAirQuality : OsmService<Osm2PgsqlDbContext>
     protected override OsmOptions<PlanetOsmPolygon> OsmOptionsPolygon(Geometry geom)
     {
         var options = base.OsmOptionsPolygon(geom);
-        options.OnBeforeQuery = query => query.Where(x => x.Landuse != null || x.Military != null || x.Amenity != null);
-        options.Tags = ["residential", "industrial", "airfield", "airport"];
-        options.OnAfterQuery = (query, tags) => query.Where(x => tags.Contains(x.Landuse)).ToList();
+        string[] tags = ["residential", "industrial", "military"];
+        options.OnBeforeQuery = query => query.Where(x => x.Landuse != null && tags.Contains(x.Landuse));
+        options.Tags = tags;
         return options;
     }
 
@@ -27,9 +27,9 @@ public class EcoSensorAirQuality : OsmService<Osm2PgsqlDbContext>
     protected override OsmOptions<PlanetOsmRoads> OsmOptionsRoads(Geometry geom)
     {
         var options = base.OsmOptionsRoads(geom);
-        options.OnBeforeQuery = query => query.Where(x => x.Highway != null);
-        options.Tags = OsmTag.Items(EOsmTag.Highway);
-        options.OnAfterQuery = (query, tags) => query.Where(x => tags.Contains(x.Highway)).ToList();
+        var tags = OsmTag.Items(EOsmTag.Highway);
+        options.OnBeforeQuery = query => query.Where(x => x.Highway != null && tags.Contains(x.Highway));
+        options.Tags = tags;
         return options; 
     }
 }
