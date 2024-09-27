@@ -1,4 +1,5 @@
 using System.Globalization;
+using EcoSensorApi.AirQuality;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Aws;
 using EcoSensorApi.Config;
@@ -82,18 +83,26 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns>The total number of new air quality data recorded.</returns>
     public async Task<int> AirQuality() 
         => await _airQualityVectorService.CreateAirQuality();
-    
+
     /// <summary>
     /// Retrieves the air quality features based on the provided query parameters.
     /// </summary>
     /// <param name="query">The query parameters for filtering the air quality features.</param>
+    /// <param name="pollution">The type of pollution to filter the query.</param>
     /// <returns>A <see cref="FeatureCollection"/> containing the air quality features or null if an error occurs.</returns>
-    public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery query) 
-        => await _airQualityVectorService.GetAirQualityFeatures(query);
+    public async Task<FeatureCollection?> AirQualityFeatures(MeasurementsQuery query, EPollution? pollution = null) 
+        => await _airQualityVectorService.GetAirQualityFeatures(query, pollution);
 
-    /// <inheritdoc />
-    public async Task<string> GetNextTimeStamp(MeasurementsQuery query) 
-        => await _airQualityVectorService.LastDateMeasureAsync(query) ?? DateTime.UtcNow.ToString("O");
+    /// <summary>
+    /// Retrieves the next timestamp for the specified query and pollution type.
+    /// </summary>
+    /// <param name="query">The query parameters for retrieving the next timestamp.</param>
+    /// <param name="pollution">The type of pollution to filter the query.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains the next timestamp as a string.
+    /// </returns>
+    public async Task<string> GetNextTimeStamp(MeasurementsQuery query, EPollution pollution) 
+        => await _airQualityVectorService.LastDateMeasureAsync(query, pollution) ?? DateTime.UtcNow.ToString("O");
 
     private async Task<bool> UploadFeatureCollectionAirQuality()
     {
@@ -103,66 +112,70 @@ public class MeasurementPointsService : IMeasurementPointsService
             TypeMonitoringData = ETypeMonitoringData.AirQuality
         });
         
-        var resultCreated = 0;
         var bucketName = _configuration["AWS_S3_BUCKET_NAME"] ?? "ecosensor-data";
         const string prefix = "air_quality";
+
+        var mapData = new List<AirQualityMap>();
         
         foreach (var layer in layers)
         {
-            var keyFile = $"{layer.EntityKey.Replace(" ", "_").ToLower()}_{(int)ETypeMonitoringData.AirQuality}";
-            var keyData = $"{layer.EntityKey}:{layer.TypeMonitoringData}";
-            var dataFileName = $"{keyFile}_latest.json";
-            var nextTsFileName = $"next_ts_{keyFile}.txt";
-            
-            var query = new MeasurementsQuery
+            foreach (var pollution in Pollution.GetValues())
             {
-                EntityKey = keyData,
-                TypeMonitoringData = ETypeMonitoringData.AirQuality
-            };
-
-            // check if the data file and the next timestamp file exist
-            var isExistDataFile = await _ecoSensorAws.IsExistFile(bucketName, prefix, dataFileName);
-            var isExistNextTsFile = await _ecoSensorAws.IsExistFile(bucketName, prefix, nextTsFileName);
+                var entityKey = $"{layer.EntityKey}:{layer.TypeMonitoringData}";
+                
+                // create a new AirQualityMap object
+                var map = new AirQualityMap(layer.EntityKey, ETypeMonitoringData.AirQuality, pollution)
+                {
+                    BucketName = bucketName,
+                    Prefix = prefix
+                };    
+                
+                var query = new MeasurementsQuery
+                {
+                    EntityKey = entityKey,
+                    TypeMonitoringData = ETypeMonitoringData.AirQuality
+                };
+                
+                // get the next timestamp
+                map.LastUpdated = await GetNextTimeStamp(query, pollution);
+                
+                // get the feature collection
+                var featureCollection = await AirQualityFeatures(query, pollution);
             
-            // get the next timestamp
-            var lastTs = await GetNextTimeStamp(query);
-            // check if the next timestamp is less than the current timestamp
-            var isNextTs = DateTime.ParseExact(lastTs, "O", CultureInfo.InvariantCulture) <= DateTime.UtcNow;
-            
-            if (!isNextTs && isExistDataFile && isExistNextTsFile)
-            {
-                _logger.LogWarning("The next timestamp is less than the current timestamp");
-                continue;
+                if (featureCollection is null || featureCollection.Count == 0)
+                {
+                    _logger.LogWarning("The feature collection is null or empty");
+                    continue;
+                }
+                
+                var center = await _airQualityVectorService.Center(new AirQualityVectorQuery
+                {
+                    EntityKey = entityKey
+                });
+                map.Center = center;
+                
+                // save the data in S3
+                await _ecoSensorAws.SaveFeatureCollectionToS3(bucketName, prefix, map.Data, featureCollection);
+                
+                // log the result
+                var msg = $"The feature collection was successfully uploaded to S3 with the result {map.Data}";
+                _logger.LogInformation(msg);
+                
+                mapData.Add(map);
             }
-            
-            // get the feature collection
-            var featureCollection = await AirQualityFeatures(query);
-            
-            if (featureCollection is null || featureCollection.Count == 0)
-            {
-                _logger.LogWarning("The feature collection is null or empty");
-                continue;
-            }
-            
-            // save the data in S3
-            // get the prefix data (Es. "rome_0_latest.json")
-            await _ecoSensorAws.SaveFeatureCollectionToS3(bucketName, prefix, dataFileName, featureCollection);
-            
-            // log the result
-            var msg = $"The feature collection was successfully uploaded to S3 with the result {dataFileName}";
-            _logger.LogInformation(msg);
-            
-            // save the next timestamp in S3
-            var nextTs = await GetNextTimeStamp(query);
-        
-            // save the next timestamp in S3
-            await _ecoSensorAws.SaveNextTimeStampToS3(bucketName, prefix, nextTsFileName, nextTs);
-            _logger.LogInformation($"The next timestamp was successfully uploaded to S3 with the result {nextTsFileName}");
-            
-            resultCreated++;
         }
+        
+        if (mapData.Count == 0)
+        {
+            _logger.LogWarning("The map data is empty");
+            return false;
+        }
+            
+        // save map data
+        await _ecoSensorAws.SaveObjectToS3(bucketName, prefix, "map.json", mapData);
+        _logger.LogInformation($"The map data was successfully uploaded to S3 with the result map.json");
 
-        return resultCreated > 0;
+        return mapData.Count > 0;
     }
     
     /// <summary>

@@ -1,3 +1,4 @@
+using EcoSensorApi.AirQuality;
 using Gis.Net.Aws.AWSCore.S3.Dto;
 using NetTopologySuite.Features;
 
@@ -13,8 +14,9 @@ public interface IEcoSensorAws
     /// </summary>
     /// <param name="key">The key under which the FeatureCollection will be saved.</param>
     /// <param name="objS3">The S3 object containing the FeatureCollection data.</param>
+    /// <param name="pollution"></param>
     /// <returns>A task that represents the asynchronous save operation.</returns>
-    Task SaveAitQualityToDynamoDb(string key, AwsS3ObjectDto objS3);
+    Task SaveAitQualityToDynamoDb(string key, AwsS3ObjectDto objS3, EPollution pollution);
 
     /// <summary>
     /// Saves a FeatureCollection to S3.
@@ -25,6 +27,19 @@ public interface IEcoSensorAws
     /// <param name="featureCollection">The FeatureCollection to save.</param>
     /// <returns>A task that represents the asynchronous save operation. The task result contains the saved S3 object.</returns>
     Task<AwsS3ObjectDto?> SaveFeatureCollectionToS3(string bucketName, string prefix, string key, FeatureCollection? featureCollection);
+    
+    /// <summary>
+    /// Saves an object to an S3 bucket.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to be saved.</typeparam>
+    /// <param name="bucketName">The name of the S3 bucket.</param>
+    /// <param name="prefix">The prefix for the S3 object key.</param>
+    /// <param name="key">The key for the S3 object.</param>
+    /// <param name="obj">The object to be saved.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains the S3 object DTO if the operation is successful; otherwise, null.
+    /// </returns>
+    Task<AwsS3ObjectDto?> SaveObjectToS3<T>(string bucketName, string prefix, string key, T obj);
     
     /// <summary>
     /// Saves the next timestamp to S3.

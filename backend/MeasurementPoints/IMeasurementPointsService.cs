@@ -1,3 +1,5 @@
+using EcoSensorApi.AirQuality;
+
 namespace EcoSensorApi.MeasurementPoints;
 
 /// <summary>
@@ -36,11 +38,12 @@ public interface IMeasurementPointsService
     /// </summary>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task<bool> UploadFeatureCollection();
-    
+
     /// <summary>
     /// Gets the next timestamp based on the provided measurements query.
     /// </summary>
     /// <param name="query">The measurements query used to determine the next timestamp.</param>
+    /// <param name="pollution"></param>
     /// <returns>A task that represents the asynchronous operation, with a string result indicating the next timestamp.</returns>
-    Task<string> GetNextTimeStamp(MeasurementsQuery query);
+    Task<string> GetNextTimeStamp(MeasurementsQuery query, EPollution pollution);
 }

@@ -431,13 +431,13 @@ public class AirQualityVectorService :
     /// Retrieves a collection of air quality features based on the specified key.
     /// </summary>
     /// <param name="query"></param>
+    /// <param name="pollution"></param>
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains a <see cref="FeatureCollection"/> 
     /// if air quality vectors are found; otherwise, null.
     /// </returns>
-    public async Task<FeatureCollection?> GetAirQualityFeatures(MeasurementsQuery query)
+    public async Task<FeatureCollection?> GetAirQualityFeatures(MeasurementsQuery query, EPollution? pollution = null)
     {
-        
         if (string.IsNullOrEmpty(query.EntityKey))
         {
             const string msg = "The key name is null or empty";
@@ -458,12 +458,15 @@ public class AirQualityVectorService :
         // create a list of features
         var features = new List<IFeature>();
         
-        // read the air quality properties
-        var listAirQuality = (await List(new AirQualityVectorQuery
+        // create a query for the air quality properties
+        var queryAirQuality = new AirQualityVectorQuery
         {
             EntityKey = query.EntityKey,
             TypeMonitoringData = query.TypeMonitoringData
-        })).ToList();
+        };
+        
+        // read the air quality properties
+        var listAirQuality = (await List(queryAirQuality)).ToList();
         
         if (listAirQuality.Count == 0)
         {
@@ -496,7 +499,12 @@ public class AirQualityVectorService :
             }
             
             // get the properties from now
-            var props = aq.PropertiesCollection?.Where(x => x.Date >= DateTime.UtcNow).ToList();
+            var props = aq.PropertiesCollection?
+                .Where(x => x.Date >= DateTime.UtcNow).ToList();
+
+            if (pollution is not null)
+                props = props?.Where(x => x.Pollution == pollution).ToList();
+            
             if (props is null || props.Count == 0)
             {
                 Logger.LogWarning("The air quality properties from now are null or empty");
@@ -532,7 +540,8 @@ public class AirQualityVectorService :
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains the number of records deleted.
     /// </returns>
-    public async Task<int> DeleteOldRecords() => await _airQualityPropertiesService.DeleteOldRecordsAsync(1);
+    public async Task<int> DeleteOldRecords() 
+        => await _airQualityPropertiesService.DeleteOldRecordsAsync(1);
     
     /// <summary>
     /// Retrieves the last date of measurement from the air quality properties service.
@@ -541,5 +550,6 @@ public class AirQualityVectorService :
     /// A task that represents the asynchronous operation.
     /// The task result contains the last date of measurement as a string if found; otherwise, null.
     /// </returns>
-    public async Task<string?> LastDateMeasureAsync(MeasurementsQuery query) => await _airQualityPropertiesService.LastDateMeasureAsync(query);
+    public async Task<string?> LastDateMeasureAsync(MeasurementsQuery query, EPollution pollution) 
+        => await _airQualityPropertiesService.LastDateMeasureAsync(query, pollution);
 }

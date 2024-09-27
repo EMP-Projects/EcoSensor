@@ -34,10 +34,11 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
     /// <returns>
     /// A task that represents the asynchronous operation. The task result contains the date of the last measurement as a string in the format "yyyy-MM-dd HH:mm:ss".
     /// </returns>
-    public async Task<string?> LastDateMeasureAsync(MeasurementsQuery query)
+    public async Task<string?> LastDateMeasureAsync(MeasurementsQuery query, EPollution pollution)
     {
+        var queryProps = new AirQualityPropertiesQuery { EntityKey = query.EntityKey, TypeMonitoringData = query.TypeMonitoringData, Pollution = pollution};
         // Get the last measures
-        var lastMeasures = await List(new AirQualityPropertiesQuery { EntityKey = query.EntityKey, TypeMonitoringData = query.TypeMonitoringData});
+        var lastMeasures = await List(queryProps);
         // Get the last date measure
         var lastMeasure = lastMeasures.MaxBy(x => x.Date);
         // Return the date of the last measurement ISO Formatted
@@ -90,6 +91,19 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
 
         // Save changes
         return await SaveContext();
+    }
+    
+    /// <summary>
+    /// Retrieves the IDs of air quality properties based on the specified pollution type and query parameters.
+    /// </summary>
+    /// <param name="query">The query parameters for retrieving air quality properties.</param>
+    /// <param name="pollution">The type of pollution to filter the air quality properties.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains an array of IDs of the air quality properties that match the specified criteria.
+    /// </returns>
+    public async Task<long[]> GetListIdByPollution(MeasurementsQuery query, EPollution pollution)
+    {
+        return (await List(new AirQualityPropertiesQuery { Pollution = pollution, EntityKey = query.EntityKey, TypeMonitoringData = query.TypeMonitoringData })).Select(x => x.Id).ToArray();
     }
 
     /// <summary>

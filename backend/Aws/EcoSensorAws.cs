@@ -1,9 +1,12 @@
 using System.Text;
+using System.Text.Json;
+using EcoSensorApi.AirQuality;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.MeasurementPoints;
 using Gis.Net.Aws.AWSCore.Exceptions;
 using Gis.Net.Aws.AWSCore.S3.Dto;
 using Gis.Net.Aws.AWSCore.S3.Services;
+using Gis.Net.Core;
 using Gis.Net.Vector;
 using NetTopologySuite.Features;
 
@@ -41,7 +44,7 @@ public class EcoSensorAws : IEcoSensorAws
     }
 
     /// <inheritdoc />
-    public async Task SaveAitQualityToDynamoDb(string key, AwsS3ObjectDto objS3)
+    public async Task SaveAitQualityToDynamoDb(string key, AwsS3ObjectDto objS3, EPollution pollution)
     {
         try
         {
@@ -53,7 +56,7 @@ public class EcoSensorAws : IEcoSensorAws
             {
                 EntityKey = key,
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
-            }) ?? DateTime.UtcNow.ToString("O");
+            }, pollution) ?? DateTime.UtcNow.ToString("O");
             
             // Create a new DynamoDbEcoSensorModel item
             var item = new DynamoDbEcoSensorModel
@@ -110,6 +113,29 @@ public class EcoSensorAws : IEcoSensorAws
         using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(geoJson));
         
         // Upload the FeatureCollection to S3
+        return await WriteStreamToS3(bucketName, prefix, key, memoryStream);
+    }
+    
+    /// <summary>
+    /// Saves an object to an S3 bucket.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to be saved.</typeparam>
+    /// <param name="bucketName">The name of the S3 bucket.</param>
+    /// <param name="prefix">The prefix for the S3 object key.</param>
+    /// <param name="key">The key for the S3 object.</param>
+    /// <param name="obj">The object to be saved.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation. The task result contains the S3 object DTO if the operation is successful; otherwise, null.
+    /// </returns>
+    public async Task<AwsS3ObjectDto?> SaveObjectToS3<T>(string bucketName, string prefix, string key, T obj)
+    {
+        // Serialize the object to JSON
+        var json = JsonSerializer.Serialize(obj);
+    
+        // Create a memory stream from the JSON string
+        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+    
+        // Upload the object to S3
         return await WriteStreamToS3(bucketName, prefix, key, memoryStream);
     }
 
