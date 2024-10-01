@@ -46,4 +46,10 @@ public interface IDataMap
     /// </summary>
     /// <value>The center coordinates.</value>
     double[]? Center { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the extent coordinates.
+    /// </summary>
+    /// <value>The extent coordinates.</value>
+    double[]? Extent { get; set; }
 }

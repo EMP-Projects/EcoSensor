@@ -147,12 +147,18 @@ public class MeasurementPointsService : IMeasurementPointsService
                     _logger.LogWarning("The feature collection is null or empty");
                     continue;
                 }
-                
-                var center = await _airQualityVectorService.Center(new AirQualityVectorQuery
+
+                var airQualityQuery = new AirQualityVectorQuery
                 {
                     EntityKey = entityKey
-                });
+                };
+                
+                // get the center and extent
+                var center = await _airQualityVectorService.Center(airQualityQuery);
                 map.Center = center;
+
+                var extent = await _airQualityVectorService.Extent(airQualityQuery);
+                map.Extent = extent;
                 
                 // save the data in S3
                 await _ecoSensorAws.SaveFeatureCollectionToS3(bucketName, prefix, map.Data, featureCollection);

@@ -33,6 +33,10 @@ public abstract class DataMap : IDataMap
     [JsonPropertyName("center")]
     public double[]? Center { get; set; }
 
+    /// <inheritdoc />
+    [JsonPropertyName("extent")]
+    public double[]? Extent { get; set; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DataMap"/> class with the specified entity key.
     /// </summary>
