@@ -107,10 +107,10 @@ public class MeasurementPointsService : IMeasurementPointsService
     private async Task<bool> UploadFeatureCollectionAirQuality()
     {
         // read the list of configuration layers
-        var layers = await _configService.List(new ConfigQuery
+        var layers = (await _configService.List(new ConfigQuery
         {
             TypeMonitoringData = ETypeMonitoringData.AirQuality
-        });
+        })).ToList();
         
         var bucketName = _configuration["AWS_S3_BUCKET_NAME"] ?? "ecosensor-data";
         const string prefix = "air_quality";
@@ -181,6 +181,9 @@ public class MeasurementPointsService : IMeasurementPointsService
         await _ecoSensorAws.SaveObjectToS3(bucketName, prefix, "map.json", mapData);
         _logger.LogInformation($"The map data was successfully uploaded to S3 with the result map.json");
 
+        await _ecoSensorAws.SaveObjectToS3(bucketName, prefix, "layers.json", layers);
+        _logger.LogInformation($"The layers data was successfully uploaded to S3 with the result layers.json");
+        
         return mapData.Count > 0;
     }
     

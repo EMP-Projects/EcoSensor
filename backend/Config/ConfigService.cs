@@ -1,9 +1,6 @@
 using Gis.Net.Core.Services;
-using Gis.Net.GeoJsonImport;
 using Gis.Net.Istat;
 using Gis.Net.Istat.Models;
-using Gis.Net.Vector;
-using Geometry = NetTopologySuite.Geometries.Geometry;
 
 namespace EcoSensorApi.Config;
 
@@ -60,7 +57,7 @@ public class ConfigService : ServiceCore<ConfigModel, ConfigDto, ConfigQuery, Co
             // For each item in the istat list, add a new BBoxConfig object to the resultBboxConfigList
             foreach (var item in istat)
                 if (item.WkbGeometry is not null)
-                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, $"{layer.EntityKey}:{layer.TypeMonitoringData}"));
+                    resultBboxConfigList.Add(new BBoxConfig(item.WkbGeometry, $"{layer.EntityKey}:{layer.TypeMonitoringData}", layer.CityName ?? layer.EntityKey));
         }
 
         return resultBboxConfigList;
