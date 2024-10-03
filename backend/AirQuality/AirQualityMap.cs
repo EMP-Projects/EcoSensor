@@ -16,4 +16,8 @@ public class AirQualityMap : DataMap, IAirQualityMap
     /// <inheritdoc />
     [JsonPropertyName("pollution")]
     public int Pollution { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("pollutionDescription")]
+    public string PollutionDescription { get; set; }
 }

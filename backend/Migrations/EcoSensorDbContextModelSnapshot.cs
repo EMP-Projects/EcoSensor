@@ -95,8 +95,8 @@ namespace EcoSensorApi.Migrations
                             Max = 10.0,
                             Min = 0.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(3040),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 896, DateTimeKind.Utc).AddTicks(6020),
                             Unit = "μg/m3"
                         },
                         new
@@ -108,8 +108,8 @@ namespace EcoSensorApi.Migrations
                             Max = 20.0,
                             Min = 10.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6750),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(270),
                             Unit = "μg/m3"
                         },
                         new
@@ -121,8 +121,8 @@ namespace EcoSensorApi.Migrations
                             Max = 25.0,
                             Min = 20.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6750),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(280),
                             Unit = "μg/m3"
                         },
                         new
@@ -134,8 +134,8 @@ namespace EcoSensorApi.Migrations
                             Max = 50.0,
                             Min = 25.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6750),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(280),
                             Unit = "μg/m3"
                         },
                         new
@@ -147,8 +147,8 @@ namespace EcoSensorApi.Migrations
                             Max = 75.0,
                             Min = 50.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6760),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(280),
                             Unit = "μg/m3"
                         },
                         new
@@ -160,8 +160,8 @@ namespace EcoSensorApi.Migrations
                             Max = 800.0,
                             Min = 75.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6760),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(280),
                             Unit = "μg/m3"
                         },
                         new
@@ -173,8 +173,8 @@ namespace EcoSensorApi.Migrations
                             Max = 20.0,
                             Min = 0.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6760),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(290),
                             Unit = "μg/m3"
                         },
                         new
@@ -186,8 +186,8 @@ namespace EcoSensorApi.Migrations
                             Max = 40.0,
                             Min = 20.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6760),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(290),
                             Unit = "μg/m3"
                         },
                         new
@@ -199,8 +199,8 @@ namespace EcoSensorApi.Migrations
                             Max = 50.0,
                             Min = 40.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6760),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(290),
                             Unit = "μg/m3"
                         },
                         new
@@ -212,8 +212,8 @@ namespace EcoSensorApi.Migrations
                             Max = 100.0,
                             Min = 50.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6770),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(290),
                             Unit = "μg/m3"
                         },
                         new
@@ -225,8 +225,8 @@ namespace EcoSensorApi.Migrations
                             Max = 150.0,
                             Min = 100.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6770),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(290),
                             Unit = "μg/m3"
                         },
                         new
@@ -238,8 +238,8 @@ namespace EcoSensorApi.Migrations
                             Max = 1200.0,
                             Min = 150.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6800),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(340),
                             Unit = "μg/m3"
                         },
                         new
@@ -252,7 +252,7 @@ namespace EcoSensorApi.Migrations
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6800),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(350),
                             Unit = "μg/m3"
                         },
                         new
@@ -265,7 +265,7 @@ namespace EcoSensorApi.Migrations
                             Min = 40.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6820),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(380),
                             Unit = "μg/m3"
                         },
                         new
@@ -278,7 +278,7 @@ namespace EcoSensorApi.Migrations
                             Min = 90.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6830),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(380),
                             Unit = "μg/m3"
                         },
                         new
@@ -291,7 +291,7 @@ namespace EcoSensorApi.Migrations
                             Min = 120.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6830),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(380),
                             Unit = "μg/m3"
                         },
                         new
@@ -304,7 +304,7 @@ namespace EcoSensorApi.Migrations
                             Min = 230.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6830),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(390),
                             Unit = "μg/m3"
                         },
                         new
@@ -317,7 +317,7 @@ namespace EcoSensorApi.Migrations
                             Min = 340.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6830),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(390),
                             Unit = "μg/m3"
                         },
                         new
@@ -330,7 +330,7 @@ namespace EcoSensorApi.Migrations
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6840),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(390),
                             Unit = "μg/m3"
                         },
                         new
@@ -343,7 +343,7 @@ namespace EcoSensorApi.Migrations
                             Min = 50.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6840),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(480),
                             Unit = "μg/m3"
                         },
                         new
@@ -356,7 +356,7 @@ namespace EcoSensorApi.Migrations
                             Min = 100.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6840),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(480),
                             Unit = "μg/m3"
                         },
                         new
@@ -369,7 +369,7 @@ namespace EcoSensorApi.Migrations
                             Min = 130.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6840),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(490),
                             Unit = "μg/m3"
                         },
                         new
@@ -382,7 +382,7 @@ namespace EcoSensorApi.Migrations
                             Min = 240.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6840),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(490),
                             Unit = "μg/m3"
                         },
                         new
@@ -395,7 +395,7 @@ namespace EcoSensorApi.Migrations
                             Min = 380.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6860),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(510),
                             Unit = "μg/m3"
                         },
                         new
@@ -408,7 +408,7 @@ namespace EcoSensorApi.Migrations
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6860),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(510),
                             Unit = "μg/m3"
                         },
                         new
@@ -421,7 +421,7 @@ namespace EcoSensorApi.Migrations
                             Min = 100.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6870),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(510),
                             Unit = "μg/m3"
                         },
                         new
@@ -434,7 +434,7 @@ namespace EcoSensorApi.Migrations
                             Min = 200.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6870),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(510),
                             Unit = "μg/m3"
                         },
                         new
@@ -447,7 +447,7 @@ namespace EcoSensorApi.Migrations
                             Min = 350.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6870),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(520),
                             Unit = "μg/m3"
                         },
                         new
@@ -460,7 +460,7 @@ namespace EcoSensorApi.Migrations
                             Min = 500.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6870),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(520),
                             Unit = "μg/m3"
                         },
                         new
@@ -473,7 +473,7 @@ namespace EcoSensorApi.Migrations
                             Min = 750.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(6880),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(520),
                             Unit = "μg/m3"
                         });
                 });
@@ -551,7 +551,7 @@ namespace EcoSensorApi.Migrations
                             Min = 0.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 963, DateTimeKind.Utc).AddTicks(7290),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(1030),
                             Unit = "ppb"
                         },
                         new
@@ -564,7 +564,7 @@ namespace EcoSensorApi.Migrations
                             Min = 55.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(400),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4590),
                             Unit = "ppb"
                         },
                         new
@@ -577,7 +577,7 @@ namespace EcoSensorApi.Migrations
                             Min = 70.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(400),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4590),
                             Unit = "ppb"
                         },
                         new
@@ -590,7 +590,7 @@ namespace EcoSensorApi.Migrations
                             Min = 85.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(410),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4590),
                             Unit = "ppb"
                         },
                         new
@@ -603,7 +603,7 @@ namespace EcoSensorApi.Migrations
                             Min = 105.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(440),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4630),
                             Unit = "ppb"
                         },
                         new
@@ -616,7 +616,7 @@ namespace EcoSensorApi.Migrations
                             Min = 125.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(440),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4630),
                             Unit = "ppb"
                         },
                         new
@@ -629,7 +629,7 @@ namespace EcoSensorApi.Migrations
                             Min = 165.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(440),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4630),
                             Unit = "ppb"
                         },
                         new
@@ -642,7 +642,7 @@ namespace EcoSensorApi.Migrations
                             Min = 205.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(440),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4640),
                             Unit = "ppb"
                         },
                         new
@@ -655,7 +655,7 @@ namespace EcoSensorApi.Migrations
                             Min = 405.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 3,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(450),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4640),
                             Unit = "ppb"
                         },
                         new
@@ -667,8 +667,8 @@ namespace EcoSensorApi.Migrations
                             Max = 12.0,
                             Min = 0.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(450),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4640),
                             Unit = "μg/m3"
                         },
                         new
@@ -680,8 +680,8 @@ namespace EcoSensorApi.Migrations
                             Max = 35.5,
                             Min = 12.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(450),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4640),
                             Unit = "μg/m3"
                         },
                         new
@@ -693,8 +693,8 @@ namespace EcoSensorApi.Migrations
                             Max = 55.5,
                             Min = 35.5,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(450),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4650),
                             Unit = "μg/m3"
                         },
                         new
@@ -706,8 +706,8 @@ namespace EcoSensorApi.Migrations
                             Max = 105.5,
                             Min = 55.5,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(450),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4650),
                             Unit = "μg/m3"
                         },
                         new
@@ -719,8 +719,8 @@ namespace EcoSensorApi.Migrations
                             Max = 250.5,
                             Min = 150.5,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(460),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4650),
                             Unit = "μg/m3"
                         },
                         new
@@ -732,8 +732,8 @@ namespace EcoSensorApi.Migrations
                             Max = 500.5,
                             Min = 250.5,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 7,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(460),
+                            Pollution = 5,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4650),
                             Unit = "μg/m3"
                         },
                         new
@@ -745,8 +745,8 @@ namespace EcoSensorApi.Migrations
                             Max = 55.0,
                             Min = 0.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(460),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4660),
                             Unit = "μg/m3"
                         },
                         new
@@ -758,8 +758,8 @@ namespace EcoSensorApi.Migrations
                             Max = 155.0,
                             Min = 55.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(480),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4670),
                             Unit = "μg/m3"
                         },
                         new
@@ -771,8 +771,8 @@ namespace EcoSensorApi.Migrations
                             Max = 255.0,
                             Min = 155.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(480),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4680),
                             Unit = "μg/m3"
                         },
                         new
@@ -784,8 +784,8 @@ namespace EcoSensorApi.Migrations
                             Max = 355.0,
                             Min = 255.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(480),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4680),
                             Unit = "μg/m3"
                         },
                         new
@@ -797,8 +797,8 @@ namespace EcoSensorApi.Migrations
                             Max = 425.0,
                             Min = 355.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(480),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4680),
                             Unit = "μg/m3"
                         },
                         new
@@ -810,8 +810,8 @@ namespace EcoSensorApi.Migrations
                             Max = 605.0,
                             Min = 425.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
-                            Pollution = 6,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(490),
+                            Pollution = 4,
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4680),
                             Unit = "μg/m3"
                         },
                         new
@@ -824,7 +824,7 @@ namespace EcoSensorApi.Migrations
                             Min = 0.0,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(490),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4690),
                             Unit = "ppm"
                         },
                         new
@@ -837,7 +837,7 @@ namespace EcoSensorApi.Migrations
                             Min = 4.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(490),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4690),
                             Unit = "ppm"
                         },
                         new
@@ -850,7 +850,7 @@ namespace EcoSensorApi.Migrations
                             Min = 9.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(490),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4690),
                             Unit = "ppm"
                         },
                         new
@@ -863,7 +863,7 @@ namespace EcoSensorApi.Migrations
                             Min = 12.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(570),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4690),
                             Unit = "ppm"
                         },
                         new
@@ -876,7 +876,7 @@ namespace EcoSensorApi.Migrations
                             Min = 15.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(580),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4700),
                             Unit = "ppm"
                         },
                         new
@@ -889,7 +889,7 @@ namespace EcoSensorApi.Migrations
                             Min = 30.5,
                             Period = new TimeSpan(0, 8, 0, 0, 0),
                             Pollution = 0,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(580),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4700),
                             Unit = "ppm"
                         },
                         new
@@ -902,7 +902,7 @@ namespace EcoSensorApi.Migrations
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(600),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4720),
                             Unit = "ppb"
                         },
                         new
@@ -915,7 +915,7 @@ namespace EcoSensorApi.Migrations
                             Min = 35.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(600),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4720),
                             Unit = "ppb"
                         },
                         new
@@ -928,7 +928,7 @@ namespace EcoSensorApi.Migrations
                             Min = 75.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(600),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4720),
                             Unit = "ppb"
                         },
                         new
@@ -941,7 +941,7 @@ namespace EcoSensorApi.Migrations
                             Min = 185.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(600),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4720),
                             Unit = "ppb"
                         },
                         new
@@ -954,7 +954,7 @@ namespace EcoSensorApi.Migrations
                             Min = 305.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(600),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4720),
                             Unit = "ppb"
                         },
                         new
@@ -967,7 +967,7 @@ namespace EcoSensorApi.Migrations
                             Min = 605.0,
                             Period = new TimeSpan(1, 0, 0, 0, 0),
                             Pollution = 2,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(610),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4730),
                             Unit = "ppb"
                         },
                         new
@@ -980,7 +980,7 @@ namespace EcoSensorApi.Migrations
                             Min = 0.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(610),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4730),
                             Unit = "ppb"
                         },
                         new
@@ -993,7 +993,7 @@ namespace EcoSensorApi.Migrations
                             Min = 54.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(610),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4730),
                             Unit = "ppb"
                         },
                         new
@@ -1006,7 +1006,7 @@ namespace EcoSensorApi.Migrations
                             Min = 100.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(610),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4730),
                             Unit = "ppb"
                         },
                         new
@@ -1019,7 +1019,7 @@ namespace EcoSensorApi.Migrations
                             Min = 360.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(620),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4740),
                             Unit = "ppb"
                         },
                         new
@@ -1032,7 +1032,7 @@ namespace EcoSensorApi.Migrations
                             Min = 650.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(620),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4740),
                             Unit = "ppb"
                         },
                         new
@@ -1045,7 +1045,7 @@ namespace EcoSensorApi.Migrations
                             Min = 1250.0,
                             Period = new TimeSpan(0, 1, 0, 0, 0),
                             Pollution = 1,
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 45, 964, DateTimeKind.Utc).AddTicks(620),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 23, 897, DateTimeKind.Utc).AddTicks(4740),
                             Unit = "ppb"
                         });
                 });
@@ -1285,12 +1285,12 @@ namespace EcoSensorApi.Migrations
                             Id = 1L,
                             CityCode = 72021,
                             CityName = "Gioia del Colle",
-                            EntityKey = "114f3038-4bcf-4b18-a956-cb1646f7485b",
+                            EntityKey = "cd616122-fba1-429d-8e96-f25b605b3714",
                             ProvCode = 72,
                             ProvName = "Bari",
                             RegionCode = 16,
                             RegionName = "Puglia",
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 46, 333, DateTimeKind.Utc).AddTicks(8570),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 24, 217, DateTimeKind.Utc).AddTicks(8400),
                             TypeMonitoringData = 0
                         },
                         new
@@ -1298,12 +1298,12 @@ namespace EcoSensorApi.Migrations
                             Id = 2L,
                             CityCode = 52032,
                             CityName = "Siena",
-                            EntityKey = "0186180b-ed43-48ea-a80b-762ba4c9287d",
+                            EntityKey = "10355752-c235-45e1-ac1a-aed4398038df",
                             ProvCode = 52,
                             ProvName = "Siena",
                             RegionCode = 9,
                             RegionName = "Toscana",
-                            TimeStamp = new DateTime(2024, 9, 22, 16, 43, 46, 333, DateTimeKind.Utc).AddTicks(8610),
+                            TimeStamp = new DateTime(2024, 10, 3, 20, 56, 24, 217, DateTimeKind.Utc).AddTicks(8420),
                             TypeMonitoringData = 0
                         });
                 });

@@ -8,31 +8,31 @@ public enum EPollution
     /// <summary>
     /// Atmospheric gases close to surface (10 meter above ground).
     /// </summary>
-    CarbonMonoxide,
+    CarbonMonoxide = 0,
 
     /// <summary>
     /// Nitrogen Dioxide.
     /// </summary>
-    NitrogenDioxide,
+    NitrogenDioxide = 1,
 
     /// <summary>
     /// Sulphur Dioxide.
     /// </summary>
-    SulphurDioxide,
+    SulphurDioxide = 2,
 
     /// <summary>
     /// Ozone.
     /// </summary>
-    Ozone,
+    Ozone = 3,
 
     /// <summary>
     /// Particulate matter with diameter smaller than 10 µm (PM10) and smaller
     /// than 2.5 µm (PM2.5) close to surface (10 meter above ground).
     /// </summary>
-    Pm10,
+    Pm10 = 4,
 
     /// <summary>
     /// Particulate matter with diameter smaller than 2.5 µm (PM2.5) close to surface (10 meter above ground).
     /// </summary>
-    Pm25
+    Pm25 = 5
 }

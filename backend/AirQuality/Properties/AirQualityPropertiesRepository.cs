@@ -46,6 +46,12 @@ public class AirQualityPropertiesRepository : RepositoryCore<AirQualityPropertie
         if (queryByParams?.TypeMonitoringData is not null)
             query = query.Where(x => x.TypeMonitoringData == (ETypeMonitoringData)queryByParams.TypeMonitoringData);
 
+        if (queryByParams?.EuropeanAqi is not null)
+            query = query.Where(x => x.EuropeanAqi >= queryByParams.EuropeanAqi && x.EuropeanAqi <= queryByParams.EuropeanAqi);
+        
+        if (queryByParams?.UsAqi is not null)
+            query = query.Where(x => x.UsAqi >= queryByParams.UsAqi && x.UsAqi <= queryByParams.UsAqi);
+        
         return query;
     }
 }

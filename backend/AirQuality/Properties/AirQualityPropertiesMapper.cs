@@ -20,7 +20,8 @@ public class AirQualityPropertiesMapper : AbstractMapperProfile<AirQualityProper
             .ForMember(dest => dest.Lat, opt => opt.Ignore())
             .ForMember(dest => dest.Lng, opt => opt.Ignore())
             .ForMember(dest => dest.EntityKey, opt => opt.Ignore())
-            .ForMember(dest => dest.TimeStamp, opt => opt.Ignore());
-
+            .ForMember(dest => dest.TimeStamp, opt => opt.Ignore())
+            .ForMember(dest => dest.EuropeanAqiText, opt => opt.Ignore())
+            .ForMember(dest => dest.UsAqiText, opt => opt.Ignore());
     }
 }

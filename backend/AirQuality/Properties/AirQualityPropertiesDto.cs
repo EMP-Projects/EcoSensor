@@ -71,6 +71,14 @@ public class AirQualityPropertiesDto : DtoBase, IAirQualityPropertiesDto, IGisPr
     [JsonPropertyName("sourceText"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? SourceText { get; set; }
 
+    /// <inheritdoc />
+    [JsonPropertyName("europeanAqiText"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? EuropeanAqiText { get; set; }
+
+    /// <inheritdoc />
+    [JsonPropertyName("usAqiText"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? UsAqiText { get; set; }
+
     /// <summary>
     /// Gets or sets the source of the air quality data.
     /// </summary>
@@ -105,4 +113,6 @@ public class AirQualityPropertiesDto : DtoBase, IAirQualityPropertiesDto, IGisPr
     /// <inheritdoc />
     [JsonPropertyName("typeMonitoringData")]
     public ETypeMonitoringData TypeMonitoringData { get; set; }
+    
+    
 }

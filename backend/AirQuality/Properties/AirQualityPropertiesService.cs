@@ -1,6 +1,7 @@
 using System.Globalization;
 using EcoSensorApi.AirQuality.Indexes.Eu;
 using EcoSensorApi.MeasurementPoints;
+using Gis.Net.Core.Repositories;
 using Gis.Net.Core.Services;
 using Gis.Net.Vector;
 using NetTopologySuite.Geometries;
@@ -166,12 +167,14 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
 
             // get the color index for the air quality
             var color = string.Empty;
+            var europeanAqiText = string.Empty;
             if (indexAq?[time.i] is not null)
             {
                 // get the color based on the index
                 var colorIndexAq = colorIndexAqList.FirstOrDefault(x => x.Min <= indexAq[time.i] && x.Max >= indexAq[time.i]);
                 // check if the color index is null
                 if (colorIndexAq is not null) color = colorIndexAq.Color;
+                europeanAqiText = airQualityPropsList.FirstOrDefault(x => x.EuropeanAqi >= indexAq[time.i] && x.EuropeanAqi <= indexAq[time.i])?.EuropeanAqiText ?? string.Empty;
             }
             
             // create the air quality properties
@@ -192,10 +195,23 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
                 GisId = gisId,
                 SourceText = Pollution.GetPollutionSource(EAirQualitySource.OpenMeteo),
                 Source = EAirQualitySource.OpenMeteo,
-                Elevation = elevation
+                Elevation = elevation,
+                UsAqiText = string.Empty,
+                EuropeanAqiText = europeanAqiText
             });
         }
 
         return result;
+    }
+
+    /// <inheritdoc />
+    protected override ListOptions<AirQualityPropertiesModel, AirQualityPropertiesDto, AirQualityPropertiesQuery>
+        GetRowsOptions(AirQualityPropertiesQuery q)
+    {
+        var options = base.GetRowsOptions(q);
+        options.OnExtraMappingAsync = async (model, dto) =>
+            dto.EuropeanAqiText =
+                await _euAirQualityLevelService.GetLevelNameAsync(Convert.ToDouble(model.EuropeanAqi));
+        return options;
     }
 }

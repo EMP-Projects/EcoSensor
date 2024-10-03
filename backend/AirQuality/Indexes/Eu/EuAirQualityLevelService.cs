@@ -11,4 +11,10 @@ public class EuAirQualityLevelService : AbstractAirQualityLevelService<EuAirQual
     {
     }
     
+    public async Task<string?> GetLevelNameAsync(double? value)
+    {
+        var level = (await List(new EuAirQualityQuery { Value = value })).FirstOrDefault();
+        return level?.LevelName;
+    }
+    
 }

@@ -15,7 +15,7 @@ public static class Pollution
     {
         var k = Enum.GetName(key);
         if (k is null)
-            throw new ArgumentOutOfRangeException(nameof(key), key, "Inquinante non valido");
+            throw new ArgumentOutOfRangeException(nameof(key), key, "Invalid pollutant");
         return k;
     }
 

@@ -14,4 +14,7 @@ public interface IAirQualityPropertiesDto : IAirQualityBase
     /// Gets or sets the text description of the source.
     /// </summary>
     string? SourceText { get; set; }
+    
+    string? EuropeanAqiText { get; set; }
+    string? UsAqiText { get; set; }
 }

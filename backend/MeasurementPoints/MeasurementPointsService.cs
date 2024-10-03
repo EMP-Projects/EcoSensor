@@ -153,12 +153,16 @@ public class MeasurementPointsService : IMeasurementPointsService
                     EntityKey = entityKey
                 };
                 
-                // get the center and extent
+                // get the center
                 var center = await _airQualityVectorService.Center(airQualityQuery);
                 map.Center = center;
 
+                // get the extent
                 var extent = await _airQualityVectorService.Extent(airQualityQuery);
                 map.Extent = extent;
+                
+                // set the pollution description
+                map.PollutionDescription = Pollution.GetPollution(pollution);
                 
                 // save the data in S3
                 await _ecoSensorAws.SaveFeatureCollectionToS3(bucketName, prefix, map.Data, featureCollection);

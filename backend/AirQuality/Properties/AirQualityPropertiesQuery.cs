@@ -57,4 +57,10 @@ public class AirQualityPropertiesQuery : QueryBase, IAirQualityPropertiesQuery
     /// <value>The type of monitoring data.</value>
     [FromQuery(Name="typeMonitoringData")]
     public ETypeMonitoringData? TypeMonitoringData { get; set; }
+    
+    [FromQuery(Name="europeanAqi")]
+    public long? EuropeanAqi { get; set; }
+    
+    [FromQuery(Name="usAqi")]
+    public long? UsAqi { get; set; }
 }
