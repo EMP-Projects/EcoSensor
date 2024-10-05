@@ -44,6 +44,51 @@ public static class ConfigManager
                 CityName = "Siena",
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
             });
+        
+        modelBuilder.Entity<ConfigModel>().HasData(
+            new ConfigModel
+            {
+                Id = 3,
+                EntityKey = Guid.NewGuid().ToString(),
+                TimeStamp = DateTime.UtcNow,
+                RegionCode = 17,
+                RegionName = "Basilicata",
+                ProvCode = 77,
+                ProvName = "Matera",
+                CityCode = 77014,
+                CityName = "Matera",
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            });
+        
+        modelBuilder.Entity<ConfigModel>().HasData(
+            new ConfigModel
+            {
+                Id = 4,
+                EntityKey = Guid.NewGuid().ToString(),
+                TimeStamp = DateTime.UtcNow,
+                RegionCode = 16,
+                RegionName = "Puglia",
+                ProvCode = 72,
+                ProvName = "Bari",
+                CityCode = 72006,
+                CityName = "Bari",
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            });
+        
+        modelBuilder.Entity<ConfigModel>().HasData(
+            new ConfigModel
+            {
+                Id = 5,
+                EntityKey = Guid.NewGuid().ToString(),
+                TimeStamp = DateTime.UtcNow,
+                RegionCode = 16,
+                RegionName = "Puglia",
+                ProvCode = 73,
+                ProvName = "Taranto",
+                CityCode = 73027,
+                CityName = "Taranto",
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            });
 
         return modelBuilder;
     }
