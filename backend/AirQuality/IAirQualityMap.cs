@@ -11,5 +11,9 @@ public interface IAirQualityMap : IDataMap
     /// <value>The pollution level.</value>
     int Pollution { get; set; }
     
+    /// <summary>
+    /// Gets or sets the description of the pollution level.
+    /// </summary>
+    /// <value>The description of the pollution level.</value>
     string PollutionDescription { get; set; }
 }

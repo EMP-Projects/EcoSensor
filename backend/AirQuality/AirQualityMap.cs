@@ -10,6 +10,7 @@ public class AirQualityMap : DataMap, IAirQualityMap
     {
         Prefix = "air_quality";
         Pollution = (int)pollution;
+        PollutionDescription = AirQuality.Pollution.GetPollution(pollution);
         Data = $"{entityKey.ToLower()}_{AirQuality.Pollution.GetPollution(pollution).ToLower()}.json";
     }
 

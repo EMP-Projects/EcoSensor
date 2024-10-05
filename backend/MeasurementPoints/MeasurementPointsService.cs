@@ -1,7 +1,7 @@
-using System.Globalization;
 using EcoSensorApi.AirQuality;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Aws;
+using EcoSensorApi.Cache;
 using EcoSensorApi.Config;
 using Gis.Net.Aws.AWSCore.SNS.Dto;
 using Gis.Net.Aws.AWSCore.SNS.Services;
@@ -22,6 +22,7 @@ public class MeasurementPointsService : IMeasurementPointsService
     private readonly IEcoSensorAws _ecoSensorAws;
     private readonly IAwsSnsService _awsSnsService;
     private readonly IConfiguration _configuration;
+    private readonly EuAirQualityLevelCache _euAirQualityLevelCache;
 
     /// <summary>
     /// Service to calculate measurement points for air quality
@@ -33,7 +34,8 @@ public class MeasurementPointsService : IMeasurementPointsService
         ConfigService configService, 
         IEcoSensorAws ecoSensorAws, 
         IAwsSnsService awsSnsService, 
-        IConfiguration configuration)
+        IConfiguration configuration, 
+        EuAirQualityLevelCache euAirQualityLevelCache)
     {
         _osmVectorService = osmVectorService;
         _airQualityVectorService = airQualityVectorService;
@@ -42,6 +44,7 @@ public class MeasurementPointsService : IMeasurementPointsService
         _ecoSensorAws = ecoSensorAws;
         _awsSnsService = awsSnsService;
         _configuration = configuration;
+        _euAirQualityLevelCache = euAirQualityLevelCache;
     }
 
     /// <summary>
@@ -197,6 +200,10 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns>A task that represents the asynchronous upload operation.</returns>
     public async Task<bool> UploadFeatureCollection()
     {
+
+        // initialize the cache
+        await _euAirQualityLevelCache.CacheInit();
+        
         var topicArn = _configuration["AWS_TOPIC_ARN"];
         if (string.IsNullOrEmpty(topicArn))
         {

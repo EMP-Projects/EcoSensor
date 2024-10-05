@@ -41,8 +41,12 @@ public abstract class AbstractAirQualityLevelDto : DtoBase, IAirQualityLevelDto
     /// <summary>
     /// Gets or sets the type of pollution measured.
     /// </summary>
+    [JsonPropertyName("pollutionText")]
+    public required string PollutionText { get; set; }
+
+    /// <inheritdoc />
     [JsonPropertyName("pollution")]
-    public required string Pollution { get; set; }
+    public EPollution Pollution { get; set; }
     
     /// <summary>
     /// Gets or sets the unit of the air quality measurement.

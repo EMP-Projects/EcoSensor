@@ -1,9 +1,11 @@
 using System.Reflection;
+using Amazon.CognitoSync.Model;
 using EcoSensorApi.AirQuality.Indexes.Eu;
 using EcoSensorApi.AirQuality.Indexes.Us;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.AirQuality.Vector;
 using EcoSensorApi.Aws;
+using EcoSensorApi.Cache;
 using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
 using EcoSensorApi.Osm;
@@ -146,6 +148,11 @@ public static class EcoSensorManager
         builder.Services.AddScoped<IEcoSensorAws, EcoSensorAws>();
         builder.Services.AddScoped<EcoSensorAddDbContext>();
         builder.Services.AddScoped<DynamoDbEcoSensorService>();
+        
+        // Cache services
+        builder.Services.AddMemoryCache();
+        builder.Services.AddScoped<EuAirQualityLevelCache>();
+        builder.Services.AddScoped<UsAirQualityLevelCache>();
         
         return builder;
     }

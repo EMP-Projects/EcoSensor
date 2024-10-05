@@ -1,11 +1,9 @@
-using System.Globalization;
-using EcoSensorApi.AirQuality.Indexes.Eu;
+using EcoSensorApi.Cache;
 using EcoSensorApi.MeasurementPoints;
 using Gis.Net.Core.Repositories;
 using Gis.Net.Core.Services;
 using Gis.Net.Vector;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.Precision;
 
 namespace EcoSensorApi.AirQuality.Properties;
 
@@ -17,16 +15,16 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
     EcoSensorDbContext>
 {
 
-    private readonly EuAirQualityLevelService _euAirQualityLevelService;
+    private readonly EuAirQualityLevelCache _euAirQualityLevelCache;
     
     /// <inheritdoc />
     public AirQualityPropertiesService(
         ILogger<AirQualityPropertiesService> logger, 
         AirQualityPropertiesRepository propertiesRepository, 
-        EuAirQualityLevelService euAirQualityLevelService) : 
+        EuAirQualityLevelCache euAirQualityLevelCache) : 
         base(logger, propertiesRepository)
     {
-        _euAirQualityLevelService = euAirQualityLevelService;
+        _euAirQualityLevelCache = euAirQualityLevelCache;
     }
     
     /// <summary>
@@ -137,10 +135,7 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         if (times is null) return result;
         
         // get the color index for the air quality
-        var colorIndexAqList = await _euAirQualityLevelService.List(new EuAirQualityQuery
-        {
-            Pollution = pollution
-        });
+        var colorIndexAqList = _euAirQualityLevelCache.GetLevels(pollution);
         
         // get the air quality properties
         var airQualityPropsList = await List(new AirQualityPropertiesQuery
@@ -209,9 +204,7 @@ public class AirQualityPropertiesService : ServiceCore<AirQualityPropertiesModel
         GetRowsOptions(AirQualityPropertiesQuery q)
     {
         var options = base.GetRowsOptions(q);
-        options.OnExtraMappingAsync = async (model, dto) =>
-            dto.EuropeanAqiText =
-                await _euAirQualityLevelService.GetLevelNameAsync(Convert.ToDouble(model.EuropeanAqi));
+        options.OnExtraMapping = (model, dto) => dto.EuropeanAqiText = _euAirQualityLevelCache.GetLevelName(model.EuropeanAqi);
         return options;
     }
 }

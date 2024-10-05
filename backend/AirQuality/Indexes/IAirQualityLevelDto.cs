@@ -33,10 +33,15 @@ public interface IAirQualityLevelDto
     /// <summary>
     /// Gets or sets the type of pollution measured.
     /// </summary>
-    string Pollution { get; set; }
+    string PollutionText { get; set; }
 
     /// <summary>
     /// Gets or sets the unit of the air quality measurement.
     /// </summary>
     string Unit { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the type of pollution measured.
+    /// </summary>
+    EPollution Pollution { get; set; }
 }

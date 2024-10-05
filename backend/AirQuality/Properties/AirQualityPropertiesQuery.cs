@@ -58,9 +58,17 @@ public class AirQualityPropertiesQuery : QueryBase, IAirQualityPropertiesQuery
     [FromQuery(Name="typeMonitoringData")]
     public ETypeMonitoringData? TypeMonitoringData { get; set; }
     
+    /// <summary>
+    /// Gets or sets the European Air Quality Index (AQI).
+    /// </summary>
+    /// <value>The European AQI.</value>
     [FromQuery(Name="europeanAqi")]
     public long? EuropeanAqi { get; set; }
-    
+
+    /// <summary>
+    /// Gets or sets the United States Air Quality Index (AQI).
+    /// </summary>
+    /// <value>The US AQI.</value>
     [FromQuery(Name="usAqi")]
     public long? UsAqi { get; set; }
 }

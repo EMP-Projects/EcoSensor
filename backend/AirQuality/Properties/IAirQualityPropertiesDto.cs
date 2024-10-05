@@ -15,6 +15,13 @@ public interface IAirQualityPropertiesDto : IAirQualityBase
     /// </summary>
     string? SourceText { get; set; }
     
+    /// <summary>
+    /// Gets or sets the text description of the European Air Quality Index (AQI).
+    /// </summary>
     string? EuropeanAqiText { get; set; }
+
+    /// <summary>
+    /// Gets or sets the text description of the United States Air Quality Index (AQI).
+    /// </summary>
     string? UsAqiText { get; set; }
 }
