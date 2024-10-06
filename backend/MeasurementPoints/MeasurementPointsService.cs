@@ -200,45 +200,52 @@ public class MeasurementPointsService : IMeasurementPointsService
     /// <returns>A task that represents the asynchronous upload operation.</returns>
     public async Task<bool> UploadFeatureCollection()
     {
-
-        // initialize the cache
-        await _euAirQualityLevelCache.CacheInit();
-        
-        var topicArn = _configuration["AWS_TOPIC_ARN"];
-        if (string.IsNullOrEmpty(topicArn))
+        try
         {
-            _logger.LogError("The AWS_TOPIC_ARN environment variable is not set");
-            return false;
-        }
+            // initialize the cache
+            await _euAirQualityLevelCache.CacheInit();
 
-        // seed the features
-        await SeedFeatures();
-        // calculate the measurement points
-        await MeasurementPoints();
-        // read the air quality data
-        await AirQuality();
-        
-        var resultAirQuality = await UploadFeatureCollectionAirQuality();
-        
-        if (resultAirQuality)
-        {
+            var topicArn = _configuration["AWS_TOPIC_ARN"];
+            if (string.IsNullOrEmpty(topicArn))
+            {
+                _logger.LogError("The AWS_TOPIC_ARN environment variable is not set");
+                return false;
+            }
+
+            // seed the features
+            await SeedFeatures();
+            // calculate the measurement points
+            await MeasurementPoints();
+            // read the air quality data
+            await AirQuality();
+
+            var resultAirQuality = await UploadFeatureCollectionAirQuality();
+
+            if (resultAirQuality)
+            {
+                await _awsSnsService.Publish(new AwsPublishDto
+                {
+                    TopicArn = topicArn,
+                    Message = "Updated Air Quality feature collection"
+                }, default);
+            }
+
+            // TODO: upload feature collection for other monitoring data types
+
+            // publish the message to the SNS topic
             await _awsSnsService.Publish(new AwsPublishDto
             {
                 TopicArn = topicArn,
-                Message = "Updated Air Quality feature collection"
+                Message = "Data update finished"
             }, default);
-        }
-        
-        // TODO: upload feature collection for other monitoring data types
-        
-        // publish the message to the SNS topic
-        await _awsSnsService.Publish(new AwsPublishDto
-        {
-            TopicArn = topicArn,
-            Message = "Data update finished"
-        }, default);
 
-        return resultAirQuality;
+            return resultAirQuality;
+        } 
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"An error occurred while uploading the feature collection - {ex.Message}" );
+            return false;
+        }
     }
     
     /// <inheritdoc />
