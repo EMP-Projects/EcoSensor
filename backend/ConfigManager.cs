@@ -89,6 +89,21 @@ public static class ConfigManager
                 CityName = "Taranto",
                 TypeMonitoringData = ETypeMonitoringData.AirQuality
             });
+        
+        modelBuilder.Entity<ConfigModel>().HasData(
+            new ConfigModel
+            {
+                Id = 6,
+                EntityKey = Guid.NewGuid().ToString(),
+                TimeStamp = DateTime.UtcNow,
+                RegionCode = 16,
+                RegionName = "Puglia",
+                ProvCode = 73,
+                ProvName = "Taranto",
+                CityCode = 73029,
+                CityName = "Statte",
+                TypeMonitoringData = ETypeMonitoringData.AirQuality
+            });
 
         return modelBuilder;
     }
