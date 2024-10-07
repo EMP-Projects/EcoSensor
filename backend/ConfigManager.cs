@@ -19,7 +19,7 @@ public static class ConfigManager
             new ConfigModel
             {
                 Id = 1,
-                EntityKey = Guid.NewGuid().ToString(),
+                EntityKey = "Gioia_del_Colle".ToLower(),
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 16,
                 RegionName = "Puglia",
@@ -34,7 +34,7 @@ public static class ConfigManager
             new ConfigModel
             {
                 Id = 2,
-                EntityKey = Guid.NewGuid().ToString(),
+                EntityKey = "Siena".ToLower(),
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 9,
                 RegionName = "Toscana",
@@ -49,7 +49,7 @@ public static class ConfigManager
             new ConfigModel
             {
                 Id = 3,
-                EntityKey = Guid.NewGuid().ToString(),
+                EntityKey = "Matera".ToLower(),
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 17,
                 RegionName = "Basilicata",
@@ -64,7 +64,7 @@ public static class ConfigManager
             new ConfigModel
             {
                 Id = 4,
-                EntityKey = Guid.NewGuid().ToString(),
+                EntityKey = "Bari".ToLower(),
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 16,
                 RegionName = "Puglia",
@@ -79,7 +79,7 @@ public static class ConfigManager
             new ConfigModel
             {
                 Id = 5,
-                EntityKey = Guid.NewGuid().ToString(),
+                EntityKey = "Taranto".ToLower(),
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 16,
                 RegionName = "Puglia",
@@ -94,7 +94,7 @@ public static class ConfigManager
             new ConfigModel
             {
                 Id = 6,
-                EntityKey = Guid.NewGuid().ToString(),
+                EntityKey = "Statte".ToLower(),
                 TimeStamp = DateTime.UtcNow,
                 RegionCode = 16,
                 RegionName = "Puglia",
