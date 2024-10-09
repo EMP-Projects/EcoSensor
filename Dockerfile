@@ -36,11 +36,6 @@ ARG AWS_ACCESS_KEY_ID
 ARG AWS_SECRET_ACCESS_KEY
 ARG AWS_REGION
 
-# Variabili d'ambiente per le credenziali AWS
-ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-ENV AWS_REGION=${AWS_REGION}
-
 # Crea il file credentials nella cartella root
 RUN mkdir -p /app/.aws && \
     echo "[default]" > /app/.aws/credentials && \
