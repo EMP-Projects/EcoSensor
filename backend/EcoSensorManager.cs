@@ -8,7 +8,6 @@ using EcoSensorApi.Config;
 using EcoSensorApi.MeasurementPoints;
 using EcoSensorApi.Osm;
 using EcoSensorApi.Tasks.Osm;
-using Gis.Net.Aws.AWSCore.DynamoDb;
 using Gis.Net.Aws.AWSCore.S3;
 using Gis.Net.Aws.AWSCore.SNS;
 using Gis.Net.Core;

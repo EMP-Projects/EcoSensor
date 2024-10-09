@@ -24,8 +24,13 @@ public class CreateGeoJson : OsmTasks<MeasurementPointsService>
     /// <inheritdoc />
     public override async Task HandleNotificationsAsync()
     {
-        // Upload the feature collection to the server
-        var result = await Service().UploadFeatureCollection();
-        Logger.LogInformation($"Feature collection uploaded: {result}");
+        try {
+            // Upload the feature collection to the server
+            var result = await Service().UploadFeatureCollection();
+            Logger.LogInformation($"Feature collection uploaded: {result}");
+        } catch (Exception ex) {
+            Logger.LogError(ex, $"An error occurred while creating the GeoJSON file. - {ex.Message}");;
+        }
+        
     }
 }

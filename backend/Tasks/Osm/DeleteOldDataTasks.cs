@@ -24,7 +24,13 @@ public class DeleteOldDataTasks : OsmTasks<MeasurementPointsService>
     /// <inheritdoc />
     public override async Task HandleNotificationsAsync()
     {
-        var result = await Service().DeleteOldRecords();
-        Logger.LogInformation($"{result} old data has been deleted");
+        try
+        {
+            var result = await Service().DeleteOldRecords();
+            Logger.LogInformation($"{result} old data has been deleted");
+        } catch (Exception ex) {
+            Logger.LogError(ex, $"An error occurred while deleting old data. - {ex.Message}");
+        }
+        
     }
 }
