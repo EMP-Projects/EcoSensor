@@ -31,11 +31,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Aggiungi le credenziali AWS come variabili d'ambiente
-ARG AWS_ACCESS_KEY_ID
-ARG AWS_SECRET_ACCESS_KEY
-ARG AWS_REGION
-
 # Crea il file credentials nella cartella root
 RUN mkdir -p ~/.aws && \
     echo "[default]" > ~/.aws/credentials && \
