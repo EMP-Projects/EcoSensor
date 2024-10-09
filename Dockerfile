@@ -45,4 +45,25 @@ RUN mkdir -p /app/.aws && \
     echo "[default]" > /app/.aws/config && \
     echo "region=$AWS_REGION" >> /app/.aws/config
 
+# aggiungi ad appsettings.json le configurazioni per AWS
+RUN echo "{" > /app/appsettings.json && \
+    echo "  \"Logging\": {" >> /app/appsettings.json && \
+    echo "    \"LogLevel\": {" >> /app/appsettings.json && \
+    echo "      \"Default\": \"Information\"," >> /app/appsettings.json && \
+    echo "      \"Microsoft\": \"Warning\"," >> /app/appsettings.json && \
+    echo "      \"Microsoft.Hosting.Lifetime\": \"Information\"" >> /app/appsettings.json && \
+    echo "    }" >> /app/appsettings.json && \
+    echo "  }," >> /app/appsettings.json && \
+    echo "  \"AllowedHosts\": \"*\"," >> /app/appsettings.json && \
+    echo "  \"AWS\": {" >> /app/appsettings.json && \
+    echo "    \"Profile\": \"default\"," >> /app/appsettings.json && \
+    echo "    \"AccessKey\": \"$AWS_ACCESS_KEY_ID\"," >> /app/appsettings.json && \
+    echo "    \"SecretKey\": \"$AWS_SECRET_ACCESS_KEY\"," >> /app/appsettings.json && \
+    echo "    \"Region\": \"$AWS_REGION\"" >> /app/appsettings.json && \
+    echo "  }" >> /app/appsettings.json && \
+    echo "}" >> /app/appsettings.json
+
+# imposta i permessi per credentials 
+RUN chmod 600 /app/.aws/credentials
+
 ENTRYPOINT ["dotnet", "EcoSensorApi.dll"]
