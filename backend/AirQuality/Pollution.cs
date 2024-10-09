@@ -1,3 +1,5 @@
+using EcoSensorApi.Cache;
+
 namespace EcoSensorApi.AirQuality;
 
 /// <summary>

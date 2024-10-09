@@ -11,7 +11,7 @@ public class EuAirQualityLevelMapper : AbstractMapperProfile<EuAirQualityLevel, 
         ModelToDtoMapper
             .ForMember(dest => dest.LevelName, opt 
                 => opt.MapFrom(src => AirQualityIndex.EuLevelName(src.Level)))
-            .ForMember(dest => dest.Pollution, opt
+            .ForMember(dest => dest.PollutionText, opt
                 => opt.MapFrom(src => Pollution.GetPollution(src.Pollution)));
     }
 }

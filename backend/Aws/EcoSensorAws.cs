@@ -1,5 +1,7 @@
+using System.ComponentModel;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using EcoSensorApi.AirQuality;
 using EcoSensorApi.AirQuality.Properties;
 using EcoSensorApi.MeasurementPoints;
@@ -9,6 +11,7 @@ using Gis.Net.Aws.AWSCore.S3.Services;
 using Gis.Net.Core;
 using Gis.Net.Vector;
 using NetTopologySuite.Features;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace EcoSensorApi.Aws;
 
@@ -130,7 +133,7 @@ public class EcoSensorAws : IEcoSensorAws
     public async Task<AwsS3ObjectDto?> SaveObjectToS3<T>(string bucketName, string prefix, string key, T obj)
     {
         // Serialize the object to JSON
-        var json = JsonSerializer.Serialize(obj);
+        var json = JsonSerializer.Serialize(obj, MeasurementsConverter.GetOptions());
     
         // Create a memory stream from the JSON string
         using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
