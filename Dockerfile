@@ -39,7 +39,4 @@ RUN mkdir -p ~/.aws && \
     echo "[default]" > ~/.aws/config && \
     echo "region=$AWS_REGION" >> ~/.aws/config
 
-# Ensure the credentials file has the correct permissions
-RUN chmod 600 /root/.aws/credentials
-
 ENTRYPOINT ["dotnet", "EcoSensorApi.dll"]
