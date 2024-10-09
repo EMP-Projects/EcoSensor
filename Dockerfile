@@ -41,6 +41,7 @@ RUN mkdir -p /app/.aws && \
     echo "[default]" > /app/.aws/credentials && \
     echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> /app/.aws/credentials && \
     echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> /app/.aws/credentials && \
+    echo "region=$AWS_REGION" >> /app/.aws/credentials && \
     echo "[default]" > /app/.aws/config && \
     echo "region=$AWS_REGION" >> /app/.aws/config
 
