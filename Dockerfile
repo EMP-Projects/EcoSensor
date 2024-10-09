@@ -30,4 +30,21 @@ RUN dotnet publish "EcoSensorApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Aggiungi le credenziali AWS come variabili d'ambiente
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_REGION
+
+# Crea il file credentials nella cartella root
+RUN mkdir -p ~/.aws && \
+    echo "[default]" > ~/.aws/credentials && \
+    echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> ~/.aws/credentials && \
+    echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> ~/.aws/credentials && \
+    echo "[default]" > ~/.aws/config && \
+    echo "region=$AWS_REGION" >> ~/.aws/config
+
+# Ensure the credentials file has the correct permissions
+RUN chmod 600 /root/.aws/credentials
+
 ENTRYPOINT ["dotnet", "EcoSensorApi.dll"]
