@@ -56,6 +56,7 @@ RUN echo "{" > /app/appsettings.json && \
     echo "  }," >> /app/appsettings.json && \
     echo "  \"AllowedHosts\": \"*\"," >> /app/appsettings.json && \
     echo "  \"AWS\": {" >> /app/appsettings.json && \
+    echo "    \"AWSProfilesLocation\": \"/app/.aws/credentials"," >> /app/appsettings.json && \
     echo "    \"Profile\": \"default\"," >> /app/appsettings.json && \
     echo "    \"Region\": \"$AWS_REGION\"" >> /app/appsettings.json && \
     echo "  }" >> /app/appsettings.json && \
@@ -65,3 +66,4 @@ RUN echo "{" > /app/appsettings.json && \
 RUN chmod 600 /app/.aws/credentials
 
 ENTRYPOINT ["dotnet", "EcoSensorApi.dll"]
+
